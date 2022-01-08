@@ -1,0 +1,119 @@
+.auth-container {
+  .left-div {
+    padding: 30px 40px;
+    .logo-title {
+      font-size: 30px;
+      font-weight: 700;
+      color: #5376a4;
+      margin-bottom: 10px;
+    }
+    .title-info {
+      width: 526px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #a9aab1;
+    }
+    .signup-image-div {
+      width: 520px;
+      padding: 20px 0;
+      max-width: 90%;
+      img {
+        width: 100%;
+      }
+    }
+  }
+
+  .right-div {
+    padding: 30px 40px;
+    width: 80%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    .start-for-free {
+      font-size: 14px;
+      color: grey;
+      font-weight: 600;
+    }
+    h2 {
+      font-size: 30px;
+      font-weight: 700;
+      color: #344055;
+      margin-bottom: 10px;
+    }
+    .member {
+      font-size: 14px;
+      font-weight: 500;
+      color: grey;
+      margin-bottom: 20px;
+      span {
+        color: #188cf6;
+        font-weight: 700;
+        margin-left: 5px;
+        cursor: pointer;
+      }
+      .register-span {
+        transform: all 0.3s linear;
+        .register-icon {
+          svg {
+            transition: all 0.3s linear;
+          }
+        }
+        &:hover {
+          svg {
+            transform: translateX(5px);
+          }
+        }
+      }
+    }
+
+    .form-div {
+      .form-label {
+        margin-right: 20px;
+      }
+      .form-input {
+        border-radius: 5px;
+      }
+      .signup-role {
+        .signup-role-label {
+          text-align: center;
+          margin-bottom: 13px;
+          color: #575988;
+          font-weight: 600;
+          font-size: 16px;
+        }
+        .role-buttons {
+          width: 90%;
+          height: 40px;
+          border-radius: 10px;
+          transition: all 0.3s linear;
+          &:hover {
+            color: white;
+            background: #575988;
+            border-color: #575988;
+          }
+          &.selected {
+            color: white;
+            background: #575988;
+            border-color: #575988;
+          }
+        }
+        .submit-button {
+          width: 100%;
+          margin-top: 22px;
+          border-radius: 10px;
+          height: 40px;
+          color: white;
+          background: #575988;
+          border-color: #575988;
+          transition: all 0.3s linear;
+          &:hover {
+            background-color: white;
+            color: #575988;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,14 +1,14 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
-import SignUp from "../components/Signup/SignUp";
-import SignIn from "../components/SignIn/SignIn";
+import SignUp from "../components/AuthPages/SignUp";
+import SignIn from "../components/AuthPages/SignIn";
 
 const ModuleRoutes = () => {
   return (
     // DEFAULT ROUTES
     <Routes>
-      <Route path="/signup" element={<SignUp />} />
-      <Route path="/login" element={<SignIn />} />
+      <Route exact path="/signup" element={<SignUp />} />
+      <Route exact path="/login" element={<SignIn />} />
     </Routes>
   );
 };
