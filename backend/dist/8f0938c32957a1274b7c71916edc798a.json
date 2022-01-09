@@ -16,7 +16,7 @@
         "host": "127.0.0.1",
         "port": 8200,
         "login": "s.pUR9WsfEcqoEGkLkUECkROKM",
-        "keyname": "hello",
+        "keyname": "",
         "apiversion": "v1"
     }
 }
