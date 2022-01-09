@@ -8,7 +8,7 @@
         "AllowCors": false,
         "GracefullShutdown": true,
         "VAULT": false,
-        "ServiceName": "BoilerPlate_Service",
+        "ServiceName": "GamesInn",
         "QUEUE": false
     },
     "vault": {

@@ -10,8 +10,8 @@ DBConfig.dbconf = {
         host: 'localhost',
         port: 27017,
     },
-    "novig": {
-        dbname: 'User',
+    "gamesinn": {
+        dbname: 'gamesinn',
         host: 'localhost',
         port: 27017,
     }

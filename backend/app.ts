@@ -15,6 +15,8 @@ import { Utils } from "./utils/utils";
 import { RMQ } from "./server/queues/rabbitmq";
 import { DefaultDatabase } from "./databases/database";
 import { DefaultModel } from "./models/defaultmodel";
+import { GamesInn } from "./databases/gamesinn-database";
+import { GamersModel } from "./models/usermodel";
 
 // // Instead of:
 // import sourceMapSupport from 'source-map-support'
@@ -149,7 +151,6 @@ export class Application {
             global.logger = env.logger;
             global.defaultDB = env.defaultDB;
             global.delayStart = env.delayStart;
-            console.log(env.config.ServiceName , 'sdasda');
             
             if (!env.config.ServiceName) throw new Error('Unknown Service Name');
             if (!env.config.PORT) throw new Error('Server Port Not Defined');
@@ -166,6 +167,7 @@ export class Application {
             if (!env.config.VAULT) {
 
                 if (global.defaultDB) await DefaultDatabase.Connect(DBConfig.dbconf.default)
+                else if(!global.defaultDB) await GamesInn.Connect(DBConfig.dbconf.gamesinn)
 
             } else {
 
@@ -173,7 +175,7 @@ export class Application {
 
                 if (global.logger == 'sentry') Sentry.INIT({ dsn: Application.conf.Logging.SENTRY.dsn, environment: global.environment, serverName: global.servicename, logLevel: LogLevel.Error });
                 if (global.defaultDB) await DefaultDatabase.Connect(DBConfig.dbconf.default);
-
+                else await GamesInn.Connect(DBConfig.dbconf.gamesinn)
             }
 
 
@@ -181,7 +183,8 @@ export class Application {
              * TEST DATABASE
              */
             if (global.defaultDB) await DefaultModel.INIT();
-
+            else await GamersModel.INIT()
+            
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.
              */

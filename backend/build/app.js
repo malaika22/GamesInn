@@ -32,6 +32,8 @@ const utils_1 = require("./utils/utils");
 const rabbitmq_1 = require("./server/queues/rabbitmq");
 const database_2 = require("./databases/database");
 const defaultmodel_1 = require("./models/defaultmodel");
+const gamesinn_database_1 = require("./databases/gamesinn-database");
+const usermodel_1 = require("./models/usermodel");
 global.__rootdir__ = process.cwd();
 class Application {
     constructor() { }
@@ -111,7 +113,6 @@ class Application {
             global.logger = env.logger;
             global.defaultDB = env.defaultDB;
             global.delayStart = env.delayStart;
-            console.log(env.config.ServiceName, 'sdasda');
             if (!env.config.ServiceName)
                 throw new Error('Unknown Service Name');
             if (!env.config.PORT)
@@ -131,6 +132,8 @@ class Application {
             if (!env.config.VAULT) {
                 if (global.defaultDB)
                     await database_2.DefaultDatabase.Connect(database_1.DBConfig.dbconf.default);
+                else if (!global.defaultDB)
+                    await gamesinn_database_1.GamesInn.Connect(database_1.DBConfig.dbconf.gamesinn);
             }
             else {
                 Application.conf = await vault_1.Vault.Init(env);
@@ -138,12 +141,16 @@ class Application {
                     sentry_1.Sentry.INIT({ dsn: Application.conf.Logging.SENTRY.dsn, environment: global.environment, serverName: global.servicename, logLevel: types_1.LogLevel.Error });
                 if (global.defaultDB)
                     await database_2.DefaultDatabase.Connect(database_1.DBConfig.dbconf.default);
+                else
+                    await gamesinn_database_1.GamesInn.Connect(database_1.DBConfig.dbconf.gamesinn);
             }
             /**
              * TEST DATABASE
              */
             if (global.defaultDB)
                 await defaultmodel_1.DefaultModel.INIT();
+            else
+                await usermodel_1.GamersModel.INIT();
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.
              */

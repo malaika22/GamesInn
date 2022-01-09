@@ -1,17 +1,18 @@
 import express from "express";
 import { DefaultDatabase } from "../../databases/database";
 import { DefaultModel } from "../../models/defaultmodel";
+import { GamersModel } from "../../models/usermodel";
 import { HTTPServer } from "../../server/http";
 import { Utils } from "../../utils/utils";
 
 const routes = express.Router();
 
 
-routes.use('/123', async (req, res) => {
+routes.post('/123', async (req, res) => {
     try {
 
         await Utils.Sleep(6000)
-        let doc = await DefaultModel.Add();
+        let doc = await GamersModel.InsertTestDoc();
         console.log('Test 123 Called ');
         res.send({ status: 123 });
     } catch (error) {
