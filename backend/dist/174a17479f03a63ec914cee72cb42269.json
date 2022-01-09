@@ -1,0 +1,22 @@
+{
+    "env": "local",
+    "defaultDB": true,
+    "logger": "sentry",
+    "delaySart": 10000,
+    "config": {
+        "PORT": 8000,
+        "AllowCors": false,
+        "GracefullShutdown": false,
+        "VAULT": true,
+        "ServiceName": "novig Athuntication",
+        "QUEUE": true
+    },
+    "vault": {
+        "protocol": "http",
+        "host": "novigvault.cubestagearea.xyz",
+        "port": 8200,
+        "login": "s.DNBsbLMECZHuziwNACVuiraa",
+        "keyname": "APPCONFIG_LOCAL",
+        "apiversion": "v1"
+    }
+}
