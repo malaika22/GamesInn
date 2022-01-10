@@ -1,0 +1,22 @@
+{
+    "env": "staging",
+    "defaultDB": false,
+    "logger": "sentry",
+    "delaySart": 2000,
+    "config": {
+        "PORT": 8000,
+        "AllowCors": false,
+        "GracefullShutdown": true,
+        "VAULT": false,
+        "ServiceName": "",
+        "QUEUE": false
+    },
+    "vault": {
+        "protocol": "",
+        "host": "",
+        "port": 8200,
+        "login": "",
+        "keyname": "",
+        "apiversion": "v1"
+    }
+}
