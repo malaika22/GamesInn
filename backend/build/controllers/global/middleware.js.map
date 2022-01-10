@@ -1,0 +1,1 @@
+{"version":3,"file":"middleware.js","sourceRoot":"","sources":["../../../controllers/global/middleware.ts"],"names":[],"mappings":";;;;;;AAAA,sDAA8B;AAE9B,MAAM,MAAM,GAAG,iBAAO,CAAC,MAAM,EAAE,CAAC;AAEhC,MAAM,CAAC,GAAG,CAAC,CAAC,GAAG,EAAE,GAAG,EAAE,IAAI,EAAE,EAAE;IAC1B,OAAO,CAAC,GAAG,CAAC,mBAAmB,CAAC,CAAC;IACjC,IAAI,EAAE,CAAC;AACX,CAAC,CAAC,CAAC;AAEU,QAAA,MAAM,GAAG,MAAM,CAAC"}
