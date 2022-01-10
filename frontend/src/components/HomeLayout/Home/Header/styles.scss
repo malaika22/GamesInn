@@ -1,0 +1,40 @@
+.header-container {
+  background-color: #575988;
+  height: 68px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  .logo-div {
+    padding-left: 40px;
+    font-size: 20px;
+    color: white;
+  }
+  .header-menu {
+    background: #575988;
+    color: white;
+    border-bottom: none;
+    .ant-menu-item-selected {
+      color: white;
+      &::after {
+        border-bottom-color: white;
+      }
+    }
+  }
+  .header-buttons {
+    text-align: center;
+    button {
+      width: 150px;
+      border: none;
+      border-radius: 5px;
+      margin-right: 10px;
+      font-size: 14px;
+      /* background: #575988; */
+      color: #575988;
+      font-weight: 600;
+      &:hover {
+        background-color: #575988;
+        color: white;
+      }
+    }
+  }
+}
