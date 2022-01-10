@@ -8,6 +8,11 @@ import SlideTwo from "../../../../assests/home/slideTwo.jpeg";
 import SlideThree from "../../../../assests/home/slideThree.jpeg";
 import SlideFour from "../../../../assests/home/slideFour.jpeg";
 import SlideFive from "../../../../assests/home/slideFive.jpeg";
+import guests from "../../../../assests/home/guests.svg";
+import gamer from "../../../../assests/home/gamer.svg";
+import investor from "../../../../assests/home/investor.svg";
+import cardLogo from "../../../../assests/home/cardLogo.png";
+import visaLogo from "../../../../assests/home/visaLogo.png";
 //import {Swiper, SwiperSlide} from 'swiper/react'
 import "swiper/swiper-bundle.min.css";
 
@@ -84,30 +89,107 @@ const HomeContent = () => {
         <div className="slider-container">
           <Swiper {...params} className="swiper-div">
             <div className="item">
-              <img src={SlideOne} alt="game" />
+              <img src={SlideOne} alt="Game" />
             </div>
             <div className="item">
-              <img src={SlideTwo} alt="game" />
+              <img src={SlideTwo} alt="Game" />
             </div>
             <div className="item">
-              <img src={SlideThree} alt="game" />
+              <img src={SlideThree} alt="Game" />
             </div>
             <div className="item">
-              <img src={SlideFour} alt="game" />
+              <img src={SlideFour} alt="Game" />
             </div>
             <div className="item">
-              <img src={SlideFive} alt="game" />
+              <img src={SlideFive} alt="Game" />
             </div>
           </Swiper>
         </div>
       </div>
       <div className="how-it-works-section">
-        <div>
-          <Row>
-            <Col></Col>
-            <Col></Col>
-            <Col></Col>
-          </Row>
+        <div className="section-title">HOW IT WORKS?</div>
+        <Row container>
+          <Col span={8}>
+            <div className="role-div">
+              <div className="role-title">INVESTORS</div>
+              <div className="role-img-div">
+                <img src={investor} alt="Investors" />
+              </div>
+              <div className="role-des">
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore
+                eveniet omnis beatae in tenetur at dolores nemo, error dolore
+                eos saepe fugiat, optio ipsum cupiditate consectetur
+                perspiciatis atque quia quibusdam.
+              </div>
+            </div>
+          </Col>
+          <Col span={8}>
+            <div className="role-div">
+              <div className="role-title">Gamers</div>
+              <div className="role-img-div">
+                <img src={gamer} alt="Gamer" />
+              </div>
+              <div className="role-des">
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore
+                eveniet omnis beatae in tenetur at dolores nemo, error dolore
+                eos saepe fugiat, optio ipsum cupiditate consectetur
+                perspiciatis atque quia quibusdam.
+              </div>
+            </div>
+          </Col>
+          <Col span={8}>
+            <div className="role-div">
+              <div className="role-title">Guests</div>
+              <div className="role-img-div">
+                <img src={guests} alt="Guests" />
+              </div>
+              <div className="role-des">
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Labore
+                eveniet omnis beatae in tenetur at dolores nemo, error dolore
+                eos saepe fugiat, optio ipsum cupiditate consectetur
+                perspiciatis atque quia quibusdam.
+              </div>
+            </div>
+          </Col>
+        </Row>
+      </div>
+      <div className="about-us-section">
+        <div className="about-us-title">About us</div>
+        <div className="about-content">
+          <div className="about-content-title">
+            TRADE GAMING ACCOUNTS AND BOOST YOUR GAMEPLAY
+          </div>
+          <div className="about-content-des">
+            Join our community of gamers who are using our marketplace fortunes
+            buy and sell their gaming accounts
+          </div>
+          <div className="cash-accounts">
+            <img src={cardLogo} alt="master card" />
+            <img src={visaLogo} alt="visa card" />
+          </div>
+        </div>
+        <div className="about-content">
+          <div className="about-content-title">FIND A SUITABLE INVESTOR</div>
+          <div className="about-content-des">
+            Join our community of gamers who are using our marketplace fortunes
+            buy and sell their gaming accounts
+          </div>
+        </div>
+        <div className="about-content">
+          <div className="about-content-title">
+            WE PROVIDE THE FACILITY OF PUBLIC FUNDING
+          </div>
+          <div className="about-content-des">
+            Join our community of gamers who are using our marketplace fortunes
+            buy and sell their gaming accounts
+          </div>
+        </div>
+        <div className="about-content">
+          <div className="about-content-title">MARKETPLACE FEATURES</div>
+          <div className="about-content-des">
+            Join our community of gamers who are using our marketplace fortunes
+            buy and sell their gaming accounts
+          </div>
         </div>
       </div>
     </div>
