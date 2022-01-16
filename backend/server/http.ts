@@ -15,7 +15,7 @@ import * as DefaultRouter from "../controllers/global/default";
 import * as TestRouter from "../controllers/api/test";
 import * as HealthRouter from "../controllers/api/health";
 import * as VaultRouter from "../controllers/api/vault";
-
+import * as AuthenticationRouter from '../controllers/api/auth'
 
 import * as http from "http";
 import stoppable from "stoppable"
@@ -71,7 +71,7 @@ export class HTTPServer {
         //@TODO TAIMOOR
         //@REVIEW TAIMOOR This is how we need to add to all services
         this.server.app.use('/auth/api/v1/vault', VaultRouter.router);
-
+        this.server.app.use('/gamer/auth/api/v1', AuthenticationRouter.router)
 
 
 

@@ -8,13 +8,16 @@
  * https://learn.hashicorp.com/tutorials/vault/pattern-approle?in=vault/recommended-patterns
  */
 import * as vault from "node-vault";
+import * as jwt from "jsonwebtoken";
+
 import { Application } from "../app";
 import { APPCONFIG } from "../interfaces/appconfig";
 import { Environment } from "../interfaces/environment";
 import { Logger } from "../server/logger";
+import { Session } from "../models/session-model";
 
 
-const { sign } = require('jsonwebtoken');
+
 import * as crypto from "crypto"
 import pbkdf2 from "pbkdf2";
 
@@ -150,6 +153,32 @@ export abstract class Vault {
         return (hash === original) ? true : false;
 
 
+    }
+
+    public static GenerateSignToken(session: Session): string {
+
+        /**
+         * @REVIEW Change Signing LogicMake it more secure
+         */
+        let payload = {
+            user: {
+                _id: session._id,
+                type: session.type,
+                createdAt: session.createdTime,
+                user_id: session.userID
+            }
+        }
+        // Logger.Console(`payload ===> ${JSON.stringify(payload, undefined, 4)}`, 'info')
+        try {
+            let token = jwt.sign(payload, '', { algorithm: 'none' })
+            let encryptedToken = Vault.Encrypt(token);
+
+            return encryptedToken;
+
+        } catch (error: any) {
+            Logger.Console("Error creating session");
+            throw error;
+        }
     }
 
 

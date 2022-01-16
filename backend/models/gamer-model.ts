@@ -152,8 +152,12 @@ export abstract class GamersModel {
     }
 
     public static async FindGamerByEmail(email:string){
-        let gamer = await this.collection.findOne({email:email , verified:true})
+        let gamer = await this.collection.findOne({email:email })
+        console.log(gamer, ' Gamer inside find gamer by email');
+        
         return gamer
     }
+
+    
 
 }

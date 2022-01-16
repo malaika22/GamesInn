@@ -100,7 +100,8 @@ class GamersModel {
                 country: data.country.trim(),
                 email: data.email.trim(),
                 userType: UserTypes.GAMER,
-                date: new Date().toISOString()
+                verified: false,
+                createdTime: new Date().toISOString()
             };
             let doc = await this.collection.findOneAndUpdate({ email: temp.email }, { $set: temp }, { upsert: true });
             if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
@@ -114,6 +115,11 @@ class GamersModel {
             console.log("Error in creating gamer ", error);
             throw error;
         }
+    }
+    static async FindGamerByEmail(email) {
+        let gamer = await this.collection.findOne({ email: email });
+        console.log(gamer, ' Gamer inside find gamer by email');
+        return gamer;
     }
 }
 exports.GamersModel = GamersModel;

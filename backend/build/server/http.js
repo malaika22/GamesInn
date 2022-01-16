@@ -32,6 +32,7 @@ const DefaultRouter = __importStar(require("../controllers/global/default"));
 const TestRouter = __importStar(require("../controllers/api/test"));
 const HealthRouter = __importStar(require("../controllers/api/health"));
 const VaultRouter = __importStar(require("../controllers/api/vault"));
+const AuthenticationRouter = __importStar(require("../controllers/api/auth"));
 const stoppable_1 = __importDefault(require("stoppable"));
 const sentry_1 = require("./sentry");
 class HTTPServer {
@@ -67,6 +68,7 @@ class HTTPServer {
         //@TODO TAIMOOR
         //@REVIEW TAIMOOR This is how we need to add to all services
         this.server.app.use('/auth/api/v1/vault', VaultRouter.router);
+        this.server.app.use('/gamer/auth/api/v1', AuthenticationRouter.router);
         //Default Route Must be added at end.
         this.server.app.use('/', DefaultRouter.router);
     }

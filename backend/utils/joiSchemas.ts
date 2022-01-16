@@ -10,20 +10,23 @@ export abstract class JoiSchemas {
 
   public static SignUpValidator(data: any): ValidationError {
     let schema = Joi.object({
-      name: Joi.string().min(3).max(30).required(),
+      userName: Joi.string().min(3).max(30).required(),
+      firstName: Joi.string().min(3).max(30).required(),
+      lastName:Joi.string().min(3).max(30).required(),
+      address:Joi.string().min(3).max(40).required(),
       password: Joi.string().required().min(8).max(50),
-      dob: Joi.string().required().regex(/^\d{2}\/\d{2}\/\d{4}$/),
+      city:Joi.string().required().min(3).max(25),
+      country:Joi.string().required().min(8).max(25),
       email: Joi.string().email().required(),
-      number: Joi.string().required().regex(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im),
-      countryCode: Joi.string().required().min(2).max(4)
+      userType:Joi.string().required().valid('GAMER', 'INVESTOR'),
     });
     let result = schema.validate(data, { abortEarly: false });
     if (result.error) return { errored: true, errors: result.error.message.split('.'), value: result.value }
     else return { errored: false, errors: null, value: result.value }
   }
-  public static LoginValidator(data: any, key: string): ValidationError {
+  public static LoginValidator(data: any): ValidationError {
     let schema = Joi.object({
-      [key]: Joi.string().required(),
+      password: Joi.string().required(),
       email: Joi.string().email().required(),
     });
     let result = schema.validate(data, { abortEarly: false });

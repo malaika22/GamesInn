@@ -33,9 +33,9 @@ exports.Vault = void 0;
  * https://learn.hashicorp.com/tutorials/vault/pattern-approle?in=vault/recommended-patterns
  */
 const vault = __importStar(require("node-vault"));
+const jwt = __importStar(require("jsonwebtoken"));
 const app_1 = require("../app");
 const logger_1 = require("../server/logger");
-const { sign } = require('jsonwebtoken');
 const crypto = __importStar(require("crypto"));
 const pbkdf2_1 = __importDefault(require("pbkdf2"));
 class Vault {
@@ -128,6 +128,29 @@ class Vault {
         let salt = ((_a = app_1.Application.conf) === null || _a === void 0 ? void 0 : _a.ENCRYPTION.salt) || Vault.salt;
         let hash = pbkdf2_1.default.pbkdf2Sync(password, salt, 1, 32, 'sha256').toString('hex');
         return (hash === original) ? true : false;
+    }
+    static GenerateSignToken(session) {
+        /**
+         * @REVIEW Change Signing LogicMake it more secure
+         */
+        let payload = {
+            user: {
+                _id: session._id,
+                type: session.type,
+                createdAt: session.createdTime,
+                user_id: session.userID
+            }
+        };
+        // Logger.Console(`payload ===> ${JSON.stringify(payload, undefined, 4)}`, 'info')
+        try {
+            let token = jwt.sign(payload, '', { algorithm: 'none' });
+            let encryptedToken = Vault.Encrypt(token);
+            return encryptedToken;
+        }
+        catch (error) {
+            logger_1.Logger.Console("Error creating session");
+            throw error;
+        }
     }
     static hashPassword(password) {
         var _a;
