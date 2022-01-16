@@ -16,7 +16,7 @@ import { RMQ } from "./server/queues/rabbitmq";
 import { DefaultDatabase } from "./databases/database";
 import { DefaultModel } from "./models/defaultmodel";
 import { GamesInn } from "./databases/gamesinn-database";
-import { GamersModel } from "./models/usermodel";
+import { GamersModel } from "./models/gamer-model";
 
 // // Instead of:
 // import sourceMapSupport from 'source-map-support'

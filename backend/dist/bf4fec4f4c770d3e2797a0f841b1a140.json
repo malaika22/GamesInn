@@ -7,7 +7,7 @@
         "PORT": 8000,
         "AllowCors": false,
         "GracefullShutdown": true,
-        "VAULT": false,
+        "VAULT": true,
         "ServiceName": "GamesInn",
         "QUEUE": false
     },

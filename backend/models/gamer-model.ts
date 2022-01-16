@@ -1,6 +1,29 @@
-import mongodb, { Db } from "mongodb";
+
+import mongodb, { Db, ObjectId } from "mongodb";
 import { Subscription } from 'rxjs';
 import { GamesInn } from "../databases/gamesinn-database";
+
+
+enum UserTypes {
+    GAMER = 'Gamer',
+    INVESTOR = 'Investor',
+}
+
+
+interface Gamer{
+    _id?: ObjectId | string,
+    userName:String,
+    email:String,
+    password:String,
+    firstName:String,
+    lastName:String,
+    country:String,
+    city:String,
+    address:String,
+    createdTime:string
+    userType: UserTypes,
+    verified:boolean
+}
 
 export abstract class GamersModel {
 
@@ -93,4 +116,44 @@ export abstract class GamersModel {
             return error;
         }
     }
+
+
+    public static async CreateGamer(data:Gamer)
+    {
+        try {
+            let temp:Gamer = {
+                userName:data.userName.trim(),
+                firstName:data.firstName.trim(),
+                lastName:data.lastName.trim(),
+                address:data.address.trim().toLocaleUpperCase(),
+                password:data.password.trim(),
+                city:data.city.trim(),
+                country:data.country.trim(),
+                email:data.email.trim(),
+                userType:UserTypes.GAMER,
+                verified:false,
+                createdTime:new Date().toISOString()
+            }
+    
+            let doc = await this.collection.findOneAndUpdate({email:temp.email}, {$set:temp}, {upsert:true})
+    
+            if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
+                temp._id = doc.lastErrorObject.upserted;
+                return temp;
+            } else return doc.value;
+    
+    
+        } catch (error) {
+            console.log("Error in creating gamer ", error)
+            throw error
+
+        }
+
+    }
+
+    public static async FindGamerByEmail(email:string){
+        let gamer = await this.collection.findOne({email:email , verified:true})
+        return gamer
+    }
+
 }

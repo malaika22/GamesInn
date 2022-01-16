@@ -45,11 +45,11 @@ class Vault {
             this.conf = conf;
             let vaultConf = {
                 apiVersion: conf.vault.apiversion,
-                endpoint: conf.vault.protocol + '://' + conf.vault.host,
+                endpoint: conf.vault.protocol + '://' + conf.vault.host + ":" + 8200,
                 token: conf.vault.login
             };
             this.client = vault.default(vaultConf);
-            let appConfig = await this.client.read(`kv/${conf.vault.keyname}`);
+            let appConfig = await this.client.read(`kv/gamesinn`);
             // let appConfig = await this.client.list('kv/')
             // console.log(appConfig);
             // console.log(appConfig.data);
@@ -64,12 +64,12 @@ class Vault {
         try {
             let vaultConf = {
                 apiVersion: conf.vault.apiversion,
-                endpoint: conf.vault.protocol + "://" + conf.vault.host,
+                endpoint: conf.vault.protocol + "://" + conf.vault.host + ":" + 8200,
                 token: conf.vault.login,
             };
             this.client = vault.default(vaultConf);
             // console.log(await this.client.health(), 'client for vault');
-            let appConfig = await this.client.read(`kv/${conf.vault.keyname}`);
+            let appConfig = await this.client.read(`secrets/${conf.vault.keyname}`);
             // let appConfig = await this.client.list('kv/')
             // console.log(appConfig);
             // console.log(appConfig.data);

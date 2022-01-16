@@ -5,13 +5,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = void 0;
 const express_1 = __importDefault(require("express"));
-const usermodel_1 = require("../../models/usermodel");
+const gamer_model_1 = require("../../models/gamer-model");
 const utils_1 = require("../../utils/utils");
 const routes = express_1.default.Router();
 routes.post('/123', async (req, res) => {
     try {
         await utils_1.Utils.Sleep(6000);
-        let doc = await usermodel_1.GamersModel.InsertTestDoc();
+        let doc = await gamer_model_1.GamersModel.InsertTestDoc();
         console.log('Test 123 Called ');
         res.send({ status: 123 });
     }

@@ -33,7 +33,7 @@ const rabbitmq_1 = require("./server/queues/rabbitmq");
 const database_2 = require("./databases/database");
 const defaultmodel_1 = require("./models/defaultmodel");
 const gamesinn_database_1 = require("./databases/gamesinn-database");
-const usermodel_1 = require("./models/usermodel");
+const gamer_model_1 = require("./models/gamer-model");
 global.__rootdir__ = process.cwd();
 class Application {
     constructor() { }
@@ -150,7 +150,7 @@ class Application {
             if (global.defaultDB)
                 await defaultmodel_1.DefaultModel.INIT();
             else
-                await usermodel_1.GamersModel.INIT();
+                await gamer_model_1.GamersModel.INIT();
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.
              */
