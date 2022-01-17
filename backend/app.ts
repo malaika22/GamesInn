@@ -172,7 +172,6 @@ export class Application {
             } else {
 
                 Application.conf = await Vault.Init(env as Environment);
-
                 if (global.logger == 'sentry') Sentry.INIT({ dsn: Application.conf.Logging.SENTRY.dsn, environment: global.environment, serverName: global.servicename, logLevel: LogLevel.Error });
                 if (global.defaultDB) await DefaultDatabase.Connect(DBConfig.dbconf.default);
                 else await GamesInn.Connect(DBConfig.dbconf.gamesinn)
