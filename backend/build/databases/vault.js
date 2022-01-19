@@ -50,7 +50,11 @@ class Vault {
             };
             this.client = vault.default(vaultConf);
             let appConfig = await this.client.read(`kv/gamesinn`);
+<<<<<<< HEAD
             console.log(appConfig.data, 'data from vault');
+=======
+            console.log(appConfig, 'appCOnfig');
+>>>>>>> 34f268905f1c08e457369d0016addf52d725055d
             // let appConfig = await this.client.list('kv/')
             // console.log(appConfig);
             // console.log(appConfig.data);

@@ -7,7 +7,7 @@
         "PORT": 8000,
         "AllowCors": false,
         "GracefullShutdown": true,
-        "VAULT": true,
+        "VAULT": false,
         "ServiceName": "GamesInn",
         "QUEUE": false
     },
@@ -15,11 +15,7 @@
         "protocol": "http",
         "host": "127.0.0.1",
         "port": 8200,
-<<<<<<< HEAD
-        "login": "s.8KSmDxIs5tkSrakjZDhElt8j",
-=======
-        "login": "s.dxk2vJ39MpyuiAlXNQB8DJiF",
->>>>>>> 34f268905f1c08e457369d0016addf52d725055d
+        "login": "s.7IhLsBZQsHqrJ3CKXfK2g1oQ",
         "keyname": "gamesinn",
         "apiversion": "v1"
     }

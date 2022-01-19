@@ -46,9 +46,8 @@ export abstract class Vault {
             this.client = vault.default(vaultConf);
 
         let appConfig = await this.client.read(`kv/gamesinn`);
-            console.log(appConfig.data , 'data from vault');
-            
-        // let appConfig = await this.client.list('kv/')
+        console.log(appConfig, 'appCOnfig')
+            // let appConfig = await this.client.list('kv/')
             // console.log(appConfig);
 
             // console.log(appConfig.data);
