@@ -5,50 +5,48 @@ import { GamesInn } from "../databases/gamesinn-database";
 import { Vault } from "../databases/vault";
 import { Logger } from "../server/logger";
 import { Sentry } from "../server/sentry";
-import UserTypes from "../utils/enums/userTypes";
-import { Gamer} from "./gamer-model";
+// import UserTypes from "../utils/enums/userTypes";
+import { Gamer } from "./gamer-model";
 
 
 
 
 
 interface Investor {
-    _id?: ObjectId | string,
-    username: string,
-    // username:string,
-    dob: string,
-    countryCode: string,
-    number: string,
-    password?: string,
-    email: string,
-    verified: boolean,
-    type: string,
-    date: string
-    createdTime?: string,
-    lastUpdatedTime?: string,
-    accessToken?: string
-    userId?: string;
+  _id?: ObjectId | string,
+  username: string,
+  // username:string,
+  dob: string,
+  countryCode: string,
+  number: string,
+  password?: string,
+  email: string,
+  verified: boolean,
+  type: string,
+  date: string
+  createdTime?: string,
+  lastUpdatedTime?: string,
+  accessToken?: string
+  userId?: string;
 }
 
 
 export interface Session {
-  sid : ObjectID | string,
+  _id: ObjectID | string,
   accessToken?: Array<string> | string;
   userID: string;
   userType: string;
   createdTime: string;
-  address:string;
+  address: string;
   lastUpdatedTime: string;
   firstName: string;
   username: string;
-  lastName:string;
+  lastName: string;
   country: string;
   signupTime: string;
   verified: boolean;
   email: string;
-  city:string
-
-  // ffcount:Object
+  city: string
 }
 
 export abstract class SessionsModel {
@@ -63,8 +61,7 @@ export abstract class SessionsModel {
 
           this.collection = await this.db.createCollection("session");
           console.log("GOT DB");
-          console.log(this.collection.collectionName);
-
+          this.collection.createIndex({"accessToken" : 1})
         } catch (error: any) {
 
           if (error.code == 48) this.collection = await this.db.collection("session");
@@ -83,19 +80,18 @@ export abstract class SessionsModel {
   public static async GetSessionByID(id: any, accessToken: string) {
     try {
 
-        let doc = await this.collection.find({
-            _id: new ObjectId(id),
-            accessToken: accessToken
-        }).limit(1).toArray();
-        console.log(doc,'session doc');
-        
-        return (doc && doc.length) ? doc[0] : undefined;
+      let doc = await this.collection.find({
+        _id: new ObjectId(id),
+        accessToken: accessToken
+      }).limit(1).toArray();
+
+      return (doc && doc.length) ? doc[0] : undefined;
 
     } catch (err) {
-        Logger.Console(`Error ==> ${JSON.stringify(err, undefined, 4)}`, "critical");
-        throw err;
+      Logger.Console(`Error ==> ${JSON.stringify(err, undefined, 4)}`, "critical");
+      throw err;
     }
-}
+  }
 
   public static async InsertTestDoc() {
     try {
@@ -120,7 +116,7 @@ export abstract class SessionsModel {
 
       let sid = new ObjectID();
       let temp: Session = {
-        sid: sid,
+        _id: sid,
         userType: (user as Gamer).userType,
         createdTime: new Date().toISOString(),
         lastUpdatedTime: new Date().toISOString(),
@@ -130,11 +126,10 @@ export abstract class SessionsModel {
         signupTime: (user as Gamer).createdTime || (user as Investor).createdTime || '',
         email: (user as Gamer).email || '',
         verified: (user as Gamer).verified || true, /** True because Guest Gamer is Already Verified */
-        // ffcount: (user as Gamer).ffcount
-        firstName:(user as Gamer ).firstName,
-        lastName:(user as Gamer).lastName,
-        city:(user as Gamer).city,
-        address:(user as Gamer).address
+        firstName: (user as Gamer).firstName,
+        lastName: (user as Gamer).lastName,
+        city: (user as Gamer).city,
+        address: (user as Gamer).address
       };
       temp.accessToken = Vault.GenerateSignToken(temp);
 
@@ -150,11 +145,11 @@ export abstract class SessionsModel {
   }
 
 
-  public static async getSessionByToken(token: string) {
+  public static async GetSessionByToken(token: string) {
     try {
+      let doc = await this.collection.find({ accessToken: token }).limit(1).toArray();
 
-      let doc = await this.collection.find({ accessToken: [token] });
-      return doc;
+      return doc[0];
 
     } catch (error) {
       console.log(error);
@@ -179,10 +174,11 @@ export abstract class SessionsModel {
     }
   }
 
-  public static async getSessionByEmail(email: string) {
+  public static async GetSessionByEmail(email: string) {
     try {
 
       let doc = await this.collection.findOne({ email });
+    
       return doc;
 
     } catch (err) {
@@ -191,11 +187,12 @@ export abstract class SessionsModel {
     }
   }
 
-  //Deleting Session
-  public static async RemoveSession(email: string) {
+  public static async RemoveSession(accessToken: string) {
     try {
-
-      return await this.collection.findOneAndDelete({ email });
+      console.log(this.collection.collectionName)
+      let doc = await this.collection.findOneAndDelete({accessToken :accessToken })
+      console.log("doc ==>>",  doc)
+      return doc
 
     } catch (error) {
       console.log("Error logging out ===> ", error);
@@ -203,8 +200,8 @@ export abstract class SessionsModel {
     }
   }
 
-  public static async RemoveAllSessions(email:string){
-  let doc = await this.collection.deleteMany({email:email})
-  await doc
- }
+  public static async RemoveAllSessions(email: string) {
+    let doc = await this.collection.deleteMany({ email: email })
+    return doc
+  }
 }

@@ -16,7 +16,7 @@ class SessionsModel {
                 try {
                     this.collection = await this.db.createCollection("session");
                     console.log("GOT DB");
-                    console.log(this.collection.collectionName);
+                    this.collection.createIndex({ "accessToken": 1 });
                 }
                 catch (error) {
                     if (error.code == 48)
@@ -36,7 +36,6 @@ class SessionsModel {
                 _id: new mongodb_1.ObjectId(id),
                 accessToken: accessToken
             }).limit(1).toArray();
-            console.log(doc, 'session doc');
             return (doc && doc.length) ? doc[0] : undefined;
         }
         catch (err) {
@@ -63,7 +62,7 @@ class SessionsModel {
         try {
             let sid = new bson_1.ObjectID();
             let temp = {
-                sid: sid,
+                _id: sid,
                 userType: user.userType,
                 createdTime: new Date().toISOString(),
                 lastUpdatedTime: new Date().toISOString(),
@@ -73,7 +72,6 @@ class SessionsModel {
                 signupTime: user.createdTime || user.createdTime || '',
                 email: user.email || '',
                 verified: user.verified || true,
-                // ffcount: (user as Gamer).ffcount
                 firstName: user.firstName,
                 lastName: user.lastName,
                 city: user.city,
@@ -88,10 +86,10 @@ class SessionsModel {
             throw error;
         }
     }
-    static async getSessionByToken(token) {
+    static async GetSessionByToken(token) {
         try {
-            let doc = await this.collection.find({ accessToken: [token] });
-            return doc;
+            let doc = await this.collection.find({ accessToken: token }).limit(1).toArray();
+            return doc[0];
         }
         catch (error) {
             console.log(error);
@@ -108,7 +106,7 @@ class SessionsModel {
             throw error;
         }
     }
-    static async getSessionByEmail(email) {
+    static async GetSessionByEmail(email) {
         try {
             let doc = await this.collection.findOne({ email });
             return doc;
@@ -118,10 +116,12 @@ class SessionsModel {
             throw err;
         }
     }
-    //Deleting Session
-    static async RemoveSession(email) {
+    static async RemoveSession(accessToken) {
         try {
-            return await this.collection.findOneAndDelete({ email });
+            console.log(this.collection.collectionName);
+            let doc = await this.collection.findOneAndDelete({ accessToken: accessToken });
+            console.log("doc ==>>", doc);
+            return doc;
         }
         catch (error) {
             console.log("Error logging out ===> ", error);
@@ -130,7 +130,7 @@ class SessionsModel {
     }
     static async RemoveAllSessions(email) {
         let doc = await this.collection.deleteMany({ email: email });
-        await doc;
+        return doc;
     }
 }
 exports.SessionsModel = SessionsModel;

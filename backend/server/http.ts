@@ -1,4 +1,4 @@
-import express from "express";
+import express ,{ Application} from "express";
 // import cors from "cors";
 
 //Config Imports
@@ -25,7 +25,7 @@ export class HTTPServer {
 
     public static server: HTTPServer;
     public static conf: HTTPCONF;
-    private app: any;
+    private app: Application;
     private httpServer!: http.Server & stoppable.WithStop
 
     private constructor(conf: HTTPCONF) {

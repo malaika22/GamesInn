@@ -1,14 +1,16 @@
 
+import axios from 'axios';
+import crypto from 'crypto'
+
 import { Payload, ServiceNames, WebMethods } from '../interfaces/payload';
 import { Logger } from '../server/logger';
-import axios from 'axios';
 import { Sentry } from '../server/sentry';
 
 export abstract class Utils {
 
     // private static salt = Application.conf?.ENCRYPTION.salt
 
-   
+
 
     /**
      * 
@@ -172,7 +174,7 @@ export abstract class Utils {
 
     }
 
-  
+
     public static ValidatePayload(payload: Payload) {
 
         try {
@@ -204,10 +206,10 @@ export abstract class Utils {
 
 
     }
-   
 
 
-   
+
+
 
     public static async DownloadImage(url: string) {
         try {
@@ -221,7 +223,7 @@ export abstract class Utils {
         }
     }
 
-  
+
 
 
     public static TestError() {
@@ -234,6 +236,11 @@ export abstract class Utils {
 
             throw error;
         }
+    }
+
+
+    public static RandomStringGenerator(){
+       return crypto.randomBytes(8).toString('hex')
     }
 
 }

@@ -4,9 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Utils = void 0;
+const axios_1 = __importDefault(require("axios"));
+const crypto_1 = __importDefault(require("crypto"));
 const payload_1 = require("../interfaces/payload");
 const logger_1 = require("../server/logger");
-const axios_1 = __importDefault(require("axios"));
 const sentry_1 = require("../server/sentry");
 class Utils {
     // private static salt = Application.conf?.ENCRYPTION.salt
@@ -201,6 +202,9 @@ class Utils {
         catch (error) {
             throw error;
         }
+    }
+    static RandomStringGenerator() {
+        return crypto_1.default.randomBytes(8).toString('hex');
     }
 }
 exports.Utils = Utils;

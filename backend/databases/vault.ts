@@ -46,7 +46,6 @@ export abstract class Vault {
             this.client = vault.default(vaultConf);
 
         let appConfig = await this.client.read(`kv/gamesinn`);
-        console.log(appConfig, 'appCOnfig')
             // let appConfig = await this.client.list('kv/')
             // console.log(appConfig);
 
@@ -86,7 +85,6 @@ export abstract class Vault {
         let appConfig = await this.client.read(`kv/${Vault.conf.vault.keyname}`);
         return appConfig.data as APPCONFIG;
     }
-
 
     public static async UpdateVaultData() {
         let appConfig = await this.client.read(`kv/${Vault.conf.vault.keyname}`);
@@ -131,7 +129,6 @@ export abstract class Vault {
 
         // protected data
 
-
         // secret key generate 32 bytes of random data
         let Securitykey = Application.conf?.ENCRYPTION.salt || Vault.salt
         let iv = Buffer.from(Application.conf?.ENCRYPTION.iv || Vault.iv)
@@ -146,7 +143,6 @@ export abstract class Vault {
     }
 
     public static VerifyHashedPassword(password: string, original: string) {
-        console.log(`Password: ${password},  originalPassword: ${original}`)
         let salt = Application.conf?.ENCRYPTION.salt || Vault.salt
 
         let hash = pbkdf2.pbkdf2Sync(password, salt, 1, 32, 'sha256').toString('hex')
@@ -163,10 +159,10 @@ export abstract class Vault {
          */
         let payload = {
             user: {
-                _id: session.sid,
+                _id: session._id,
                 type: session.userType,
                 createdAt: session.createdTime,
-                user_id: session.userID
+                user_id: session.userID,
             }
         }
         // Logger.Console(`payload ===> ${JSON.stringify(payload, undefined, 4)}`, 'info')
@@ -188,6 +184,17 @@ export abstract class Vault {
 
         let hash = pbkdf2.pbkdf2Sync(password, salt, 1, 32, 'sha256')
         return hash.toString('hex')
+    }
+
+
+    public static DecodeSignToken = (token:string) => {
+        try {
+            return jwt.verify(Vault.Decrypt(token), "" ,{complete:true} ).payload
+
+        } catch (error) {
+            Logger.Console("Error decrypting session");
+            throw error;
+        }
     }
 
 }

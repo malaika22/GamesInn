@@ -13,7 +13,6 @@ let application = new app_1.Application();
  */
 (async () => {
     let env = JSON.parse((await promises_1.default.readFile(__dirname + `/environments/environment.json`)).toString());
-    console.log(env, 'env');
     application.INIT(env);
 })();
 //# sourceMappingURL=index.js.map

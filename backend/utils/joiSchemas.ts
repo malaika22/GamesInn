@@ -34,4 +34,26 @@ export abstract class JoiSchemas {
     else return { errored: false, errors: null, value: result.value }
   }
 
+
+  public static LogoutValidator(data: any): ValidationError {
+    let schema = Joi.object({
+      accessToken: Joi.string().required(),
+      
+    });
+    let result = schema.validate(data, { abortEarly: false });
+    if (result.error) return { errored: true, errors: result.error.message.split('.'), value: result.value }
+    else return { errored: false, errors: null, value: result.value }
+  }
+
+  public static EmailValidator(data:any) : ValidationError{
+    let schema = Joi.object({
+      email: Joi.string().email().required(),
+      
+    });
+    let result = schema.validate(data, { abortEarly: false });
+    if (result.error) return { errored: true, errors: result.error.message.split('.'), value: result.value }
+    else return { errored: false, errors: null, value: result.value }
+  }
+  
+
 }

@@ -35,6 +35,26 @@ class JoiSchemas {
         else
             return { errored: false, errors: null, value: result.value };
     }
+    static LogoutValidator(data) {
+        let schema = joi_1.default.object({
+            accessToken: joi_1.default.string().required(),
+        });
+        let result = schema.validate(data, { abortEarly: false });
+        if (result.error)
+            return { errored: true, errors: result.error.message.split('.'), value: result.value };
+        else
+            return { errored: false, errors: null, value: result.value };
+    }
+    static EmailValidator(data) {
+        let schema = joi_1.default.object({
+            email: joi_1.default.string().email().required(),
+        });
+        let result = schema.validate(data, { abortEarly: false });
+        if (result.error)
+            return { errored: true, errors: result.error.message.split('.'), value: result.value };
+        else
+            return { errored: false, errors: null, value: result.value };
+    }
 }
 exports.JoiSchemas = JoiSchemas;
 //# sourceMappingURL=joiSchemas.js.map

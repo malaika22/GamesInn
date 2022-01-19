@@ -10,19 +10,19 @@ export enum UserTypes {
 }
 
 
-export interface Gamer{
+export interface Gamer {
     _id?: ObjectId | string,
-    userName:string,
-    email:string,
-    password:string,
-    firstName:string,
-    lastName:string,
-    country:string,
-    city:string,
-    address:string,
-    createdTime:string
+    userName: string,
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string,
+    country: string,
+    city: string,
+    address: string,
+    createdTime: string
     userType: UserTypes,
-    verified:boolean
+    verified: boolean
 }
 
 export abstract class GamersModel {
@@ -37,9 +37,10 @@ export abstract class GamersModel {
             if (val) {
                 try {
                     this.collection = await this.db.createCollection('gamers');
-                    console.log(this.collection)
+                    // console.log(this.collection)
                     console.log('GOT DB');
                     console.log(this.collection.collectionName);
+                    this.collection.createIndex({ email: 1, createdTime: 1 })
 
                 } catch (error: any) {
                     if (error.code == 48) {
@@ -54,17 +55,17 @@ export abstract class GamersModel {
         });
     }
 
-     /**
-    * @Note : Follow Function is overide for initializing in Model.
-    * Since Workers in node js doesn't share memory hence we initialize it again 
-    */
+    /**
+   * @Note : Follow Function is overide for initializing in Model.
+   * Since Workers in node js doesn't share memory hence we initialize it again 
+   */
 
-      public static async INITWorker(db: Db) {
+    public static async INITWorker(db: Db) {
         if (!db) throw new Error('Unable to Initialize model in worker');
         this.db = db;
         try {
 
-            this.collection =  this.db.collection('gamers');
+            this.collection = this.db.collection('gamers');
         } catch (error) {
             throw new Error('Error in Initializing Collection in Worker')
         }
@@ -118,31 +119,30 @@ export abstract class GamersModel {
     }
 
 
-    public static async CreateGamer(data:Gamer)
-    {
+    public static async CreateGamer(data: Gamer) {
         try {
-            let temp:Gamer = {
-                userName:data.userName.trim(),
-                firstName:data.firstName.trim(),
-                lastName:data.lastName.trim(),
-                address:data.address.trim().toLocaleUpperCase(),
-                password:data.password.trim(),
-                city:data.city.trim(),
-                country:data.country.trim(),
-                email:data.email.trim(),
-                userType:UserTypes.GAMER,
-                verified:false,
-                createdTime:new Date().toISOString()
+            let temp: Gamer = {
+                userName: data.userName.trim(),
+                firstName: data.firstName.trim(),
+                lastName: data.lastName.trim(),
+                address: data.address.trim().toLocaleUpperCase(),
+                password: data.password.trim(),
+                city: data.city.trim(),
+                country: data.country.trim(),
+                email: data.email.trim(),
+                userType: UserTypes.GAMER,
+                verified: false,
+                createdTime: new Date().toISOString()
             }
-    
-            let doc = await this.collection.findOneAndUpdate({email:temp.email}, {$set:temp}, {upsert:true})
-    
+
+            let doc = await this.collection.findOneAndUpdate({ email: temp.email }, { $set: temp }, { upsert: true })
+
             if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
                 temp._id = doc.lastErrorObject.upserted;
                 return temp;
             } else return doc.value;
-    
-    
+
+
         } catch (error) {
             console.log("Error in creating gamer ", error)
             throw error
@@ -151,13 +151,19 @@ export abstract class GamersModel {
 
     }
 
-    public static async FindGamerByEmail(email:string){
-        let gamer = await this.collection.findOne({email:email })
-        console.log(gamer, ' Gamer inside find gamer by email');
-        
-        return gamer
+    public static async FindGamerByEmail(email: string) {
+        try {
+            let gamer = await this.collection.find({ email: email }).limit(1).toArray()
+            return gamer[0]
+        }
+        catch (error) {
+            console.log("Error in gamer by email", error)
+            throw error
+
+        }
+
     }
 
-    
+
 
 }

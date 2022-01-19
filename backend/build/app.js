@@ -34,6 +34,8 @@ const database_2 = require("./databases/database");
 const defaultmodel_1 = require("./models/defaultmodel");
 const gamesinn_database_1 = require("./databases/gamesinn-database");
 const gamer_model_1 = require("./models/gamer-model");
+const session_model_1 = require("./models/session-model");
+const tokens_model_1 = require("./models/tokens-model");
 global.__rootdir__ = process.cwd();
 class Application {
     constructor() { }
@@ -150,6 +152,8 @@ class Application {
             if (global.defaultDB)
                 await defaultmodel_1.DefaultModel.INIT();
             await gamer_model_1.GamersModel.INIT();
+            await session_model_1.SessionsModel.INIT();
+            await tokens_model_1.TokenModel.INIT();
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.
              */

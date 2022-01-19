@@ -50,11 +50,6 @@ class Vault {
             };
             this.client = vault.default(vaultConf);
             let appConfig = await this.client.read(`kv/gamesinn`);
-<<<<<<< HEAD
-            console.log(appConfig.data, 'data from vault');
-=======
-            console.log(appConfig, 'appCOnfig');
->>>>>>> 34f268905f1c08e457369d0016addf52d725055d
             // let appConfig = await this.client.list('kv/')
             // console.log(appConfig);
             // console.log(appConfig.data);
@@ -129,7 +124,6 @@ class Vault {
     }
     static VerifyHashedPassword(password, original) {
         var _a;
-        console.log(`Password: ${password},  originalPassword: ${original}`);
         let salt = ((_a = app_1.Application.conf) === null || _a === void 0 ? void 0 : _a.ENCRYPTION.salt) || Vault.salt;
         let hash = pbkdf2_1.default.pbkdf2Sync(password, salt, 1, 32, 'sha256').toString('hex');
         return (hash === original) ? true : false;
@@ -140,10 +134,10 @@ class Vault {
          */
         let payload = {
             user: {
-                _id: session.sid,
+                _id: session._id,
                 type: session.userType,
                 createdAt: session.createdTime,
-                user_id: session.userID
+                user_id: session.userID,
             }
         };
         // Logger.Console(`payload ===> ${JSON.stringify(payload, undefined, 4)}`, 'info')
@@ -168,4 +162,13 @@ exports.Vault = Vault;
 //@TODO WHEN FETCHING SALT FROM Application.conf?.ENCRYPTION.salt IT IS GIVING UNDEFINED ERROR MAYBE BECAUSE WE ARE FETCHING THAT BEFORE INTIALIZATION
 Vault.salt = 'HV0zH?l3ic+HdEArBJMm_:/1.i.s89ZS';
 Vault.iv = 'wNgZIaiiY2Lx52TY';
+Vault.DecodeSignToken = (token) => {
+    try {
+        return jwt.verify(Vault.Decrypt(token), "", { complete: true }).payload;
+    }
+    catch (error) {
+        logger_1.Logger.Console("Error decrypting session");
+        throw error;
+    }
+};
 //# sourceMappingURL=vault.js.map

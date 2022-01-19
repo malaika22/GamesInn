@@ -15,9 +15,10 @@ class GamersModel {
             if (val) {
                 try {
                     this.collection = await this.db.createCollection('gamers');
-                    console.log(this.collection);
+                    // console.log(this.collection)
                     console.log('GOT DB');
                     console.log(this.collection.collectionName);
+                    this.collection.createIndex({ email: 1, createdTime: 1 });
                 }
                 catch (error) {
                     if (error.code == 48) {
@@ -117,9 +118,14 @@ class GamersModel {
         }
     }
     static async FindGamerByEmail(email) {
-        let gamer = await this.collection.findOne({ email: email });
-        console.log(gamer, ' Gamer inside find gamer by email');
-        return gamer;
+        try {
+            let gamer = await this.collection.find({ email: email }).limit(1).toArray();
+            return gamer[0];
+        }
+        catch (error) {
+            console.log("Error in gamer by email", error);
+            throw error;
+        }
     }
 }
 exports.GamersModel = GamersModel;

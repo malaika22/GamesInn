@@ -16,7 +16,10 @@ import { RMQ } from "./server/queues/rabbitmq";
 import { DefaultDatabase } from "./databases/database";
 import { DefaultModel } from "./models/defaultmodel";
 import { GamesInn } from "./databases/gamesinn-database";
+
 import { GamersModel } from "./models/gamer-model";
+import { SessionsModel } from "./models/session-model";
+import { TokenModel } from "./models/tokens-model";
 
 // // Instead of:
 // import sourceMapSupport from 'source-map-support'
@@ -183,8 +186,8 @@ export class Application {
              */
             if (global.defaultDB) await DefaultModel.INIT();
             await GamersModel.INIT()
-           
-                
+            await SessionsModel.INIT()
+            await TokenModel.INIT()        
            
             
             /**
