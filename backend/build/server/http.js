@@ -37,7 +37,7 @@ const stoppable_1 = __importDefault(require("stoppable"));
 const sentry_1 = require("./sentry");
 class HTTPServer {
     constructor(conf) {
-        this.app = express_1.default();
+        this.app = (0, express_1.default)();
     }
     static INIT(conf) {
         if (!HTTPServer.server) {
@@ -73,7 +73,7 @@ class HTTPServer {
         this.server.app.use('/', DefaultRouter.router);
     }
     static StartServer(port) {
-        this.server.httpServer = stoppable_1.default(this.server.app.listen(port, () => { console.log(`Server Started on Port : ${port}`); }));
+        this.server.httpServer = (0, stoppable_1.default)(this.server.app.listen(port, () => { console.log(`Server Started on Port : ${port}`); }));
         this.server.httpServer.on('close', () => {
             console.log('Server Close Fired');
             process.exit(1);

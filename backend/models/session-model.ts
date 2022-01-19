@@ -5,29 +5,16 @@ import { GamesInn } from "../databases/gamesinn-database";
 import { Vault } from "../databases/vault";
 import { Logger } from "../server/logger";
 import { Sentry } from "../server/sentry";
+import UserTypes from "../utils/enums/userTypes";
+import { Gamer} from "./gamer-model";
 
 
-export interface User {
+
+
+
+interface Investor {
     _id?: ObjectId | string,
-    name: string,
-    dob: string,
-    username:string,
-    countryCode: string,
-    number: string,
-    password?: string,
-    email: string,
-    verified: boolean,
-    type: string,
-    date: string
-    createdTime?: string,
-    lastUpdatedTime?: string,
-    accessToken?: string
-    userId?: string;
-}
-
-interface Admin {
-    _id?: ObjectId | string,
-    name: string,
+    username: string,
     // username:string,
     dob: string,
     countryCode: string,
@@ -45,22 +32,22 @@ interface Admin {
 
 
 export interface Session {
-  // sid : ObjectID | string,
+  sid : ObjectID | string,
   accessToken?: Array<string> | string;
   userID: string;
-  type: string;
+  userType: string;
   createdTime: string;
+  address:string;
   lastUpdatedTime: string;
-  date: string;
-  dob: string;
-  _id?: ObjectID | string;
-  name: string;
+  firstName: string;
   username: string;
-  number: string;
-  countryCode: string;
-  createdAt: string;
+  lastName:string;
+  country: string;
+  signupTime: string;
   verified: boolean;
   email: string;
+  city:string
+
   // ffcount:Object
 }
 
@@ -127,27 +114,27 @@ export abstract class SessionsModel {
   }
 
   //Adding Session
-  public static async AddSession(user: User | Admin): Promise<Session> {
+  public static async AddSession(user: Gamer | Investor): Promise<Session> {
 
     try {
 
       let sid = new ObjectID();
       let temp: Session = {
-        _id: sid,
-        type: user.type,
+        sid: sid,
+        userType: (user as Gamer).userType,
         createdTime: new Date().toISOString(),
         lastUpdatedTime: new Date().toISOString(),
-        date: user.date,
-        dob: (user as User).dob || '',
         userID: (user._id as any),
-        name: (user as User).name || (user as User).username,
-        username: (user as User).name || (user as User).username,
-        number: (user as User).number || '',
-        countryCode: (user as User).countryCode || '',
-        createdAt: (user as User).createdTime || (user as User).createdTime || '',
-        email: (user as User).email || '',
-        verified: (user as User).verified || true, /** True because Guest User is Already Verified */
-        // ffcount: (user as User).ffcount
+        username: (user as Gamer).userName || (user as Investor).username,
+        country: (user as Gamer).country || '',
+        signupTime: (user as Gamer).createdTime || (user as Investor).createdTime || '',
+        email: (user as Gamer).email || '',
+        verified: (user as Gamer).verified || true, /** True because Guest Gamer is Already Verified */
+        // ffcount: (user as Gamer).ffcount
+        firstName:(user as Gamer ).firstName,
+        lastName:(user as Gamer).lastName,
+        city:(user as Gamer).city,
+        address:(user as Gamer).address
       };
       temp.accessToken = Vault.GenerateSignToken(temp);
 

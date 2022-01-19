@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GamersModel = void 0;
+exports.GamersModel = exports.UserTypes = void 0;
 const gamesinn_database_1 = require("../databases/gamesinn-database");
 var UserTypes;
 (function (UserTypes) {
     UserTypes["GAMER"] = "Gamer";
     UserTypes["INVESTOR"] = "Investor";
-})(UserTypes || (UserTypes = {}));
+})(UserTypes = exports.UserTypes || (exports.UserTypes = {}));
 class GamersModel {
     static async INIT() {
         console.log('init run ');

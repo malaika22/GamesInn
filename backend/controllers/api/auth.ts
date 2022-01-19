@@ -1,7 +1,8 @@
 import express from "express";
+import { Document } from "mongodb";
 import { Vault } from "../../databases/vault";
-import { GamersModel } from "../../models/gamer-model";
-import { SessionsModel,User } from "../../models/session-model";
+import { Gamer, GamersModel } from "../../models/gamer-model";
+import { Session, SessionsModel } from "../../models/session-model";
 import { JoiSchemas } from "../../utils/joiSchemas";
 
 
@@ -36,7 +37,7 @@ routes.post('/login', async (req, res) => {
     if (validation.errored) return res.status(400).send({ msg: "Validation error", errors: validation.errors })
 
     //check if gamer exist with provided email
-    const gamer = await GamersModel.FindGamerByEmail(payload.email);
+    const gamer:Document|null = await GamersModel.FindGamerByEmail(payload.email);
     if (!gamer) return res.status(400).send({ msg: "No gamer found with this email" })
 
     //convert provided password into hash password and match if it's equal to hashed password saved in collection for respective user
@@ -45,11 +46,11 @@ routes.post('/login', async (req, res) => {
 
     if (!gamer.verified) return res.status(400).send({ msg: "User Not Verified" });
 
-    let session:any = await SessionsModel.AddSession(gamer as User);
+    let session:Session = await SessionsModel.AddSession(gamer as Gamer);
 
 
 
-    res.status(200).send({msg:'Login succesfully', success:true})
+    res.status(200).send({msg:'Login succesfully', data:session})
 
 })
 

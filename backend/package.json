@@ -18,6 +18,7 @@
     "dependencies": {
         "@sentry/integrations": "^6.13.2",
         "@sentry/node": "^6.13.2",
+        "@types/jsonwebtoken": "^8.5.8",
         "amqplib": "^0.8.0",
         "axios": "^0.21.3",
         "bcryptjs": "^2.4.3",
@@ -32,7 +33,6 @@
         "mongodb": "4.1.1",
         "node-vault": "^0.9.22",
         "nodemailer": "^6.6.2",
-        "nodemon": "^2.0.15",
         "pbkdf2": "^3.1.2",
         "rascal": "^13.1.2",
         "rxjs": "~6.6.0",
@@ -45,24 +45,24 @@
         "winston-transport-sentry-node": "^2.0.0"
     },
     "devDependencies": {
+        "@types/axios": "^0.14.0",
         "@types/body-parser": "1.19.0",
         "@types/cors": "^2.8.10",
         "@types/express": "4.17.12",
         "@types/ip": "^1.1.0",
         "@types/node": "15.6.1",
+        "@types/nodemailer": "^6.4.4",
         "@types/pbkdf2": "^3.1.0",
+        "@types/rascal": "^10.0.4",
+        "@types/source-map-support": "^0.5.4",
         "@types/stoppable": "1.1.1",
         "@types/validator": "^13.6.3",
         "@types/winston": "^2.4.4",
-        "@types/nodemailer": "^6.4.4",
-        "@types/source-map-support": "^0.5.4",
-        "@types/rascal": "^10.0.4",
-        "@types/axios": "^0.14.0",
         "copy-webpack-plugin": "^9.0.1",
         "file-loader": "^6.2.0",
+        "source-map-support": "^0.5.20",
         "webpack": "^5.56.1",
-        "webpack-cli": "^4.8.0",
-        "source-map-support": "^0.5.20"
+        "webpack-cli": "^4.8.0"
     },
     "typings": "./dist/package/typings/Rx.d.ts"
 }

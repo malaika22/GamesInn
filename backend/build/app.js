@@ -149,8 +149,7 @@ class Application {
              */
             if (global.defaultDB)
                 await defaultmodel_1.DefaultModel.INIT();
-            else
-                await gamer_model_1.GamersModel.INIT();
+            await gamer_model_1.GamersModel.INIT();
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.
              */

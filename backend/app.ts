@@ -156,7 +156,7 @@ export class Application {
             if (!env.config.PORT) throw new Error('Server Port Not Defined');
 
             if (env.config.VAULT) {
-
+                
                 if (!env.vault.host) throw new Error('Vault HOST Not Defined');
                 if (!env.vault.port) throw new Error('Vault PORT Not Defined');
                 if (!env.vault.keyname) throw new Error('Vault KeyName Not Defined');
@@ -172,7 +172,6 @@ export class Application {
             } else {
 
                 Application.conf = await Vault.Init(env as Environment);
-
                 if (global.logger == 'sentry') Sentry.INIT({ dsn: Application.conf.Logging.SENTRY.dsn, environment: global.environment, serverName: global.servicename, logLevel: LogLevel.Error });
                 if (global.defaultDB) await DefaultDatabase.Connect(DBConfig.dbconf.default);
                 else await GamesInn.Connect(DBConfig.dbconf.gamesinn)
@@ -183,7 +182,10 @@ export class Application {
              * TEST DATABASE
              */
             if (global.defaultDB) await DefaultModel.INIT();
-            else await GamersModel.INIT()
+            await GamersModel.INIT()
+           
+                
+           
             
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.

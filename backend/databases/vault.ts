@@ -46,7 +46,9 @@ export abstract class Vault {
             this.client = vault.default(vaultConf);
 
         let appConfig = await this.client.read(`kv/gamesinn`);
-            // let appConfig = await this.client.list('kv/')
+            console.log(appConfig.data , 'data from vault');
+            
+        // let appConfig = await this.client.list('kv/')
             // console.log(appConfig);
 
             // console.log(appConfig.data);
@@ -162,8 +164,8 @@ export abstract class Vault {
          */
         let payload = {
             user: {
-                _id: session._id,
-                type: session.type,
+                _id: session.sid,
+                type: session.userType,
                 createdAt: session.createdTime,
                 user_id: session.userID
             }

@@ -45,7 +45,7 @@ routes.post('/login', async (req, res) => {
     if (!gamer.verified)
         return res.status(400).send({ msg: "User Not Verified" });
     let session = await session_model_1.SessionsModel.AddSession(gamer);
-    res.status(200).send({ msg: 'Login succesfully', success: true });
+    res.status(200).send({ msg: 'Login succesfully', data: session });
 });
 exports.router = routes;
 //# sourceMappingURL=auth.js.map

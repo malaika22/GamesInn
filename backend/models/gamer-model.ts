@@ -4,22 +4,22 @@ import { Subscription } from 'rxjs';
 import { GamesInn } from "../databases/gamesinn-database";
 
 
-enum UserTypes {
+export enum UserTypes {
     GAMER = 'Gamer',
     INVESTOR = 'Investor',
 }
 
 
-interface Gamer{
+export interface Gamer{
     _id?: ObjectId | string,
-    userName:String,
-    email:String,
-    password:String,
-    firstName:String,
-    lastName:String,
-    country:String,
-    city:String,
-    address:String,
+    userName:string,
+    email:string,
+    password:string,
+    firstName:string,
+    lastName:string,
+    country:string,
+    city:string,
+    address:string,
     createdTime:string
     userType: UserTypes,
     verified:boolean

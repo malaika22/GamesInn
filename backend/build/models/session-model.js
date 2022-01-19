@@ -63,21 +63,21 @@ class SessionsModel {
         try {
             let sid = new bson_1.ObjectID();
             let temp = {
-                _id: sid,
-                type: user.type,
+                sid: sid,
+                userType: user.userType,
                 createdTime: new Date().toISOString(),
                 lastUpdatedTime: new Date().toISOString(),
-                date: user.date,
-                dob: user.dob || '',
                 userID: user._id,
-                name: user.name || user.username,
-                username: user.name || user.username,
-                number: user.number || '',
-                countryCode: user.countryCode || '',
-                createdAt: user.createdTime || user.createdTime || '',
+                username: user.userName || user.username,
+                country: user.country || '',
+                signupTime: user.createdTime || user.createdTime || '',
                 email: user.email || '',
-                verified: user.verified || true, /** True because Guest User is Already Verified */
-                // ffcount: (user as User).ffcount
+                verified: user.verified || true,
+                // ffcount: (user as Gamer).ffcount
+                firstName: user.firstName,
+                lastName: user.lastName,
+                city: user.city,
+                address: user.address
             };
             temp.accessToken = vault_1.Vault.GenerateSignToken(temp);
             await this.collection.insertOne(temp);
