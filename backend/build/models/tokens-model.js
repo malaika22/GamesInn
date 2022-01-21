@@ -18,7 +18,8 @@ class TokenModel {
                     // console.log(this.collection)
                     console.log('GOT DB');
                     console.log(this.collection.collectionName);
-                    await this.collection.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 10 });
+                    //@TODO TTl has been created but no document deletion
+                    await this.collection.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 60 });
                 }
                 catch (error) {
                     if (error.code == 48) {
@@ -60,18 +61,18 @@ class TokenModel {
             return error;
         }
     }
+    /** Using this method to insert token */
     static async InsertToken(token, purpose, userID) {
         try {
             const temp = {
                 userID: userID,
                 purpose: purpose,
-                verified: false,
+                used: false,
                 createdAt: new Date(),
                 timeToExpireSeconds: 180,
                 token: token
             };
             let doc = await this.collection.findOneAndUpdate({ token: temp.token }, { $set: temp }, { upsert: true });
-            console.log(doc, 'Document created');
             if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
                 temp._id = doc.lastErrorObject.upserted;
                 return temp;
@@ -84,6 +85,14 @@ class TokenModel {
             console.log('Error in inserting token');
             return error;
         }
+    }
+    static async FindToken(token) {
+        let doc = await this.collection.find({ token: token, used: false }).limit(1).toArray();
+        return doc[0];
+    }
+    static async UpdateToken(token) {
+        let doc = await this.collection.findOneAndUpdate({ token: token, used: false }, { $set: { used: true } }, { returnDocument: "after" });
+        return doc.value;
     }
 }
 exports.TokenModel = TokenModel;

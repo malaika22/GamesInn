@@ -40,8 +40,7 @@ export abstract class GamersModel {
                     // console.log(this.collection)
                     console.log('GOT DB');
                     console.log(this.collection.collectionName);
-                    this.collection.createIndex({ email: 1, createdTime: 1 })
-
+                    await this.collection.createIndex({ "email": 1, "createdTime": 1 }, {background:true})
                 } catch (error: any) {
                     if (error.code == 48) {
                         this.collection = await this.db.collection('gamers');
@@ -161,6 +160,13 @@ export abstract class GamersModel {
             throw error
 
         }
+
+    }
+
+    public static async VerifyGamer(userID:string | ObjectId){
+    
+    let gamer = await this.collection.findOneAndUpdate({_id : userID , verified:false} , {$set : {verified : true}} , {returnDocument:'after', projection : {password  : 0} } )
+    return gamer.value   
 
     }
 

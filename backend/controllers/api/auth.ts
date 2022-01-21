@@ -1,3 +1,5 @@
+/** @NOTE All Authentication apis will be avaliable here */
+
 import express from "express";
 import Joi from "joi";
 import { Document } from "mongodb";
@@ -13,7 +15,7 @@ import { Utils } from "../../utils/utils";
 const routes = express.Router();
 
 routes.post('/signupGamer', async (req, res) => {
-  
+
     try {
         const payload = { ...req.body }
         //Joi validation
@@ -24,12 +26,12 @@ routes.post('/signupGamer', async (req, res) => {
         const gamer = await GamersModel.FindGamerByEmail(payload.email);
         if (gamer) return res.status(400).send({ msg: "Gamer already exist" })
 
-        //hash password
+        //Hash password
         payload.password = Vault.hashPassword(payload.password)
 
-        //send token to email
+        //Send token to email
 
-        // save user into user collection
+        //Save user into user collection
         let data = await GamersModel.CreateGamer(payload)
         //save otp token to otp collection
         res.status(201).send({ msg: "Gamer created", data: data })
@@ -42,7 +44,7 @@ routes.post('/signupGamer', async (req, res) => {
 
 
 routes.post('/login', async (req, res) => {
-   
+
     try {
         const payload = { ...req.body }
         //validate if req.body all login required data
@@ -64,7 +66,7 @@ routes.post('/login', async (req, res) => {
 
         res.status(200).send({ msg: 'Login succesfully', data: session })
 
-    } catch (error:any) {
+    } catch (error: any) {
         console.log(error);
         Sentry.Error(error, 'Error in Login');
         throw error;
@@ -74,24 +76,31 @@ routes.post('/login', async (req, res) => {
 
 
 routes.post('/forgetPassword', async (req, res) => {
-  
+
     try {
         let payload = { ...req.body }
 
+        //Validate if email is provided in req.body
         const validation = JoiSchemas.EmailValidator(payload)
         if (validation.errored) return res.status(400).send({ msg: "Valdiation error", errors: validation.errors })
 
-        if(!(Utils.GenerateEmail(payload.email).checkEmail)) return res.status(400).send({msg : "Email format not okay!", success:false})
+        //Check format of email
+        if (!(Utils.GenerateEmail(payload.email).checkEmail)) return res.status(400).send({ msg: "Email format not okay!", success: false })
 
+        //Find if gamer exist with this email
         let user = await GamersModel.FindGamerByEmail(payload.email)
-        if(!user) return res.status(400).send({msg : "No user found with this email"})
+        if (!user) return res.status(400).send({ msg: "No user found with this email" })
 
+        //Generate Random Token
         const token = Utils.RandomStringGenerator()
-  
-        await TokenModel.InsertToken(token,Purposes.EMAIL_VERIFICATION,user._id )   
-        return res.status(200).send({msg : "Check your email", success:true})
 
-    } catch (error:any) {
+        //Save it in  database
+        await TokenModel.InsertToken(token, Purposes.EMAIL_VERIFICATION, user._id)
+
+        //Send response
+        return res.status(200).send({ msg: "Check your email", data: `http://localhost:8000/gamer/auth/api/v1/resetPassword/${token}`, success: true })
+
+    } catch (error: any) {
         console.log(error);
         Sentry.Error(error, 'Error in Forgot password');
         throw error;
@@ -99,16 +108,31 @@ routes.post('/forgetPassword', async (req, res) => {
 
 })
 
-routes.post('/resetPassword', (req, res) => {
+routes.get('/resetPassword/:token', async (req, res) => {
+
     try {
 
-    } catch (error:any) {
+        //Validate if token is provided as request paramseter
+        if (!req.params.token) return res.status(400).send({ msg: "Provide token" })
+        let token = await TokenModel.FindToken(req.params.token)
 
+        //if no token send bad response
+        if (!token) return res.status(404).send({ msg: "No token found" })
+
+        //Update token and user data if provided correct token
+        let promises = await Promise.all([TokenModel.UpdateToken(req.params.token), GamersModel.VerifyGamer(token.userID)])
+        return res.status(400).send({ msg: "user verfied", data: promises[1] })
+
+    } catch (error: any) {
+        console.log(error);
+        Sentry.Error(error, 'Error in Reset password');
+        throw error;
     }
 })
 
 
 routes.post('/logout', async (req, res) => {
+
     try {
         let payload = { ...req.body };
 

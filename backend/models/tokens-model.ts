@@ -1,28 +1,27 @@
 
-import mongodb, { BSONType, Db, ObjectId } from "mongodb";
+import mongodb, { Timestamp, Db, ObjectId } from "mongodb";
 import { Subscription } from 'rxjs';
 import { GamesInn } from "../databases/gamesinn-database";
 
 
-export enum Purposes { 
-EMAIL_VERIFICATION = "EMAIL_VERIFICATION",
-FORGOT_PASSWORD = "FORGOT_PASSWORD"
+export enum Purposes {
+    EMAIL_VERIFICATION = "EMAIL_VERIFICATION",
+    FORGOT_PASSWORD = "FORGOT_PASSWORD"
 }
 
 interface Token {
-    _id?:string| ObjectId,
-
+    _id?: string | ObjectId,
     token: string,
-    createdAt: Date,
+    createdAt: Date | string,
     purpose: Purposes,
-    verified: boolean,
-    userID:string|ObjectId
+    used: boolean,
+    userID: string | ObjectId
     timeToExpireSeconds: string | number
 }
 
 
 export abstract class TokenModel {
-    
+
 
     static db: Db;
     static collection: mongodb.Collection;
@@ -37,7 +36,11 @@ export abstract class TokenModel {
                     // console.log(this.collection)
                     console.log('GOT DB');
                     console.log(this.collection.collectionName);
-                    await this.collection.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 10 })
+
+                    //@TODO TTl has been created but no document deletion
+                    await this.collection.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 60 })
+
+                  
 
                 } catch (error: any) {
                     if (error.code == 48) {
@@ -84,22 +87,22 @@ export abstract class TokenModel {
         }
     }
 
-    public static async InsertToken(token:string, purpose:Purposes, userID : string | ObjectId) {
-        try {   
-           
-            const temp: Token =   {
-                userID:userID,
-                purpose :purpose,
-                verified: false,
-                createdAt: new Date(),
+    /** Using this method to insert token */
+    public static async InsertToken(token: string, purpose: Purposes, userID: string | ObjectId): Promise<any> {
+        try {
+
+            const temp: Token = {
+                userID: userID,
+                purpose: purpose,
+                used: false,
+                createdAt:  new Date(),
                 timeToExpireSeconds: 180,
-                token:token
+                token: token
 
             }
 
-           let doc = await this.collection.findOneAndUpdate({token : temp.token} , {$set:temp}, {upsert:true})
-            console.log(doc , 'Document created')
-           if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
+            let doc = await this.collection.findOneAndUpdate({ token: temp.token }, { $set: temp }, { upsert: true })
+            if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
                 temp._id = doc.lastErrorObject.upserted;
                 return temp;
             } else return doc.value;
@@ -112,6 +115,18 @@ export abstract class TokenModel {
         }
     }
 
+
+    public static async FindToken(token:string)
+    {
+        let doc:any =  await this.collection.find({token:token, used:false}).limit(1).toArray()
+        return doc[0]
+    }
+
+    public static async UpdateToken(token:string)
+    {
+      let doc = await this.collection.findOneAndUpdate({token:token , used:false}, {$set : {used:true}} ,{returnDocument:"after"} )
+       return doc.value 
+    }
 
 
 }

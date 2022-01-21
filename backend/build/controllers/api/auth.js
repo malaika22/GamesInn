@@ -1,4 +1,5 @@
 "use strict";
+/** @NOTE All Authentication apis will be avaliable here */
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -24,10 +25,10 @@ routes.post('/signupGamer', async (req, res) => {
         const gamer = await gamer_model_1.GamersModel.FindGamerByEmail(payload.email);
         if (gamer)
             return res.status(400).send({ msg: "Gamer already exist" });
-        //hash password
+        //Hash password
         payload.password = vault_1.Vault.hashPassword(payload.password);
-        //send token to email
-        // save user into user collection
+        //Send token to email
+        //Save user into user collection
         let data = await gamer_model_1.GamersModel.CreateGamer(payload);
         //save otp token to otp collection
         res.status(201).send({ msg: "Gamer created", data: data });
@@ -65,17 +66,23 @@ routes.post('/login', async (req, res) => {
 routes.post('/forgetPassword', async (req, res) => {
     try {
         let payload = { ...req.body };
+        //Validate if email is provided in req.body
         const validation = joiSchemas_1.JoiSchemas.EmailValidator(payload);
         if (validation.errored)
             return res.status(400).send({ msg: "Valdiation error", errors: validation.errors });
+        //Check format of email
         if (!(utils_1.Utils.GenerateEmail(payload.email).checkEmail))
             return res.status(400).send({ msg: "Email format not okay!", success: false });
+        //Find if gamer exist with this email
         let user = await gamer_model_1.GamersModel.FindGamerByEmail(payload.email);
         if (!user)
             return res.status(400).send({ msg: "No user found with this email" });
+        //Generate Random Token
         const token = utils_1.Utils.RandomStringGenerator();
+        //Save it in  database
         await tokens_model_1.TokenModel.InsertToken(token, tokens_model_1.Purposes.EMAIL_VERIFICATION, user._id);
-        return res.status(200).send({ msg: "Check your email", success: true });
+        //Send response
+        return res.status(200).send({ msg: "Check your email", data: `http://localhost:8000/gamer/auth/api/v1/resetPassword/${token}`, success: true });
     }
     catch (error) {
         console.log(error);
@@ -83,10 +90,23 @@ routes.post('/forgetPassword', async (req, res) => {
         throw error;
     }
 });
-routes.post('/resetPassword', (req, res) => {
+routes.get('/resetPassword/:token', async (req, res) => {
     try {
+        //Validate if token is provided as request paramseter
+        if (!req.params.token)
+            return res.status(400).send({ msg: "Provide token" });
+        let token = await tokens_model_1.TokenModel.FindToken(req.params.token);
+        //if no token send bad response
+        if (!token)
+            return res.status(404).send({ msg: "No token found" });
+        //Update token and user data if provided correct token
+        let promises = await Promise.all([tokens_model_1.TokenModel.UpdateToken(req.params.token), gamer_model_1.GamersModel.VerifyGamer(token.userID)]);
+        return res.status(400).send({ msg: "user verfied", data: promises[1] });
     }
     catch (error) {
+        console.log(error);
+        sentry_1.Sentry.Error(error, 'Error in Reset password');
+        throw error;
     }
 });
 routes.post('/logout', async (req, res) => {

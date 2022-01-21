@@ -18,7 +18,7 @@ class GamersModel {
                     // console.log(this.collection)
                     console.log('GOT DB');
                     console.log(this.collection.collectionName);
-                    this.collection.createIndex({ email: 1, createdTime: 1 });
+                    await this.collection.createIndex({ "email": 1, "createdTime": 1 }, { background: true });
                 }
                 catch (error) {
                     if (error.code == 48) {
@@ -126,6 +126,10 @@ class GamersModel {
             console.log("Error in gamer by email", error);
             throw error;
         }
+    }
+    static async VerifyGamer(userID) {
+        let gamer = await this.collection.findOneAndUpdate({ _id: userID, verified: false }, { $set: { verified: true } }, { returnDocument: 'after', projection: { password: 0 } });
+        return gamer.value;
     }
 }
 exports.GamersModel = GamersModel;
