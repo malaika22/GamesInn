@@ -4,8 +4,9 @@ import SignUp from "../components/AuthPages/SignUp";
 import SignIn from "../components/AuthPages/SignIn";
 import Home from "../components/HomeLayout/Home/Home";
 import GamerLayout from "../components/GamerLayout/GamerLayout";
+import Accounts from "../modules/gamer/Accounts/Accounts";
 import GamerPrivateRoute from "./GamerPrivateRoute";
-import Posts from "../modules/gamer/Posts/Posts";
+import PostFeed from "../modules/gamer/PostFeed/PostFeed";
 
 const ModuleRoutes = () => {
   return (
@@ -15,7 +16,8 @@ const ModuleRoutes = () => {
       <Route exact path="/signup" element={<SignUp />} />
       <Route exact path="/login" element={<SignIn />} />
       <Route exact path="/" element={<GamerPrivateRoute />}>
-        <Route exact path="/posts" element={<Posts />} />
+        <Route exact path="/postfeed" element={<PostFeed />} />
+        <Route exact path="/accounts" element={<Accounts />} />
       </Route>
     </Routes>
   );
