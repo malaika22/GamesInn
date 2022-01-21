@@ -21,6 +21,7 @@ import "./styles.scss";
 const { Sider, Header, Footer, Content } = Layout;
 
 const GamerLayout = ({ children }) => {
+  console.log("Checkcing git");
   return (
     <div className="gamer-layout-container">
       <Layout>
