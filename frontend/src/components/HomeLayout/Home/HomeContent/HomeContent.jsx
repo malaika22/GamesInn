@@ -109,7 +109,7 @@ const HomeContent = () => {
       <div className="how-it-works-section">
         <div className="section-title">HOW IT WORKS?</div>
         <Row container>
-          <Col span={8}>
+          <Col sm={24} md={8}>
             <div className="role-div">
               <div className="role-title">INVESTORS</div>
               <div className="role-img-div">
@@ -123,7 +123,7 @@ const HomeContent = () => {
               </div>
             </div>
           </Col>
-          <Col span={8}>
+          <Col sm={24} md={8}>
             <div className="role-div">
               <div className="role-title">Gamers</div>
               <div className="role-img-div">
@@ -137,7 +137,7 @@ const HomeContent = () => {
               </div>
             </div>
           </Col>
-          <Col span={8}>
+          <Col sm={24} md={8}>
             <div className="role-div">
               <div className="role-title">Guests</div>
               <div className="role-img-div">
