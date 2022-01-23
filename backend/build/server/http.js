@@ -62,10 +62,8 @@ class HTTPServer {
         this.server.app.use('/assets', AssetRouter.router);
         //Register API routes Here
         this.server.app.use('/api/v1/test', TestRouter.router);
-        //@TODO TAIMOOR
         //@REVIEW TAIMOOR This is how we need to add to all services
         this.server.app.use('/auth/api/v1/health', HealthRouter.router);
-        //@TODO TAIMOOR
         //@REVIEW TAIMOOR This is how we need to add to all services
         this.server.app.use('/auth/api/v1/vault', VaultRouter.router);
         this.server.app.use('/gamer/auth/api/v1', AuthenticationRouter.router);

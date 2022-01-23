@@ -10,16 +10,21 @@ import * as Middleware from "../controllers/global/middleware"
 import * as AssetRouter from "../controllers/global/assets";
 import * as DefaultRouter from "../controllers/global/default";
 
-
 //API Router Imports
 import * as TestRouter from "../controllers/api/test";
 import * as HealthRouter from "../controllers/api/health";
 import * as VaultRouter from "../controllers/api/vault";
 import * as AuthenticationRouter from '../controllers/api/auth'
 
+
+import * as Handlebars from 'express-handlebars'
+import * as helpers from 'handlebars-helpers'
+import * as handlebars from 'handlebars'
+
 import * as http from "http";
 import stoppable from "stoppable"
 import { Sentry } from "./sentry";
+
 
 export class HTTPServer {
 
@@ -53,22 +58,30 @@ export class HTTPServer {
         // parse application/json
         this.server.app.use(express.json());
 
+        this.server.app.set('view engine', 'hbs')
+        this.server.app.set('views',`${process.cwd()}/views/pages` )
+        this.server.app.engine('hbs', Handlebars.engine({
+            helpers: helpers.default(),
+            layoutsDir: `${process.cwd}/views/layouts`,
+            partialsDir: `${process.cwd}/views/partials`,
+            defaultLayout:'default',
+            extname:'hbs'
+        }))
+
         //Middleware route must be stayed at the beginning.
         this.server.app.use(Middleware.router);
 
 
-
+        //serving static files
         this.server.app.use('/assets', AssetRouter.router);
 
         //Register API routes Here
         this.server.app.use('/api/v1/test', TestRouter.router);
 
-        //@TODO TAIMOOR
         //@REVIEW TAIMOOR This is how we need to add to all services
         this.server.app.use('/auth/api/v1/health', HealthRouter.router);
 
 
-        //@TODO TAIMOOR
         //@REVIEW TAIMOOR This is how we need to add to all services
         this.server.app.use('/auth/api/v1/vault', VaultRouter.router);
         this.server.app.use('/gamer/auth/api/v1', AuthenticationRouter.router)

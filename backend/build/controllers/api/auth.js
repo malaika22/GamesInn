@@ -11,6 +11,7 @@ const gamer_model_1 = require("../../models/gamer-model");
 const session_model_1 = require("../../models/session-model");
 const tokens_model_1 = require("../../models/tokens-model");
 const sentry_1 = require("../../server/sentry");
+const email_1 = require("../../utils/email/email");
 const joiSchemas_1 = require("../../utils/joiSchemas");
 const utils_1 = require("../../utils/utils");
 const routes = express_1.default.Router();
@@ -25,15 +26,21 @@ routes.post('/signupGamer', async (req, res) => {
         const gamer = await gamer_model_1.GamersModel.FindGamerByEmail(payload.email);
         if (gamer)
             return res.status(400).send({ msg: "Gamer already exist" });
-        //Hash password
-        payload.password = vault_1.Vault.hashPassword(payload.password);
-        //Send token to email
         //Save user into user collection
         let data = await gamer_model_1.GamersModel.CreateGamer(payload);
+        //Hash password
+        payload.password = vault_1.Vault.hashPassword(payload.password);
+        //Create token and save it to db
+        const token = utils_1.Utils.RandomStringGenerator();
         //save otp token to otp collection
+        await tokens_model_1.TokenModel.InsertToken(token, tokens_model_1.Purposes.EMAIL_VERIFICATION, data === null || data === void 0 ? void 0 : data._id);
+        //Send token to email
+        await email_1.Email.Shootmail(`http://localhost:8000/gamer/auth/api/v1/resetPassword/${token}`);
         res.status(201).send({ msg: "Gamer created", data: data });
     }
     catch (error) {
+        console.log(error);
+        res.status(500).send('Something went wrong');
     }
 });
 routes.post('/login', async (req, res) => {
@@ -80,7 +87,7 @@ routes.post('/forgetPassword', async (req, res) => {
         //Generate Random Token
         const token = utils_1.Utils.RandomStringGenerator();
         //Save it in  database
-        await tokens_model_1.TokenModel.InsertToken(token, tokens_model_1.Purposes.EMAIL_VERIFICATION, user._id);
+        await tokens_model_1.TokenModel.InsertToken(token, tokens_model_1.Purposes.FORGOT_PASSWORD, user._id);
         //Send response
         return res.status(200).send({ msg: "Check your email", data: `http://localhost:8000/gamer/auth/api/v1/resetPassword/${token}`, success: true });
     }

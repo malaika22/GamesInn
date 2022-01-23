@@ -1,13 +1,14 @@
 /** @NOTE All Authentication apis will be avaliable here */
 
 import express from "express";
-import Joi from "joi";
 import { Document } from "mongodb";
+
 import { Vault } from "../../databases/vault";
 import { Gamer, GamersModel } from "../../models/gamer-model";
 import { Session, SessionsModel } from "../../models/session-model";
 import { Purposes, TokenModel } from "../../models/tokens-model";
 import { Sentry } from "../../server/sentry";
+import { Email } from "../../utils/email/email";
 import { JoiSchemas } from "../../utils/joiSchemas";
 import { Utils } from "../../utils/utils";
 
@@ -17,6 +18,7 @@ const routes = express.Router();
 routes.post('/signupGamer', async (req, res) => {
 
     try {
+
         const payload = { ...req.body }
         //Joi validation
         let validation = JoiSchemas.SignUpValidator(payload)
@@ -26,17 +28,25 @@ routes.post('/signupGamer', async (req, res) => {
         const gamer = await GamersModel.FindGamerByEmail(payload.email);
         if (gamer) return res.status(400).send({ msg: "Gamer already exist" })
 
-        //Hash password
-        payload.password = Vault.hashPassword(payload.password)
-
-        //Send token to email
 
         //Save user into user collection
         let data = await GamersModel.CreateGamer(payload)
+
+        //Hash password
+        payload.password = Vault.hashPassword(payload.password)
+
+        //Create token and save it to db
+        const token = Utils.RandomStringGenerator()
+      
         //save otp token to otp collection
+        await TokenModel.InsertToken(token, Purposes.EMAIL_VERIFICATION, data?._id)
+
+        //Send token to email
+        await Email.Shootmail(`http://localhost:8000/gamer/auth/api/v1/resetPassword/${token}`)
         res.status(201).send({ msg: "Gamer created", data: data })
     } catch (error) {
-
+        console.log(error)
+        res.status(500).send('Something went wrong')
     }
 
 
@@ -47,6 +57,7 @@ routes.post('/login', async (req, res) => {
 
     try {
         const payload = { ...req.body }
+        
         //validate if req.body all login required data
         const validation = JoiSchemas.LoginValidator(payload)
         if (validation.errored) return res.status(400).send({ msg: "Validation error", errors: validation.errors })
@@ -95,7 +106,7 @@ routes.post('/forgetPassword', async (req, res) => {
         const token = Utils.RandomStringGenerator()
 
         //Save it in  database
-        await TokenModel.InsertToken(token, Purposes.EMAIL_VERIFICATION, user._id)
+        await TokenModel.InsertToken(token, Purposes.FORGOT_PASSWORD, user._id)
 
         //Send response
         return res.status(200).send({ msg: "Check your email", data: `http://localhost:8000/gamer/auth/api/v1/resetPassword/${token}`, success: true })
@@ -163,3 +174,4 @@ export const router = routes;
 //     console.log(Vault.DecodeSignToken(payload.token));
 //     res.status(200).send({msg  : "done"})
 // })
+

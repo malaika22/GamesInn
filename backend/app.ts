@@ -20,6 +20,11 @@ import { GamesInn } from "./databases/gamesinn-database";
 import { GamersModel } from "./models/gamer-model";
 import { SessionsModel } from "./models/session-model";
 import { TokenModel } from "./models/tokens-model";
+import { Email } from "./utils/email/email";
+// import { OpenAPIConfiguration } from "./controllers/documentation/config_openapi";
+
+// import { runme } from "./controllers/documentation/api-documentations";
+// import { OpenAPIConfiguration } from "./controllers/documentation/config_openapi";
 
 // // Instead of:
 // import sourceMapSupport from 'source-map-support'
@@ -133,33 +138,23 @@ export class Application {
 
 
 
-        // process.on('SIGTERM', () => {
-        //     // Stops the server from accepting new connections and finishes existing connections.
-        //     HTTPServer.StopServer();
-
-        //     //Kill The Process so that It will be restarted by PM2 or any other process manager
-        //     process.exit(1);
-        // })
-
-
-
 
 
         try {
 
-            await Logger.CreateLogger(LoggerConf.colors)
+            Logger.CreateLogger(LoggerConf.colors)
 
             global.servicename = env.config.ServiceName;
             global.environment = env.env;
             global.logger = env.logger;
             global.defaultDB = env.defaultDB;
             global.delayStart = env.delayStart;
-            
+
             if (!env.config.ServiceName) throw new Error('Unknown Service Name');
             if (!env.config.PORT) throw new Error('Server Port Not Defined');
 
             if (env.config.VAULT) {
-                
+
                 if (!env.vault.host) throw new Error('Vault HOST Not Defined');
                 if (!env.vault.port) throw new Error('Vault PORT Not Defined');
                 if (!env.vault.keyname) throw new Error('Vault KeyName Not Defined');
@@ -170,7 +165,7 @@ export class Application {
             if (!env.config.VAULT) {
 
                 if (global.defaultDB) await DefaultDatabase.Connect(DBConfig.dbconf.default)
-                else if(!global.defaultDB) await GamesInn.Connect(DBConfig.dbconf.gamesinn)
+                else if (!global.defaultDB) await GamesInn.Connect(DBConfig.dbconf.gamesinn)
 
             } else {
 
@@ -180,6 +175,13 @@ export class Application {
                 else await GamesInn.Connect(DBConfig.dbconf.gamesinn)
             }
 
+            /**
+             * CREATE EMAIL TRANSPORT IF NEEDED
+             */
+
+             await Email.CreateTransport()
+
+
 
             /**
              * TEST DATABASE
@@ -187,9 +189,8 @@ export class Application {
             if (global.defaultDB) await DefaultModel.INIT();
             await GamersModel.INIT()
             await SessionsModel.INIT()
-            await TokenModel.INIT()        
-           
-            
+            await TokenModel.INIT()
+
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.
              */

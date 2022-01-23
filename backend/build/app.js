@@ -36,6 +36,7 @@ const gamesinn_database_1 = require("./databases/gamesinn-database");
 const gamer_model_1 = require("./models/gamer-model");
 const session_model_1 = require("./models/session-model");
 const tokens_model_1 = require("./models/tokens-model");
+const email_1 = require("./utils/email/email");
 global.__rootdir__ = process.cwd();
 class Application {
     constructor() { }
@@ -102,14 +103,8 @@ class Application {
                 }
             });
         }
-        // process.on('SIGTERM', () => {
-        //     // Stops the server from accepting new connections and finishes existing connections.
-        //     HTTPServer.StopServer();
-        //     //Kill The Process so that It will be restarted by PM2 or any other process manager
-        //     process.exit(1);
-        // })
         try {
-            await logger_2.Logger.CreateLogger(logger_1.LoggerConf.colors);
+            logger_2.Logger.CreateLogger(logger_1.LoggerConf.colors);
             global.servicename = env.config.ServiceName;
             global.environment = env.env;
             global.logger = env.logger;
@@ -146,6 +141,10 @@ class Application {
                 else
                     await gamesinn_database_1.GamesInn.Connect(database_1.DBConfig.dbconf.gamesinn);
             }
+            /**
+             * CREATE EMAIL TRANSPORT IF NEEDED
+             */
+            await email_1.Email.CreateTransport();
             /**
              * TEST DATABASE
              */
