@@ -144,7 +144,8 @@ class Application {
             /**
              * CREATE EMAIL TRANSPORT IF NEEDED
              */
-            await email_1.Email.CreateTransport();
+            if (env.config.EMAIL)
+                await email_1.Email.CreateTransport();
             /**
              * TEST DATABASE
              */

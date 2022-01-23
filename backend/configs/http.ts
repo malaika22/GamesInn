@@ -5,5 +5,6 @@ export interface HTTPCONF {
     GracefullShutdown: boolean
     VAULT: boolean,
     ServiceName: string,
-    QUEUE: boolean
+    QUEUE: boolean,
+    EMAIL:boolean
 }

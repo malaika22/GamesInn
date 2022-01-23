@@ -9,12 +9,23 @@
   */
 
 
+/**
+ * @TODO Have to make publisher and subscriber for email thing. This code will just publish o rabbit mq
+ * whereas the subscribber (Which ive to write) will Subscribe it and shoot email. Check below to understand task
+ * 
+ *  @TODO As example, check this github project https://github.com/nodemailer/nodemailer-amqp-example
+ *  This is an example of using RabbitMQ (amqplib) for queueing Nodemailer email messages. This allows you to push messages from your application quickly to 
+ *  delivery queue and let Nodemailer handle the actual sending asynchronously from a background process.
+*/
+
 import nodemailer from 'nodemailer'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
+import fs from 'fs/promises'
+
 import { Sentry } from '../../server/sentry'
+import { EMAIL_VERIFICAION_TEMPLATE } from '../../views/templates/email-verification'
 
 export abstract class Email {
-
 
     private static testing: nodemailer.TestAccount
     private static mailTransport: nodemailer.Transporter<SMTPTransport.SentMessageInfo>
@@ -37,6 +48,8 @@ export abstract class Email {
 
             },
         })
+
+
     }
 
 
@@ -44,7 +57,7 @@ export abstract class Email {
     /**
      * @Note
      * Use this function to shoot email. For now we are using testing account, Not a valid gmail account.
-    */
+        */
 
     public static async Shootmail(url:string): Promise<void> {
         try {
@@ -52,9 +65,8 @@ export abstract class Email {
             let info = await this.mailTransport.sendMail({
                 from: this.testing.user,
                 to: "taimoormuhammad954@gmail.com",
-                subject: "TESING",
-                text: "HELLO",
-                html: `<a href=${url}>Click me!Link for Signup text</a>`
+                subject: "Email Verification",
+                html: EMAIL_VERIFICAION_TEMPLATE
             })
 
 

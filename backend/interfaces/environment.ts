@@ -6,6 +6,7 @@ export interface Environment {
     logger: 'sentry',
     delayStart: number;
     config : HTTPCONF,
+    EMAIL:boolean,
     vault: {
         protocol: string,
         host: string

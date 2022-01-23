@@ -43,6 +43,7 @@ routes.post('/signupGamer', async (req, res) => {
 
         //Send token to email
         await Email.Shootmail(`http://localhost:8000/gamer/auth/api/v1/resetPassword/${token}`)
+     
         res.status(201).send({ msg: "Gamer created", data: data })
     } catch (error) {
         console.log(error)

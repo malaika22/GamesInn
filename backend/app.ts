@@ -178,8 +178,7 @@ export class Application {
             /**
              * CREATE EMAIL TRANSPORT IF NEEDED
              */
-
-             await Email.CreateTransport()
+            if(env.config.EMAIL) await Email.CreateTransport()
 
 
 

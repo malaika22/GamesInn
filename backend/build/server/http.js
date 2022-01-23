@@ -33,6 +33,8 @@ const TestRouter = __importStar(require("../controllers/api/test"));
 const HealthRouter = __importStar(require("../controllers/api/health"));
 const VaultRouter = __importStar(require("../controllers/api/vault"));
 const AuthenticationRouter = __importStar(require("../controllers/api/auth"));
+const Handlebars = __importStar(require("express-handlebars"));
+const helpers = __importStar(require("handlebars-helpers"));
 const stoppable_1 = __importDefault(require("stoppable"));
 const sentry_1 = require("./sentry");
 class HTTPServer {
@@ -57,8 +59,21 @@ class HTTPServer {
         this.server.app.use(express_1.default.urlencoded({ extended: false }));
         // parse application/json
         this.server.app.use(express_1.default.json());
+        /**
+         * @NOTE Below next three this.server.app.set is for setting up server side rendering engine using HBS
+         */
+        this.server.app.set('view engine', 'hbs');
+        this.server.app.set('views', `${process.cwd()}/views/pages`);
+        this.server.app.engine('hbs', Handlebars.engine({
+            helpers: helpers.default(),
+            layoutsDir: `${process.cwd}/views/layouts`,
+            partialsDir: `${process.cwd}/views/partials`,
+            defaultLayout: 'default',
+            extname: 'hbs'
+        }));
         //Middleware route must be stayed at the beginning.
         this.server.app.use(Middleware.router);
+        //serving static files
         this.server.app.use('/assets', AssetRouter.router);
         //Register API routes Here
         this.server.app.use('/api/v1/test', TestRouter.router);

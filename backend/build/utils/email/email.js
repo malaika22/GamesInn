@@ -13,8 +13,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Email = void 0;
+/**
+ * @TODO Have to make publisher and subscriber for email thing. This code will just publish o rabbit mq
+ * whereas the subscribber (Which ive to write) will Subscribe it and shoot email. Check below to understand task
+ *
+ *  @TODO As example, check this github project https://github.com/nodemailer/nodemailer-amqp-example
+ *  This is an example of using RabbitMQ (amqplib) for queueing Nodemailer email messages. This allows you to push messages from your application quickly to
+ *  delivery queue and let Nodemailer handle the actual sending asynchronously from a background process.
+*/
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const sentry_1 = require("../../server/sentry");
+const email_verification_1 = require("../../views/templates/email-verification");
 class Email {
     /**
      * @Note On basis of your project need, transport will be created if you want to send email
@@ -34,15 +43,14 @@ class Email {
     /**
      * @Note
      * Use this function to shoot email. For now we are using testing account, Not a valid gmail account.
-    */
+        */
     static async Shootmail(url) {
         try {
             let info = await this.mailTransport.sendMail({
                 from: this.testing.user,
                 to: "taimoormuhammad954@gmail.com",
-                subject: "TESING",
-                text: "HELLO",
-                html: `<a href=${url}>Click me!Link for Signup text</a>`
+                subject: "Email Verification",
+                html: email_verification_1.EMAIL_VERIFICAION_TEMPLATE
             });
             console.log(` Mail sent with message Id of ${info.messageId}`);
             console.log("Preview URL: %s", nodemailer_1.default.getTestMessageUrl(info));

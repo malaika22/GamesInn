@@ -58,8 +58,13 @@ export class HTTPServer {
         // parse application/json
         this.server.app.use(express.json());
 
+        /**
+         * @NOTE Below next three this.server.app.set is for setting up server side rendering engine using HBS
+         */
         this.server.app.set('view engine', 'hbs')
+  
         this.server.app.set('views',`${process.cwd()}/views/pages` )
+  
         this.server.app.engine('hbs', Handlebars.engine({
             helpers: helpers.default(),
             layoutsDir: `${process.cwd}/views/layouts`,
