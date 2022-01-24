@@ -45,11 +45,8 @@ export abstract class Vault {
 
             this.client = vault.default(vaultConf);
 
-        let appConfig = await this.client.read(`kv/gamesinn`);
-            // let appConfig = await this.client.list('kv/')
-            // console.log(appConfig);
+            let appConfig = await this.client.read(`kv/${conf.vault.keyname}`);
 
-            // console.log(appConfig.data);
             return appConfig.data as APPCONFIG;
 
         } catch (error: any) {
@@ -68,11 +65,9 @@ export abstract class Vault {
                 token: conf.vault.login,
             };
             this.client = vault.default(vaultConf);
-            // console.log(await this.client.health(), 'client for vault');
+
             let appConfig = await this.client.read(`secrets/${conf.vault.keyname}`);
-            // let appConfig = await this.client.list('kv/')
-            // console.log(appConfig);
-            // console.log(appConfig.data);
+   
             return appConfig.data ? true : false;
         } catch (error: any) {
             Logger.Console(`Error in Initializing Vault : ${JSON.stringify(error)}`);
@@ -160,18 +155,16 @@ export abstract class Vault {
         
 
          let sessionObject:string|any = {
-            _id: session._id.toString(),
+                session_id: session._id.toString(),
                 type: session.userType,
                 createdAt: session.createdTime,
                 user_id: session.userID.toString(),
          }
 
 
-        let payload :any = {
-            user: sessionObject,
-        }
+        let payload :any = sessionObject
+        
 
-        payload = JSON.stringify(payload)
 
         try {
             let token = jwt.sign(payload, '', { algorithm: 'none' })

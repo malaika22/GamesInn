@@ -80,6 +80,7 @@ export abstract class SessionsModel {
   public static async GetSessionByID(id: any, accessToken: string) {
     try {
 
+      
       let doc = await this.collection.find({
         _id: new ObjectId(id),
         accessToken: accessToken
@@ -144,6 +145,8 @@ export abstract class SessionsModel {
 
   }
 
+
+  
 
   public static async GetSessionByToken(token: string) {
     try {

@@ -15,7 +15,7 @@ import * as TestRouter from "../controllers/api/test";
 import * as HealthRouter from "../controllers/api/health";
 import * as VaultRouter from "../controllers/api/vault";
 import * as AuthenticationRouter from '../controllers/api/auth'
-
+import * as CampaignRouter from '../controllers/api/campaign'
 
 import * as Handlebars from 'express-handlebars'
 import * as helpers from 'handlebars-helpers'
@@ -89,8 +89,10 @@ export class HTTPServer {
 
         //@REVIEW TAIMOOR This is how we need to add to all services
         this.server.app.use('/auth/api/v1/vault', VaultRouter.router);
+
         this.server.app.use('/gamer/auth/api/v1', AuthenticationRouter.router)
 
+        this.server.app.use('/campaign/api/v1/', CampaignRouter.router)
 
 
         //Default Route Must be added at end.

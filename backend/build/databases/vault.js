@@ -49,10 +49,7 @@ class Vault {
                 token: conf.vault.login
             };
             this.client = vault.default(vaultConf);
-            let appConfig = await this.client.read(`kv/gamesinn`);
-            // let appConfig = await this.client.list('kv/')
-            // console.log(appConfig);
-            // console.log(appConfig.data);
+            let appConfig = await this.client.read(`kv/${conf.vault.keyname}`);
             return appConfig.data;
         }
         catch (error) {
@@ -68,11 +65,7 @@ class Vault {
                 token: conf.vault.login,
             };
             this.client = vault.default(vaultConf);
-            // console.log(await this.client.health(), 'client for vault');
             let appConfig = await this.client.read(`secrets/${conf.vault.keyname}`);
-            // let appConfig = await this.client.list('kv/')
-            // console.log(appConfig);
-            // console.log(appConfig.data);
             return appConfig.data ? true : false;
         }
         catch (error) {
@@ -133,15 +126,12 @@ class Vault {
          * @REVIEW Change Signing LogicMake it more secure
          */
         let sessionObject = {
-            _id: session._id.toString(),
+            session_id: session._id.toString(),
             type: session.userType,
             createdAt: session.createdTime,
             user_id: session.userID.toString(),
         };
-        let payload = {
-            user: sessionObject,
-        };
-        payload = JSON.stringify(payload);
+        let payload = sessionObject;
         try {
             let token = jwt.sign(payload, '', { algorithm: 'none' });
             let encryptedToken = Vault.Encrypt(token);
