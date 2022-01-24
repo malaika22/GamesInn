@@ -157,15 +157,22 @@ export abstract class Vault {
         /**
          * @REVIEW Change Signing LogicMake it more secure
          */
-        let payload = {
-            user: {
-                _id: session._id,
+        
+
+         let sessionObject:string|any = {
+            _id: session._id.toString(),
                 type: session.userType,
                 createdAt: session.createdTime,
-                user_id: session.userID,
-            }
+                user_id: session.userID.toString(),
+         }
+
+
+        let payload :any = {
+            user: sessionObject,
         }
-        // Logger.Console(`payload ===> ${JSON.stringify(payload, undefined, 4)}`, 'info')
+
+        payload = JSON.stringify(payload)
+
         try {
             let token = jwt.sign(payload, '', { algorithm: 'none' })
             let encryptedToken = Vault.Encrypt(token);

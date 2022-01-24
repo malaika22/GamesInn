@@ -45,7 +45,7 @@ routes.post('/signupGamer', async (req, res) => {
         //Send token to email
         const email = await Email.Shootmail(token)
 
-        res.status(201).send({ msg: "Gamer created", data: data , previewURL:email.previewURL, token:token,  })
+        res.status(201).send({ msg: "Gamer created", data: data, previewURL: email.previewURL, token: token, })
     } catch (error) {
         console.log(error)
         res.status(500).send('Something went wrong')
@@ -68,11 +68,11 @@ routes.post('/login', async (req, res) => {
         const gamer: Document | null = await GamersModel.FindGamerByEmail(payload.email);
         if (!gamer) return res.status(400).send({ msg: "No gamer found with this email" })
 
-        //convert provided password into hash password and match if it's equal to hashed password saved in collection for respective user
+        if (!gamer.verified) return res.status(400).send({ msg: "User Not Verified" });
+
+       //convert provided password into hash password and match if it's equal to hashed password saved in collection for respective user
         let passwordVerification: boolean = Vault.VerifyHashedPassword(payload.password, gamer.password)
         if (!passwordVerification) return res.status(400).send({ msg: "Email or password is incorrect" })
-
-        if (!gamer.verified) return res.status(400).send({ msg: "User Not Verified" });
 
         //Create gamer Session and send session as response
         let session: Session = await SessionsModel.AddSession(gamer as Gamer);
@@ -107,7 +107,7 @@ routes.post('/forgetPassword', async (req, res) => {
         //Generate Random Token
         const token = Utils.RandomStringGenerator()
 
-        console.log(token , 'HERE IS YOUR TOKEN')
+        console.log(token, 'HERE IS YOUR TOKEN')
         //Save it in database
         await TokenModel.InsertToken(token, Purposes.FORGOT_PASSWORD, user._id)
 
@@ -115,7 +115,7 @@ routes.post('/forgetPassword', async (req, res) => {
         let emailData = await Email.Shootmail(token)
 
         //Send response
-        return res.status(200).send({ msg: "Check your email", previewURL: emailData.previewURL, messageID: emailData.messageID, token : token,success: true })
+        return res.status(200).send({ msg: "Check your email", previewURL: emailData.previewURL, messageID: emailData.messageID, token: token, success: true })
 
     } catch (error: any) {
         console.log(error);
@@ -144,10 +144,10 @@ routes.patch('/resetPassword/:token', async (req, res) => {
         payload.password = Vault.hashPassword(payload.password)
 
         //Update Passord in database
-        await GamersModel.UpdateGamerPassword({_id : token.userID , password : payload.password})
+        await GamersModel.UpdateGamerPassword({ _id: token.userID, password: payload.password })
 
         //Send response
-        return res.status(200).send({msg : "Password Updated", success:true})
+        return res.status(200).send({ msg: "Password Updated", success: true })
 
     } catch (error: any) {
         console.log(error);

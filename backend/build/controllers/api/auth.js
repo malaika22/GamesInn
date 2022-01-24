@@ -55,12 +55,12 @@ routes.post('/login', async (req, res) => {
         const gamer = await gamer_model_1.GamersModel.FindGamerByEmail(payload.email);
         if (!gamer)
             return res.status(400).send({ msg: "No gamer found with this email" });
+        if (!gamer.verified)
+            return res.status(400).send({ msg: "User Not Verified" });
         //convert provided password into hash password and match if it's equal to hashed password saved in collection for respective user
         let passwordVerification = vault_1.Vault.VerifyHashedPassword(payload.password, gamer.password);
         if (!passwordVerification)
             return res.status(400).send({ msg: "Email or password is incorrect" });
-        if (!gamer.verified)
-            return res.status(400).send({ msg: "User Not Verified" });
         //Create gamer Session and send session as response
         let session = await session_model_1.SessionsModel.AddSession(gamer);
         res.status(200).send({ msg: 'Login succesfully', data: session });

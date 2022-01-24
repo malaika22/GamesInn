@@ -132,15 +132,16 @@ class Vault {
         /**
          * @REVIEW Change Signing LogicMake it more secure
          */
-        let payload = {
-            user: {
-                _id: session._id,
-                type: session.userType,
-                createdAt: session.createdTime,
-                user_id: session.userID,
-            }
+        let sessionObject = {
+            _id: session._id.toString(),
+            type: session.userType,
+            createdAt: session.createdTime,
+            user_id: session.userID.toString(),
         };
-        // Logger.Console(`payload ===> ${JSON.stringify(payload, undefined, 4)}`, 'info')
+        let payload = {
+            user: sessionObject,
+        };
+        payload = JSON.stringify(payload);
         try {
             let token = jwt.sign(payload, '', { algorithm: 'none' });
             let encryptedToken = Vault.Encrypt(token);
