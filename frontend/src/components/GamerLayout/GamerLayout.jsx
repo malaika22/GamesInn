@@ -1,6 +1,9 @@
 import React from "react";
+import {  useNavigate } from "react-router-dom";
 import { Layout, Menu } from "antd";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import {
   faFileContract,
   faUsers,
@@ -18,9 +21,23 @@ import {
 } from "@ant-design/icons";
 import "./styles.scss";
 
+const { SubMenu } = Menu;
 const { Sider, Header, Footer, Content } = Layout;
 
 const GamerLayout = ({ children }) => {
+  //route change for my acc
+  const history =  useNavigate();
+  const routeChange = () =>{ 
+   history("/myaccounts")
+   
+  }
+// change route for buyer info
+  const routeChangebuyer = () =>{ 
+    history("/buyerinfo")
+    
+   }
+ 
+
   console.log("Checkcing git");
   return (
     <div className="gamer-layout-container">
@@ -44,10 +61,12 @@ const GamerLayout = ({ children }) => {
               <Menu.Item key="4" icon={<UploadOutlined />}>
                 My posts
               </Menu.Item>
-              <Menu.Item key="5" icon={<FontAwesomeIcon icon={faUsers} />}>
-                Tranding Info
-              </Menu.Item>
-              <Menu.Item key="6" icon={<FontAwesomeIcon icon={faCogs} />}>
+              <SubMenu key="5" icon={<FontAwesomeIcon icon={faUsers} />} title='Tranding Info'>
+               
+                <Menu.Item key="6"  onClick={routeChange} >My accounts</Menu.Item>
+                <Menu.Item key="7"  onClick={routeChangebuyer}>Buyer Information</Menu.Item>
+              </SubMenu>
+              <Menu.Item key="8" icon={<FontAwesomeIcon icon={faCogs} />}>
                 Settings
               </Menu.Item>
             </Menu>
@@ -60,9 +79,7 @@ const GamerLayout = ({ children }) => {
           <Content>
             <div className="gamer-layout-content">{children}</div>
           </Content>
-          <Footer>
-            <div className="gamer-layout-footer">@footer</div>
-          </Footer>
+         
         </Layout>
       </Layout>
     </div>
