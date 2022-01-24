@@ -56,4 +56,16 @@ export abstract class JoiSchemas {
   }
   
 
+  public static UpdatePassword(data:any):ValidationError{
+    let schema = Joi.object({
+      password: Joi.string().min(3).max(15).required().label('Password'),
+      confirmPassword: Joi.any().valid(Joi.ref('password')).required().label('Confirm Password').options({messages: {'any.only' : '{{#label}} password does not match'}})
+      
+      
+    });
+    let result = schema.validate(data, { abortEarly: false });
+    if (result.error) return { errored: true, errors: result.error.message.split('.'), value: result.value }
+    else return { errored: false, errors: null, value: result.value }
+  }
+
 }

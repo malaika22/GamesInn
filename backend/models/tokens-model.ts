@@ -38,7 +38,7 @@ export abstract class TokenModel {
                     console.log(this.collection.collectionName);
 
                     //@TODO TTl has been created but no document deletion
-                    await this.collection.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 60 })
+                    await this.collection.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 180 })
 
                   
 
@@ -101,7 +101,7 @@ export abstract class TokenModel {
 
             }
 
-            let doc = await this.collection.findOneAndUpdate({ token: temp.token }, { $set: temp }, { upsert: true })
+            let doc = await this.collection.findOneAndUpdate({ token: token }, { $set: temp }, { upsert: true })
             if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
                 temp._id = doc.lastErrorObject.upserted;
                 return temp;

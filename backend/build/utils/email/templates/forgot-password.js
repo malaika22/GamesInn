@@ -1,4 +1,10 @@
 "use strict";
+/**
+ *
+ * @param token
+ * @returns string
+ * @Note Purpose of this function is to provide HTML template for Forget Password which will be shown along with email.
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ForgetPasswordTemplate = void 0;
 const ForgetPasswordTemplate = (token) => {

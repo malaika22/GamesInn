@@ -26,17 +26,18 @@ routes.post('/signupGamer', async (req, res) => {
         const gamer = await gamer_model_1.GamersModel.FindGamerByEmail(payload.email);
         if (gamer)
             return res.status(400).send({ msg: "Gamer already exist" });
-        //Save user into user collection
-        let data = await gamer_model_1.GamersModel.CreateGamer(payload);
         //Hash password
         payload.password = vault_1.Vault.hashPassword(payload.password);
+        //Save user into user collection
+        payload.verification = false;
+        let data = await gamer_model_1.GamersModel.CreateGamer(payload);
         //Create token and save it to db
         const token = utils_1.Utils.RandomStringGenerator();
         //save otp token to otp collection
         await tokens_model_1.TokenModel.InsertToken(token, tokens_model_1.Purposes.EMAIL_VERIFICATION, data === null || data === void 0 ? void 0 : data._id);
         //Send token to email
-        await email_1.Email.Shootmail(`http://localhost:8000/gamer/auth/api/v1/resetPassword/${token}`);
-        res.status(201).send({ msg: "Gamer created", data: data });
+        const email = await email_1.Email.Shootmail(token);
+        res.status(201).send({ msg: "Gamer created", data: data, previewURL: email.previewURL, token: token, });
     }
     catch (error) {
         console.log(error);
@@ -86,10 +87,13 @@ routes.post('/forgetPassword', async (req, res) => {
             return res.status(400).send({ msg: "No user found with this email" });
         //Generate Random Token
         const token = utils_1.Utils.RandomStringGenerator();
-        //Save it in  database
+        console.log(token, 'HERE IS YOUR TOKEN');
+        //Save it in database
         await tokens_model_1.TokenModel.InsertToken(token, tokens_model_1.Purposes.FORGOT_PASSWORD, user._id);
+        //Shoot Email
+        let emailData = await email_1.Email.Shootmail(token);
         //Send response
-        return res.status(200).send({ msg: "Check your email", data: `http://localhost:8000/gamer/auth/api/v1/resetPassword/${token}`, success: true });
+        return res.status(200).send({ msg: "Check your email", previewURL: emailData.previewURL, messageID: emailData.messageID, token: token, success: true });
     }
     catch (error) {
         console.log(error);
@@ -97,7 +101,33 @@ routes.post('/forgetPassword', async (req, res) => {
         throw error;
     }
 });
-routes.get('/resetPassword/:token', async (req, res) => {
+routes.patch('/resetPassword/:token', async (req, res) => {
+    try {
+        //Check Token if exist or not
+        if (!req.params.token)
+            return res.status(400).send({ msg: "Provide token" });
+        const token = await tokens_model_1.TokenModel.FindToken(req.params.token);
+        if (!token)
+            return res.status(404).send({ msg: "No token found" });
+        let payload = { ...req.body };
+        //Check if passsword matches confrim password
+        const validation = joiSchemas_1.JoiSchemas.UpdatePassword(payload);
+        if (validation.errored)
+            return res.status(400).send({ msg: "Validation error", errors: validation.errors });
+        //Hash Password
+        payload.password = vault_1.Vault.hashPassword(payload.password);
+        //Update Passord in database
+        await gamer_model_1.GamersModel.UpdateGamerPassword({ _id: token.userID, password: payload.password });
+        //Send response
+        return res.status(200).send({ msg: "Password Updated", success: true });
+    }
+    catch (error) {
+        console.log(error);
+        sentry_1.Sentry.Error(error, 'Error in Reset password');
+        throw error;
+    }
+});
+routes.get('/userVerification/:token', async (req, res) => {
     try {
         //Validate if token is provided as request paramseter
         if (!req.params.token)
@@ -112,7 +142,7 @@ routes.get('/resetPassword/:token', async (req, res) => {
     }
     catch (error) {
         console.log(error);
-        sentry_1.Sentry.Error(error, 'Error in Reset password');
+        sentry_1.Sentry.Error(error, 'Error in User Verification');
         throw error;
     }
 });

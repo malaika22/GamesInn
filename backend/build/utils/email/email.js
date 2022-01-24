@@ -23,7 +23,7 @@ exports.Email = void 0;
 */
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const sentry_1 = require("../../server/sentry");
-const email_verification_1 = require("../../views/templates/email-verification");
+const email_verification_1 = require("./templates/email-verification");
 class Email {
     /**
      * @Note On basis of your project need, transport will be created if you want to send email
@@ -43,17 +43,21 @@ class Email {
     /**
      * @Note
      * Use this function to shoot email. For now we are using testing account, Not a valid gmail account.
-        */
-    static async Shootmail(url) {
+     * @params token,
+     * @return messageID, previewURL in an object
+    */
+    static async Shootmail(token) {
         try {
             let info = await this.mailTransport.sendMail({
                 from: this.testing.user,
                 to: "taimoormuhammad954@gmail.com",
                 subject: "Email Verification",
-                html: email_verification_1.EMAIL_VERIFICAION_TEMPLATE
+                html: (0, email_verification_1.EmaiVerificationTemplate)(token)
             });
-            console.log(` Mail sent with message Id of ${info.messageId}`);
-            console.log("Preview URL: %s", nodemailer_1.default.getTestMessageUrl(info));
+            return {
+                messageID: info.messageId,
+                previewURL: nodemailer_1.default.getTestMessageUrl(info)
+            };
         }
         catch (error) {
             console.log(error);

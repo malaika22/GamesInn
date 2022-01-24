@@ -10,13 +10,14 @@
         "VAULT": true,
         "EMAIL":true,
         "ServiceName": "GamesInn",
-        "QUEUE": false
+        "QUEUE": false,
+        "URL": "http://localhost:8000"
     },
     "vault": {
         "protocol": "http",
         "host": "127.0.0.1",
         "port": 8200,
-        "login": "s.jWiD8B84bTGZobK86PmipwnL",
+        "login": "s.yzb4QMy7rTUk1HyZDurCR92x",
         "keyname": "gamesinn",
         "apiversion": "v1"
     }

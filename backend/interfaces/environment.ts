@@ -7,6 +7,7 @@ export interface Environment {
     delayStart: number;
     config : HTTPCONF,
     EMAIL:boolean,
+    URL:string,
     vault: {
         protocol: string,
         host: string

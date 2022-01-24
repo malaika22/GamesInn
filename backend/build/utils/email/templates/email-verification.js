@@ -1,4 +1,10 @@
 "use strict";
+/**
+ *
+ * @param token
+ * @returns string
+ * @Note Purpose of this function is to provide HTML template for Email Verification which will be shown along with email.
+ */
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EmaiVerificationTemplate = void 0;
 const EmaiVerificationTemplate = (token) => {

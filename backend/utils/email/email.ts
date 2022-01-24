@@ -23,7 +23,7 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport'
 import fs from 'fs/promises'
 
 import { Sentry } from '../../server/sentry'
-import { EMAIL_VERIFICAION_TEMPLATE } from '../../views/templates/email-verification'
+import {  EmaiVerificationTemplate } from './templates/email-verification'
 
 export abstract class Email {
 
@@ -47,6 +47,7 @@ export abstract class Email {
                 pass: Email.testing.pass,
 
             },
+       
         })
 
 
@@ -57,21 +58,26 @@ export abstract class Email {
     /**
      * @Note
      * Use this function to shoot email. For now we are using testing account, Not a valid gmail account.
-        */
+     * @params token,
+     * @return messageID, previewURL in an object   
+    */
 
-    public static async Shootmail(url:string): Promise<void> {
+    public static async Shootmail(token:string): Promise<{messageID:string, previewURL:string  | false}> {
         try {
 
             let info = await this.mailTransport.sendMail({
                 from: this.testing.user,
                 to: "taimoormuhammad954@gmail.com",
                 subject: "Email Verification",
-                html: EMAIL_VERIFICAION_TEMPLATE
+                html: EmaiVerificationTemplate(token)
             })
 
 
-            console.log(` Mail sent with message Id of ${info.messageId}`)
-            console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+            return {
+                messageID : info.messageId,
+                previewURL:nodemailer.getTestMessageUrl(info)
+            }
+
         } catch (error: any) {
             console.log(error);
             Sentry.Error(error, 'Error in Sending Email');

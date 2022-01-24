@@ -1,9 +1,16 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ForgetPasswordTemplate = void 0;
-const ForgetPasswordTemplate = (token) => {
-    let verificationLink = `${global.Url}/gamer/auth/api/v1/userVerification/${token}`;
-    return `<!DOCTYPE html>
+/**
+ * 
+ * @param token
+ * @returns string
+ * @Note Purpose of this function is to provide HTML template for Forget Password which will be shown along with email.
+ */
+
+
+
+export const ForgetPasswordTemplate = (token:string) => {
+    let verificationLink:string =`${global.Url}/gamer/auth/api/v1/userVerification/${token}`
+
+    return  `<!DOCTYPE html>
     <html>
       <head>
         <title>Reset Password</title>
@@ -402,7 +409,6 @@ const ForgetPasswordTemplate = (token) => {
         }
     </script>
     </html>
-    `;
-};
-exports.ForgetPasswordTemplate = ForgetPasswordTemplate;
-//# sourceMappingURL=forgot-password.js.map
+    `
+}
+

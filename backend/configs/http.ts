@@ -6,5 +6,6 @@ export interface HTTPCONF {
     VAULT: boolean,
     ServiceName: string,
     QUEUE: boolean,
-    EMAIL:boolean
+    EMAIL:boolean,
+    URL:string
 }

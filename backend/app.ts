@@ -41,6 +41,7 @@ declare global {
             defaultDB: boolean;
             logger: string;
             delayStart: number;
+            Url:string
         }
     }
 }
@@ -54,6 +55,8 @@ export class Application {
     constructor() { }
     public async INIT(env: Environment) {
         global.ip = ip.address();
+        global.Url = env.config.URL;
+        console.log(global.Url , 'Global Url')
         process.on('unhandledRejection', (ex) => {
             // console.log("Unhandled Execption", ex);
             Logger.Log('Unhandled Rejection !!!!!', 'critical');

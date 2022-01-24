@@ -42,6 +42,8 @@ class Application {
     constructor() { }
     async INIT(env) {
         global.ip = ip.address();
+        global.Url = env.config.URL;
+        console.log(global.Url, 'Global Url');
         process.on('unhandledRejection', (ex) => {
             // console.log("Unhandled Execption", ex);
             logger_2.Logger.Log('Unhandled Rejection !!!!!', 'critical');

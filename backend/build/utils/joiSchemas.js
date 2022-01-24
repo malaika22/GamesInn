@@ -55,6 +55,17 @@ class JoiSchemas {
         else
             return { errored: false, errors: null, value: result.value };
     }
+    static UpdatePassword(data) {
+        let schema = joi_1.default.object({
+            password: joi_1.default.string().min(3).max(15).required().label('Password'),
+            confirmPassword: joi_1.default.any().valid(joi_1.default.ref('password')).required().label('Confirm Password').options({ messages: { 'any.only': '{{#label}} password does not match' } })
+        });
+        let result = schema.validate(data, { abortEarly: false });
+        if (result.error)
+            return { errored: true, errors: result.error.message.split('.'), value: result.value };
+        else
+            return { errored: false, errors: null, value: result.value };
+    }
 }
 exports.JoiSchemas = JoiSchemas;
 //# sourceMappingURL=joiSchemas.js.map

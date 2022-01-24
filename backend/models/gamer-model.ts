@@ -14,7 +14,7 @@ export interface Gamer {
     _id?: ObjectId | string,
     userName: string,
     email: string,
-    password: string,
+    password?: string,
     firstName: string,
     lastName: string,
     country: string,
@@ -23,6 +23,13 @@ export interface Gamer {
     createdTime: string
     userType: UserTypes,
     verified: boolean
+}
+
+interface UpdateGamerPassword { 
+
+    _id  : ObjectId | string,
+    password  : string
+
 }
 
 export abstract class GamersModel {
@@ -118,23 +125,26 @@ export abstract class GamersModel {
     }
 
 
-    public static async CreateGamer(data: Gamer) {
+    public static async CreateGamer(data: any) {
         try {
             let temp: Gamer = {
-                userName: data.userName.trim(),
-                firstName: data.firstName.trim(),
-                lastName: data.lastName.trim(),
-                address: data.address.trim().toLocaleUpperCase(),
-                password: data.password.trim(),
-                city: data.city.trim(),
-                country: data.country.trim(),
-                email: data.email.trim(),
-                userType: UserTypes.GAMER,
-                verified: false,
-                createdTime: new Date().toISOString()
+                userName: data.userName?.trim(),
+                firstName: data.firstName?.trim(),
+                lastName: data.lastName?.trim(),
+                address: data.address?.trim().toLocaleUpperCase(),
+                password: data.password?.trim(),
+                city: data.city?.trim(),
+                country: data.country?.trim(),
+                email: data.email?.trim(),
+                userType: UserTypes?.GAMER,
+                verified: data.verification,
+                createdTime: new Date()?.toISOString()
             }
 
             let doc = await this.collection.findOneAndUpdate({ email: temp.email }, { $set: temp }, { upsert: true })
+
+            delete doc.value?.password
+            delete temp.password
 
             if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
                 temp._id = doc.lastErrorObject.upserted;
@@ -170,6 +180,27 @@ export abstract class GamersModel {
 
     }
 
+    public static async UpdateGamerPassword(data: UpdateGamerPassword) {
+        try {
+            let temp: UpdateGamerPassword = {
+                _id : data._id,
+                password  : data.password
+            }
 
+            let doc = await this.collection.findOneAndUpdate({ _id: temp._id }, { $set: temp }, { upsert: true })
+
+            if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
+                temp._id = doc.lastErrorObject.upserted;
+                return temp;
+            } else return doc.value;
+
+
+        } catch (error) {
+            console.log("Error in creating gamer ", error)
+            throw error
+
+        }
+
+    }
 
 }

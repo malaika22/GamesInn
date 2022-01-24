@@ -1,4 +1,17 @@
-export const EMAIL_VERIFICAION_TEMPLATE = `<!DOCTYPE html>
+/**
+ * 
+ * @param token
+ * @returns string
+ * @Note Purpose of this function is to provide HTML template for Email Verification which will be shown along with email.
+ */
+
+
+
+export const EmaiVerificationTemplate = (token:string) => {
+let verificationLink:string =`${global.Url}/gamer/auth/api/v1/userVerification/${token}`
+
+
+return `<!DOCTYPE html>
 <html>
   <head>
     <title></title>
@@ -237,7 +250,7 @@ export const EMAIL_VERIFICAION_TEMPLATE = `<!DOCTYPE html>
                             bgcolor="#FFA73B"
                           >
                             <a
-                              href = "http://localhost:8000/gamer/auth/api/v1/resetPassword"
+                              href = "${verificationLink}"
                               target = "_blank"                            
                               style="
                                 font-size: 20px;
@@ -298,7 +311,7 @@ export const EMAIL_VERIFICAION_TEMPLATE = `<!DOCTYPE html>
               >
                 <p style="margin: 0">
                   <a href="#" target="_blank" style="color: #ffa73b"
-                    >http://localhost:8000/gamer/auth/api/v1/resetPassword</a
+                    >${verificationLink}</a
                   >
                 </p>
               </td>
@@ -431,3 +444,4 @@ export const EMAIL_VERIFICAION_TEMPLATE = `<!DOCTYPE html>
 
 </html>
 `
+    }

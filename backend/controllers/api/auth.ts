@@ -28,23 +28,24 @@ routes.post('/signupGamer', async (req, res) => {
         const gamer = await GamersModel.FindGamerByEmail(payload.email);
         if (gamer) return res.status(400).send({ msg: "Gamer already exist" })
 
-
-        //Save user into user collection
-        let data = await GamersModel.CreateGamer(payload)
-
         //Hash password
         payload.password = Vault.hashPassword(payload.password)
 
+        //Save user into user collection
+        payload.verification = false
+        let data = await GamersModel.CreateGamer(payload)
+
+
         //Create token and save it to db
         const token = Utils.RandomStringGenerator()
-      
+
         //save otp token to otp collection
         await TokenModel.InsertToken(token, Purposes.EMAIL_VERIFICATION, data?._id)
 
         //Send token to email
-        await Email.Shootmail(`http://localhost:8000/gamer/auth/api/v1/resetPassword/${token}`)
-     
-        res.status(201).send({ msg: "Gamer created", data: data })
+        const email = await Email.Shootmail(token)
+
+        res.status(201).send({ msg: "Gamer created", data: data , previewURL:email.previewURL, token:token,  })
     } catch (error) {
         console.log(error)
         res.status(500).send('Something went wrong')
@@ -58,7 +59,7 @@ routes.post('/login', async (req, res) => {
 
     try {
         const payload = { ...req.body }
-        
+
         //validate if req.body all login required data
         const validation = JoiSchemas.LoginValidator(payload)
         if (validation.errored) return res.status(400).send({ msg: "Validation error", errors: validation.errors })
@@ -106,11 +107,15 @@ routes.post('/forgetPassword', async (req, res) => {
         //Generate Random Token
         const token = Utils.RandomStringGenerator()
 
-        //Save it in  database
+        console.log(token , 'HERE IS YOUR TOKEN')
+        //Save it in database
         await TokenModel.InsertToken(token, Purposes.FORGOT_PASSWORD, user._id)
 
+        //Shoot Email
+        let emailData = await Email.Shootmail(token)
+
         //Send response
-        return res.status(200).send({ msg: "Check your email", data: `http://localhost:8000/gamer/auth/api/v1/resetPassword/${token}`, success: true })
+        return res.status(200).send({ msg: "Check your email", previewURL: emailData.previewURL, messageID: emailData.messageID, token : token,success: true })
 
     } catch (error: any) {
         console.log(error);
@@ -120,7 +125,40 @@ routes.post('/forgetPassword', async (req, res) => {
 
 })
 
-routes.get('/resetPassword/:token', async (req, res) => {
+
+routes.patch('/resetPassword/:token', async (req, res) => {
+    try {
+        //Check Token if exist or not
+        if (!req.params.token) return res.status(400).send({ msg: "Provide token" })
+        const token = await TokenModel.FindToken(req.params.token)
+
+        if (!token) return res.status(404).send({ msg: "No token found" })
+
+        let payload = { ...req.body }
+
+        //Check if passsword matches confrim password
+        const validation = JoiSchemas.UpdatePassword(payload)
+        if (validation.errored) return res.status(400).send({ msg: "Validation error", errors: validation.errors })
+
+        //Hash Password
+        payload.password = Vault.hashPassword(payload.password)
+
+        //Update Passord in database
+        await GamersModel.UpdateGamerPassword({_id : token.userID , password : payload.password})
+
+        //Send response
+        return res.status(200).send({msg : "Password Updated", success:true})
+
+    } catch (error: any) {
+        console.log(error);
+        Sentry.Error(error, 'Error in Reset password');
+        throw error;
+    }
+})
+
+
+
+routes.get('/userVerification/:token', async (req, res) => {
 
     try {
 
@@ -137,7 +175,7 @@ routes.get('/resetPassword/:token', async (req, res) => {
 
     } catch (error: any) {
         console.log(error);
-        Sentry.Error(error, 'Error in Reset password');
+        Sentry.Error(error, 'Error in User Verification');
         throw error;
     }
 })

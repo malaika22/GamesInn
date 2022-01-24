@@ -90,21 +90,24 @@ class GamersModel {
         }
     }
     static async CreateGamer(data) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         try {
             let temp = {
-                userName: data.userName.trim(),
-                firstName: data.firstName.trim(),
-                lastName: data.lastName.trim(),
-                address: data.address.trim().toLocaleUpperCase(),
-                password: data.password.trim(),
-                city: data.city.trim(),
-                country: data.country.trim(),
-                email: data.email.trim(),
-                userType: UserTypes.GAMER,
-                verified: false,
-                createdTime: new Date().toISOString()
+                userName: (_a = data.userName) === null || _a === void 0 ? void 0 : _a.trim(),
+                firstName: (_b = data.firstName) === null || _b === void 0 ? void 0 : _b.trim(),
+                lastName: (_c = data.lastName) === null || _c === void 0 ? void 0 : _c.trim(),
+                address: (_d = data.address) === null || _d === void 0 ? void 0 : _d.trim().toLocaleUpperCase(),
+                password: (_e = data.password) === null || _e === void 0 ? void 0 : _e.trim(),
+                city: (_f = data.city) === null || _f === void 0 ? void 0 : _f.trim(),
+                country: (_g = data.country) === null || _g === void 0 ? void 0 : _g.trim(),
+                email: (_h = data.email) === null || _h === void 0 ? void 0 : _h.trim(),
+                userType: UserTypes === null || UserTypes === void 0 ? void 0 : UserTypes.GAMER,
+                verified: data.verification,
+                createdTime: (_j = new Date()) === null || _j === void 0 ? void 0 : _j.toISOString()
             };
             let doc = await this.collection.findOneAndUpdate({ email: temp.email }, { $set: temp }, { upsert: true });
+            (_k = doc.value) === null || _k === void 0 ? true : delete _k.password;
+            delete temp.password;
             if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
                 temp._id = doc.lastErrorObject.upserted;
                 return temp;
@@ -130,6 +133,25 @@ class GamersModel {
     static async VerifyGamer(userID) {
         let gamer = await this.collection.findOneAndUpdate({ _id: userID, verified: false }, { $set: { verified: true } }, { returnDocument: 'after', projection: { password: 0 } });
         return gamer.value;
+    }
+    static async UpdateGamerPassword(data) {
+        try {
+            let temp = {
+                _id: data._id,
+                password: data.password
+            };
+            let doc = await this.collection.findOneAndUpdate({ _id: temp._id }, { $set: temp }, { upsert: true });
+            if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
+                temp._id = doc.lastErrorObject.upserted;
+                return temp;
+            }
+            else
+                return doc.value;
+        }
+        catch (error) {
+            console.log("Error in creating gamer ", error);
+            throw error;
+        }
     }
 }
 exports.GamersModel = GamersModel;
