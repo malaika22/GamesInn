@@ -1,12 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GamersModel = exports.UserTypes = void 0;
+exports.GamersModel = void 0;
 const gamesinn_database_1 = require("../databases/gamesinn-database");
-var UserTypes;
-(function (UserTypes) {
-    UserTypes["GAMER"] = "Gamer";
-    UserTypes["INVESTOR"] = "Investor";
-})(UserTypes = exports.UserTypes || (exports.UserTypes = {}));
+const userTypes_1 = require("../utils/enums/userTypes");
 class GamersModel {
     static async INIT() {
         console.log('init run ');
@@ -101,7 +97,7 @@ class GamersModel {
                 city: (_f = data.city) === null || _f === void 0 ? void 0 : _f.trim(),
                 country: (_g = data.country) === null || _g === void 0 ? void 0 : _g.trim(),
                 email: (_h = data.email) === null || _h === void 0 ? void 0 : _h.trim(),
-                userType: UserTypes === null || UserTypes === void 0 ? void 0 : UserTypes.GAMER,
+                userType: userTypes_1.UserTypes === null || userTypes_1.UserTypes === void 0 ? void 0 : userTypes_1.UserTypes.GAMER,
                 verified: data.verification,
                 createdTime: (_j = new Date()) === null || _j === void 0 ? void 0 : _j.toISOString()
             };

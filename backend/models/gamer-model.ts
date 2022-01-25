@@ -2,12 +2,9 @@
 import mongodb, { Db, ObjectId } from "mongodb";
 import { Subscription } from 'rxjs';
 import { GamesInn } from "../databases/gamesinn-database";
+import { UserTypes } from "../utils/enums/userTypes";
 
 
-export enum UserTypes {
-    GAMER = 'Gamer',
-    INVESTOR = 'Investor',
-}
 
 
 export interface Gamer {

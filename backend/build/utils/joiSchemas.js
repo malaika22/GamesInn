@@ -68,9 +68,9 @@ class JoiSchemas {
     }
     static CreateCampaigns(data) {
         let schema = joi_1.default.object({
-            campaignName: joi_1.default.string().min(3).max(15).required(),
-            campaignDays: joi_1.default.number().min(3).max(15).required(),
-            campaignDescription: joi_1.default.string().min(30).max(50).required(),
+            campaignName: joi_1.default.string().min(3).required(),
+            campaignDays: joi_1.default.number().max(3).required(),
+            campaignDescription: joi_1.default.string().max(800).required(),
             campaignTargetedAmount: joi_1.default.number().min(100).max(1000).required()
         });
         let result = schema.validate(data, { abortEarly: false });

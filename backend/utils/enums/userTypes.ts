@@ -1,7 +1,4 @@
-enum UserTypes {
-    USER = 'User',
-    GUEST = 'Guest',
-    ADMIN = 'Admin'
+export enum UserTypes {
+    GAMER = 'Gamer',
+    INVESTOR = 'Investor',
 }
-
-export default UserTypes;

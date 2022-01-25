@@ -37,6 +37,9 @@ const gamer_model_1 = require("./models/gamer-model");
 const session_model_1 = require("./models/session-model");
 const tokens_model_1 = require("./models/tokens-model");
 const email_1 = require("./utils/email/email");
+const campaign_model_1 = require("./models/campaign-model");
+const scheduler_1 = require("./controllers/cron/scheduler");
+const campaigns_history_1 = require("./models/campaigns-history");
 global.__rootdir__ = process.cwd();
 class Application {
     constructor() { }
@@ -148,6 +151,7 @@ class Application {
              */
             if (env.config.EMAIL)
                 await email_1.Email.CreateTransport();
+            scheduler_1.CroneJob.Scheduler();
             /**
              * TEST DATABASE
              */
@@ -156,6 +160,8 @@ class Application {
             await gamer_model_1.GamersModel.INIT();
             await session_model_1.SessionsModel.INIT();
             await tokens_model_1.TokenModel.INIT();
+            await campaign_model_1.CampaignModel.INIT();
+            await campaigns_history_1.CampaignHistoryModel.INIT();
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.
              */

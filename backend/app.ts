@@ -21,6 +21,9 @@ import { GamersModel } from "./models/gamer-model";
 import { SessionsModel } from "./models/session-model";
 import { TokenModel } from "./models/tokens-model";
 import { Email } from "./utils/email/email";
+import { CampaignModel } from "./models/campaign-model";
+import { CroneJob } from "./controllers/cron/scheduler";
+import { CampaignHistoryModel } from "./models/campaigns-history";
 // import { OpenAPIConfiguration } from "./controllers/documentation/config_openapi";
 
 // import { runme } from "./controllers/documentation/api-documentations";
@@ -166,16 +169,16 @@ export class Application {
             }
 
             if (!env.config.VAULT) {
-
+                
                 if (global.defaultDB) await DefaultDatabase.Connect(DBConfig.dbconf.default)
-                else if (!global.defaultDB) await GamesInn.Connect(DBConfig.dbconf.gamesinn)
+                else if (!global.defaultDB)  await GamesInn.Connect(DBConfig.dbconf.gamesinn)
 
             } else {
-
                 Application.conf = await Vault.Init(env as Environment);
                 if (global.logger == 'sentry') Sentry.INIT({ dsn: Application.conf.Logging.SENTRY.dsn, environment: global.environment, serverName: global.servicename, logLevel: LogLevel.Error });
                 if (global.defaultDB) await DefaultDatabase.Connect(DBConfig.dbconf.default);
-                else await GamesInn.Connect(DBConfig.dbconf.gamesinn)
+                else  await GamesInn.Connect(DBConfig.dbconf.gamesinn)
+                
             }
 
             /**
@@ -184,15 +187,17 @@ export class Application {
             if(env.config.EMAIL) await Email.CreateTransport()
 
 
-
+            CroneJob.Scheduler()
             /**
              * TEST DATABASE
              */
             if (global.defaultDB) await DefaultModel.INIT();
+       
             await GamersModel.INIT()
             await SessionsModel.INIT()
             await TokenModel.INIT()
-
+            await CampaignModel.INIT()
+            await CampaignHistoryModel.INIT()
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.
              */

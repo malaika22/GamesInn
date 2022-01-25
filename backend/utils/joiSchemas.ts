@@ -72,9 +72,9 @@ export abstract class JoiSchemas {
   
   public static CreateCampaigns(data:any):ValidationError{
     let schema = Joi.object({
-      campaignName: Joi.string().min(3).max(15).required(),
-      campaignDays: Joi.number().min(3).max(15).required(),
-      campaignDescription : Joi.string().min(30).max(50).required(),
+      campaignName: Joi.string().min(3).required(),
+      campaignDays: Joi.number().max(3).required(),
+      campaignDescription : Joi.string().max(800).required(),
       campaignTargetedAmount:Joi.number().min(100).max(1000).required()
     });
     let result = schema.validate(data, { abortEarly: false });

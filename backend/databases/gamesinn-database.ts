@@ -7,7 +7,7 @@ import { Logger } from "../server/logger";
 export abstract class GamesInn {
 
     private static subscriptions: Subscription[] = [];
-    private static mongClient: MongoClient;
+    public static mongClient: MongoClient;
     private static conf: DBConfigMongo;
 
     public static db: BehaviorSubject<Db | any> = new BehaviorSubject(undefined);
@@ -24,6 +24,7 @@ export abstract class GamesInn {
                     // console.log('received serverDescriptionChanged');
                     // console.log(JSON.stringify(event, null, 2));
                 });
+
 
                 this.mongClient.on('serverHeartbeatStarted', function (event) {
                     // console.log('received serverHeartbeatStarted');
