@@ -1,6 +1,8 @@
 
 .row-info{
-  padding: 10px;  
+  margin: 10px; 
+ 
+  
 
   
 .col-b{
@@ -18,10 +20,32 @@
  
   padding-left: 30px;
     font-size: 15px;
-    height: 50px;
-    padding-top: 13px;
-    background: #575e68;
-    text-align: left;
     
+    padding-top: 13px;
+    height: 80px;
+    background: #f4f4f4;
+    text-align:left;
+   
+    justify-content: space-between;
+  
 }
+.col-a a{
+color: inherit;
+
+
+}
+a:hover{
+  
+    color: #125cfc;
+ 
+}
+.col-a img{
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  margin-right: 10px;
+}
+
 

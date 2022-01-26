@@ -11,11 +11,11 @@ return(
     <>
     <div >
     <Row className='row-info' >
-      <Col className='col-b' span={8}>Account Title</Col>
-      <Col className='col-b' span={4}>Seller Username</Col>
-      <Col className='col-b' span={4}>AccountID</Col>
-      <Col  className='col-b' span={4}>Price</Col>
-      <Col  className='col-b'span={4}>Date</Col>
+      <Col className='col-b' span={10}>Account Title</Col>
+      <Col className='col-b' span={5}>Seller Username</Col>
+      <Col className='col-b' span={3}>AccountID</Col>
+      <Col  className='col-b' span={3}>Price</Col>
+      <Col  className='col-b'span={3}>Date</Col>
     
     </Row>
    
@@ -24,17 +24,19 @@ return(
 
     
      {buyers.map((person)=>{
-          const {id,title,sellername,price,date}= person
+          const {id,title,sellername,image,price,date}= person
     
      return(
       <> 
       <div className='Buyer-content' >
      <Row className='row-info'   >
-      <Col   className='col-a' span={8}>{title}</Col>
-      <Col  className='col-a'  span={4}>{sellername}</Col>
-      <Col  className='col-a'  span={4}>{id}</Col>
-      <Col  className='col-a'  span={4}>{price}</Col>
-      <Col  className='col-a'  span={4}>{date}</Col>
+      <Col   className='col-a' span={10}><a href=''>{title}</a></Col>
+      <Col  className='col-a'  span={5}>
+      <img src={image}/>
+        {sellername}</Col>
+      <Col  className='col-a'  span={3}>{id}</Col>
+      <Col  className='col-a'  span={3}>{price}</Col>
+      <Col  className='col-a'  span={3}>{date}</Col>
 
     </Row>
     
