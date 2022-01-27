@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CampaignModel = void 0;
+const mongodb_1 = require("mongodb");
 const gamesinn_database_1 = require("../databases/gamesinn-database");
 const campaigns_history_1 = require("./campaigns-history");
 class CampaignModel {
@@ -102,12 +103,13 @@ class CampaignModel {
                 campaignExpireAt: new Date(expiryDate)
             };
             CampaignModel.session = gamesinn_database_1.GamesInn.mongClient.startSession();
-            // const transactionOptions: TransactionOptions = {
-            //     // readPreference: ReadPreference.primary,
-            //     readConcern: ReadConcern.fromOptions({ level: "local" }),
-            //     writeConcern: WriteConcern.fromOptions({ w: "majority" })
-            // };
+            const transactionOptions = {
+                readPreference: mongodb_1.ReadPreference.primary,
+                readConcern: mongodb_1.ReadConcern.fromOptions({ level: "local" }),
+                writeConcern: mongodb_1.WriteConcern.fromOptions({ w: "majority" })
+            };
             let doc;
+            let objectMe = { succes: true };
             const transactionResult = await CampaignModel.session.withTransaction(async () => {
                 doc = await this.collection.findOneAndUpdate({ userID: temp.userID, campainName: temp.campaignName }, { $set: temp }, { upsert: true, session: CampaignModel.session });
                 if (doc.lastErrorObject && !(doc.lastErrorObject.upserted)) {
@@ -116,26 +118,25 @@ class CampaignModel {
                     console.error("Stopping Further Transaction");
                     return { success: false };
                 }
-                let object = { succes: true };
-                let docCampaingHistory = await campaigns_history_1.CampaignHistoryModel.InsertCampaignHistory(data, user, CampaignModel.session);
+                await campaigns_history_1.CampaignHistoryModel.InsertCampaignHistory(data, user, CampaignModel.session);
                 if ((doc).lastErrorObject && doc.lastErrorObject.upserted) {
                     temp._id = doc.lastErrorObject.upserted;
-                    object.data = temp;
-                    return object;
+                    objectMe.data = temp;
+                    return objectMe;
                 }
                 else {
-                    object.data = doc.value;
-                    return object;
+                    objectMe.data = doc.value;
+                    return objectMe;
                 }
                 ;
-            });
-            if (transactionResult === null || transactionResult === void 0 ? void 0 : transactionResult.success) {
-                console.log("The reservation was successfully created.");
+            }, transactionOptions);
+            if (transactionResult) {
+                console.log("The campaign was successfully created.");
                 return transactionResult.data;
             }
             else {
                 console.log("The transaction was intentionally aborted.");
-                return transactionResult.data = null;
+                return;
             }
             // GamesInn.mongClient.startSession working
             // let doc = await this.collection.findOneAndUpdate({ userID: temp.userID, campainName:temp.campaignName }, { $set: temp }, { upsert: true })
@@ -148,6 +149,10 @@ class CampaignModel {
         finally {
             await CampaignModel.session.endSession();
         }
+    }
+    static async FindAllAcitveCampaigns() {
+        let doc = await this.collection.find({}).toArray();
+        return doc;
     }
     static async FindCampaignByUserID(userID) {
         let doc = await this.collection.find({ userID: userID }).limit(1).toArray();

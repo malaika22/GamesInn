@@ -47,11 +47,11 @@ class CampaignHistoryModel {
             let todaysDate = new Date();
             let numberOfDaysToAdd = 3;
             let expiryDate = todaysDate.setDate(todaysDate.getDate() + numberOfDaysToAdd);
-            console.log(new Date(expiryDate));
+            //Didnt use todays date in campaignCreatedAt because dates are refrece types and expiry date has already change the value of todays date
             let temp = {
                 campaignActive: data.active,
                 campaignName: data.campaignName,
-                campaignCreatedAt: todaysDate,
+                campaignCreatedAt: new Date(),
                 campaignDescription: data.campaignDescription,
                 userEmail: user.email,
                 userName: user.username,
@@ -74,8 +74,16 @@ class CampaignHistoryModel {
         }
     }
     static async FindCampaignByUserIDInHistory(userID) {
-        let doc = await this.collection.find({ userID: userID }).limit(1).toArray();
-        return doc[0];
+        let doc = await this.collection.find({ userID: userID }).toArray();
+        return doc;
+    }
+    static async GetAllCampaigns() {
+        let doc = await this.collection.find().toArray();
+        return doc;
+    }
+    static async GetActiveCampaigns() {
+        let doc = await this.collection.find({ campaignActive: true }).toArray();
+        return doc;
     }
 }
 exports.CampaignHistoryModel = CampaignHistoryModel;

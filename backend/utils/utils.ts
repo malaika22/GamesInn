@@ -1,16 +1,20 @@
 
 import axios from 'axios';
 import crypto from 'crypto'
+import { ObjectId } from 'mongodb';
 
 import { Payload, ServiceNames, WebMethods } from '../interfaces/payload';
 import { Logger } from '../server/logger';
 import { Sentry } from '../server/sentry';
-
+export interface DatesDiffrneceDays  {
+        _id? : ObjectId|string,
+        campaignCreatedAt:Date
+}
 export abstract class Utils {
 
     // private static salt = Application.conf?.ENCRYPTION.salt
-
-
+  
+    private static _MS_PER_DAY = 1000 * 60 * 60 * 24;
 
     /**
      * 
@@ -207,8 +211,27 @@ export abstract class Utils {
 
     }
 
+  //@TODO got bug
+    public static  GetDatesDiffrenceInDays(array:[DatesDiffrneceDays])
+    {
+        let makeActiveFalseCampaigns:[any]
 
+        let todaysDate = new Date()
+        const todayDateUTC = Date.UTC(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate());
 
+     let answer =   array.map((campaign)=>{
+            let campaignDateUTC = Date.UTC(campaign.campaignCreatedAt.getFullYear(), campaign.campaignCreatedAt.getMonth(), campaign.campaignCreatedAt.getDate());
+             if(Math.floor((campaignDateUTC - todayDateUTC)/Utils._MS_PER_DAY) >= 3)
+             {  
+
+                makeActiveFalseCampaigns.push(campaign)
+                return makeActiveFalseCampaigns
+             }
+        })
+        console.log(answer)
+        // const utc2 = Date.UTC(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate());
+      
+    }
 
 
     public static async DownloadImage(url: string) {

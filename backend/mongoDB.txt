@@ -6,7 +6,7 @@ open another cmd
 type ' mongod --replSet "rs0" '
 
 then goto git bash or powershell run as administartor
-type run-rs
+type run-rs -v 4.0.0 --shell
 
 copy the connection string and paste it into mongodb.connect(string) of your code
 

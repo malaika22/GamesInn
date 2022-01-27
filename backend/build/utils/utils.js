@@ -10,7 +10,6 @@ const payload_1 = require("../interfaces/payload");
 const logger_1 = require("../server/logger");
 const sentry_1 = require("../server/sentry");
 class Utils {
-    // private static salt = Application.conf?.ENCRYPTION.salt
     /**
      *
      * @param ms
@@ -182,6 +181,21 @@ class Utils {
     static isExpired(payload) {
         return (payload.expiry > new Date().toISOString()) ? true : false;
     }
+    //@TODO got bug
+    static GetDatesDiffrenceInDays(array) {
+        let makeActiveFalseCampaigns;
+        let todaysDate = new Date();
+        const todayDateUTC = Date.UTC(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate());
+        let answer = array.map((campaign) => {
+            let campaignDateUTC = Date.UTC(campaign.campaignCreatedAt.getFullYear(), campaign.campaignCreatedAt.getMonth(), campaign.campaignCreatedAt.getDate());
+            if (Math.floor((campaignDateUTC - todayDateUTC) / Utils._MS_PER_DAY) >= 3) {
+                makeActiveFalseCampaigns.push(campaign);
+                return makeActiveFalseCampaigns;
+            }
+        });
+        console.log(answer);
+        // const utc2 = Date.UTC(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate());
+    }
     static async DownloadImage(url) {
         try {
             let res = await axios_1.default.get(url, { responseType: 'arraybuffer' });
@@ -208,4 +222,6 @@ class Utils {
     }
 }
 exports.Utils = Utils;
+// private static salt = Application.conf?.ENCRYPTION.salt
+Utils._MS_PER_DAY = 1000 * 60 * 60 * 24;
 //# sourceMappingURL=utils.js.map

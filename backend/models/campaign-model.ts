@@ -1,10 +1,7 @@
 import mongodb, { Db, ReadConcern, ReadConcernLevel, ReadPreference, TransactionOptions, WriteConcern } from "mongodb";
-import { DefaultDatabase } from "../databases/database";
-import { Subscription } from 'rxjs';
 import { GamesInn } from "../databases/gamesinn-database";
-import { ObjectID, ObjectId } from "bson";
+import {  ObjectId } from "bson";
 import { Session } from "./session-model";
-import { date, object } from "joi";
 import { CampaignHistoryModel } from "./campaigns-history";
 
 interface TransactionResult{
@@ -148,43 +145,46 @@ export abstract class CampaignModel {
             CampaignModel.session = GamesInn.mongClient.startSession();
 
 
-            // const transactionOptions: TransactionOptions = {
-            //     // readPreference: ReadPreference.primary,
-            //     readConcern: ReadConcern.fromOptions({ level: "local" }),
-            //     writeConcern: WriteConcern.fromOptions({ w: "majority" })
-            // };
+            const transactionOptions: TransactionOptions = {
+                readPreference: ReadPreference.primary,
+                readConcern: ReadConcern.fromOptions({ level: "local" }),
+                writeConcern: WriteConcern.fromOptions({ w: "majority" })
+            };
 
             let doc: mongodb.ModifyResult<mongodb.Document>
-            
+            let objectMe:any = {succes:true}
+
             const transactionResult:TransactionResult = await CampaignModel.session.withTransaction(async () => {
                 doc = await this.collection.findOneAndUpdate({ userID: temp.userID, campainName: temp.campaignName }, { $set: temp }, { upsert: true, session: CampaignModel.session },)
+               
                 if (doc.lastErrorObject && !(doc.lastErrorObject.upserted)) {
                     await CampaignModel.session.abortTransaction();
                     console.error("campaign already exist with this name or userID");
                     console.error("Stopping Further Transaction")
                     return { success: false };
                 }
-                let object:any = {succes:true}
-                let docCampaingHistory = await CampaignHistoryModel.InsertCampaignHistory(data, user, CampaignModel.session)
+               
+                await CampaignHistoryModel.InsertCampaignHistory(data, user, CampaignModel.session)
+               
                 if ((doc).lastErrorObject && doc.lastErrorObject.upserted) {
                     temp._id = doc.lastErrorObject.upserted;
-                    object.data = temp
-                    return object;
+                    objectMe.data = temp
+                    return objectMe;
                 } else{ 
-                    object.data = doc.value
-                    return object
+                    objectMe.data = doc.value
+                    return objectMe
                 };
     
-            })
+            }, transactionOptions)
 
 
-            if (transactionResult?.success) {
-                console.log("The reservation was successfully created.");
+            if (transactionResult) {
+                console.log("The campaign was successfully created.");
                 return transactionResult.data
             } else {
 
                 console.log("The transaction was intentionally aborted.");
-                return transactionResult.data = null
+                return
             }
             // GamesInn.mongClient.startSession working
             // let doc = await this.collection.findOneAndUpdate({ userID: temp.userID, campainName:temp.campaignName }, { $set: temp }, { upsert: true })
@@ -202,6 +202,12 @@ export abstract class CampaignModel {
         }
     }
 
+
+    public static async FindAllAcitveCampaigns()
+    {
+        let doc: any = await this.collection.find({ }).toArray()
+        return doc
+    }
 
 
 

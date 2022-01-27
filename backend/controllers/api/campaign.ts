@@ -30,10 +30,12 @@ let lock: Map<string, MutexInterface>
 lock = new Map()
 
 
-let whitelistedRoutes = ['/viewAllCampaigns', 'createCampaign']
-let onlyGamerCanUtilize = ['/createCampaign']
+let whitelistedRoutes = ['/allCampaigns', "/allActiveCampaigns"] //dont need access token to run
+let onlyGamerCanUtilize = ['/createCampaign', "/myAllCampaigns", "/allCampaigns", '/allActiveCampaigns'] //only gamers are allowed to use these route
+
 routes.use(async (req: any, res, next: NextFunction) => {
     try {
+        console.log('req started')
         if (whitelistedRoutes.includes(req.path)) next()
         else {
             if (!req.headers.authorization) return res.status(401).send({ msg: "Please login" })
@@ -41,6 +43,7 @@ routes.use(async (req: any, res, next: NextFunction) => {
             const token = req.headers.authorization.toString().split(" ")[1]
 
             const payload: any = Vault.DecodeSignToken(token)
+            if (!payload) return res.status(400).send({ msg: "Login to access" })
 
             const session = await SessionsModel.GetSessionByID(payload.session_id, token)
 
@@ -59,17 +62,25 @@ routes.use(async (req: any, res, next: NextFunction) => {
 
 
 routes.use((req: any, res, next: NextFunction) => {
-    if (onlyGamerCanUtilize.includes(req.path)) {
-        if (req.gamerDetails.userType == UserTypes.GAMER) next()
-        else return res.status(401).send({ msg: "You cannot use this route" })
-    }
+    try {
+        if (!req.gamerDetails) return next()
 
+        if (onlyGamerCanUtilize.includes(req.path)) {
+
+            if (req.gamerDetails.userType == UserTypes.GAMER) next()
+            else return res.status(401).send({ msg: "You cannot use this route" })
+        }
+        else return res.status(404).send('Unknown Route') //will be chnaged when working on investor
+    } catch (error) {
+        console.log(error);
+
+    }
 })
+
 
 routes.get('/hello', (req: any, res) => {
     return res.status(200).send({ msg: req.gamerDetails })
 })
-
 
 
 routes.post('/createCampaign', async (req: any, res) => {
@@ -89,13 +100,13 @@ routes.post('/createCampaign', async (req: any, res) => {
         let validation = JoiSchemas.CreateCampaigns(payload)
         if (validation.errored) return res.status(400).send({ msg: "Validation error", errors: validation.errors })
 
-        payload.active= true
+        payload.active = true
         let campaignCreated = await CampaignModel.InsertCampaign(payload, req.gamerDetails)
         // await CampaignHistoryModel.InsertCampaignHistory(payload,req.gamerDetails)
 
         return res.status(201).send({ msg: "Campaign Created", campaignData: campaignCreated })
 
-    } catch (error:any) {
+    } catch (error: any) {
         console.log(error);
         Sentry.Error(error, 'Error in Create Campaign');
         throw error;
@@ -108,6 +119,52 @@ routes.post('/createCampaign', async (req: any, res) => {
         }
     }
 
+
+})
+
+
+routes.get('/myAllCampaigns', async (req: any, res) => {
+    try {
+        let myCampaigns = await CampaignHistoryModel.FindCampaignByUserIDInHistory(req.gamerDetails.userID)
+        return res.status(200).send({ data: myCampaigns })
+    } catch (error: any) {
+        console.log(error);
+        Sentry.Error(error, 'Error in view my Campaigns');
+        throw error;
+    }
+
+})
+
+
+/**
+ * @NOTE all campaigns are only for admin, ask malaika to make it visible to investor as well or gamers
+ */
+routes.get('/allCampaigns', async (req: any, res) => {
+    try {
+        const allCampaigns = await CampaignHistoryModel.GetAllCampaigns();
+        return res.status(200).send({ data: allCampaigns })
+
+    } catch (error: any) {
+        console.log(error);
+        Sentry.Error(error, 'Error in fetch all Campaigns');
+        throw error;
+    }
+
+})
+
+
+/***
+ * @NOTE Below api is for campaigns that will be use to show data on page. These are all currenty active campaigns
+ */
+routes.get('/allActiveCampaigns', async (req, res) => {
+    try {
+        const activeCampaigns = await CampaignModel.FindAllAcitveCampaigns();
+        return res.status(200).send({ sire: activeCampaigns.length, data: activeCampaigns })
+    } catch (error: any) {
+        console.log(error);
+        Sentry.Error(error, 'Error in fetch active Campaigns');
+        throw error;
+    }
 
 })
 

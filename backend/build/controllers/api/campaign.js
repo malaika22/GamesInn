@@ -25,14 +25,16 @@ const session_model_1 = require("../../models/session-model");
 const userTypes_1 = require("../../utils/enums/userTypes");
 const campaign_model_1 = require("../../models/campaign-model");
 const joiSchemas_1 = require("../../utils/joiSchemas");
+const campaigns_history_1 = require("../../models/campaigns-history");
 const sentry_1 = require("../../server/sentry");
 const routes = express_1.default.Router();
 let lock;
 lock = new Map();
-let whitelistedRoutes = ['/viewAllCampaigns', 'createCampaign'];
-let onlyGamerCanUtilize = ['/createCampaign'];
+let whitelistedRoutes = ['/allCampaigns', "/allActiveCampaigns"]; //dont need access token to run
+let onlyGamerCanUtilize = ['/createCampaign', "/myAllCampaigns", "/allCampaigns", '/allActiveCampaigns']; //only gamers are allowed to use these route
 routes.use(async (req, res, next) => {
     try {
+        console.log('req started');
         if (whitelistedRoutes.includes(req.path))
             next();
         else {
@@ -40,6 +42,8 @@ routes.use(async (req, res, next) => {
                 return res.status(401).send({ msg: "Please login" });
             const token = req.headers.authorization.toString().split(" ")[1];
             const payload = vault_1.Vault.DecodeSignToken(token);
+            if (!payload)
+                return res.status(400).send({ msg: "Login to access" });
             const session = await session_model_1.SessionsModel.GetSessionByID(payload.session_id, token);
             if (!session)
                 return res.status(404).send({ msg: "Please login", issue: "Session not found with this token" });
@@ -52,11 +56,20 @@ routes.use(async (req, res, next) => {
     }
 });
 routes.use((req, res, next) => {
-    if (onlyGamerCanUtilize.includes(req.path)) {
-        if (req.gamerDetails.userType == userTypes_1.UserTypes.GAMER)
-            next();
+    try {
+        if (!req.gamerDetails)
+            return next();
+        if (onlyGamerCanUtilize.includes(req.path)) {
+            if (req.gamerDetails.userType == userTypes_1.UserTypes.GAMER)
+                next();
+            else
+                return res.status(401).send({ msg: "You cannot use this route" });
+        }
         else
-            return res.status(401).send({ msg: "You cannot use this route" });
+            return res.status(404).send('Unknown Route'); //will be chnaged when working on investor
+    }
+    catch (error) {
+        console.log(error);
     }
 });
 routes.get('/hello', (req, res) => {
@@ -95,6 +108,45 @@ routes.post('/createCampaign', async (req, res) => {
             release();
             console.log('Your lock has been released!!!');
         }
+    }
+});
+routes.get('/myAllCampaigns', async (req, res) => {
+    try {
+        let myCampaigns = await campaigns_history_1.CampaignHistoryModel.FindCampaignByUserIDInHistory(req.gamerDetails.userID);
+        return res.status(200).send({ data: myCampaigns });
+    }
+    catch (error) {
+        console.log(error);
+        sentry_1.Sentry.Error(error, 'Error in view my Campaigns');
+        throw error;
+    }
+});
+/**
+ * @NOTE all campaigns are only for admin, ask malaika to make it visible to investor as well or gamers
+ */
+routes.get('/allCampaigns', async (req, res) => {
+    try {
+        const allCampaigns = await campaigns_history_1.CampaignHistoryModel.GetAllCampaigns();
+        return res.status(200).send({ data: allCampaigns });
+    }
+    catch (error) {
+        console.log(error);
+        sentry_1.Sentry.Error(error, 'Error in fetch all Campaigns');
+        throw error;
+    }
+});
+/***
+ * @NOTE Below api is for campaigns that will be use to show data on page. These are all currenty active campaigns
+ */
+routes.get('/allActiveCampaigns', async (req, res) => {
+    try {
+        const activeCampaigns = await campaign_model_1.CampaignModel.FindAllAcitveCampaigns();
+        return res.status(200).send({ sire: activeCampaigns.length, data: activeCampaigns });
+    }
+    catch (error) {
+        console.log(error);
+        sentry_1.Sentry.Error(error, 'Error in fetch active Campaigns');
+        throw error;
     }
 });
 exports.router = routes;
