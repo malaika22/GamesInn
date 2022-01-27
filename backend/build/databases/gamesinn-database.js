@@ -9,7 +9,9 @@ class GamesInn {
         try {
             GamesInn.conf = dbconf;
             if (!this.mongClient || !this.db) {
+                // this.mongClient = await MongoClient.connect(`mongodb://${dbconf.host}:${dbconf.port}/replicaSet=rs`);
                 this.mongClient = await mongodb_1.MongoClient.connect(`mongodb://${dbconf.host}:${dbconf.port}`);
+                this.mongClient = await mongodb_1.MongoClient.connect("mongodb://DESKTOP-79N9VQ7:27017,DESKTOP-79N9VQ7:27018,DESKTOP-79N9VQ7:27019?replicaSet=rs");
                 this.mongClient.on('serverDescriptionChanged', function (event) {
                     // console.log('received serverDescriptionChanged');
                     // console.log(JSON.stringify(event, null, 2));

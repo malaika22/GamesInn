@@ -42,39 +42,32 @@ class CampaignHistoryModel {
             throw new Error('Error in Initializing Collection in Worker');
         }
     }
-    static async InsertCampaignHistory(data, user) {
+    static async InsertCampaignHistory(data, user, session) {
         try {
             let todaysDate = new Date();
             let numberOfDaysToAdd = 3;
             let expiryDate = todaysDate.setDate(todaysDate.getDate() + numberOfDaysToAdd);
             console.log(new Date(expiryDate));
-            try {
-                let temp = {
-                    campaignActive: data.active,
-                    campaignName: data.campaignName,
-                    campaignCreatedAt: todaysDate,
-                    campaignDescription: data.campaignDescription,
-                    userEmail: user.email,
-                    userName: user.username,
-                    userID: user.userID,
-                    campaignDays: data.campaignDays,
-                    campaignTargetedAmount: data.campaignTargetedAmount,
-                    campaignCreatedBy: user.userID,
-                    campaignExpireAt: new Date(expiryDate)
-                };
-                let doc = await this.collection.findOneAndUpdate({ userID: temp.userID, campainName: temp.campaignName }, { $set: temp }, { upsert: true });
-                if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
-                    temp._id = doc.lastErrorObject.upserted;
-                    return temp;
-                }
-                else
-                    return doc.value;
+            let temp = {
+                campaignActive: data.active,
+                campaignName: data.campaignName,
+                campaignCreatedAt: todaysDate,
+                campaignDescription: data.campaignDescription,
+                userEmail: user.email,
+                userName: user.username,
+                userID: user.userID,
+                campaignDays: data.campaignDays,
+                campaignTargetedAmount: data.campaignTargetedAmount,
+                campaignCreatedBy: user.userID,
+                campaignExpireAt: new Date(expiryDate)
+            };
+            let doc = await this.collection.findOneAndUpdate({ userID: temp.userID, campainName: temp.campaignName }, { $set: temp }, { upsert: true, session: session });
+            if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
+                temp._id = doc.lastErrorObject.upserted;
+                return temp;
             }
-            catch (error) {
-                console.log(error);
-                console.log('Error in Inserting Campaign');
-                return error;
-            }
+            else
+                return doc.value;
         }
         catch (error) {
             throw new Error('Error in insertingg campaign history');

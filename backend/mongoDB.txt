@@ -1,0 +1,13 @@
+Firstly stop your monog server instance with 
+type monog in cmd
+then db.shutdownServer()
+
+open another cmd
+type ' mongod --replSet "rs0" '
+
+then goto git bash or powershell run as administartor
+type run-rs
+
+copy the connection string and paste it into mongodb.connect(string) of your code
+
+and bang bang your server will start

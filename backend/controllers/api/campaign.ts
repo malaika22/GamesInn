@@ -13,7 +13,7 @@ import express, { NextFunction, Router } from "express";
  * allowing other threads to acquire a lock and access the resource.
  * 
  * @NOTE
- * To understand more about mutex read https://blog.theodo.com/2019/09/handle-race-conditions-in-nodejs-using-mutex/
+ * To understand more about mutex lock read https://blog.theodo.com/2019/09/handle-race-conditions-in-nodejs-using-mutex/
  */
 import { Mutex, MutexInterface } from 'async-mutex';
 
@@ -23,6 +23,7 @@ import { UserTypes } from "../../utils/enums/userTypes";
 import { CampaignModel } from "../../models/campaign-model";
 import { JoiSchemas } from "../../utils/joiSchemas";
 import { CampaignHistoryModel } from "../../models/campaigns-history";
+import { Sentry } from "../../server/sentry";
 
 const routes: Router = express.Router()
 let lock: Map<string, MutexInterface>
@@ -90,12 +91,14 @@ routes.post('/createCampaign', async (req: any, res) => {
 
         payload.active= true
         let campaignCreated = await CampaignModel.InsertCampaign(payload, req.gamerDetails)
-        await CampaignHistoryModel.InsertCampaignHistory(payload,req.gamerDetails)
+        // await CampaignHistoryModel.InsertCampaignHistory(payload,req.gamerDetails)
 
         return res.status(201).send({ msg: "Campaign Created", campaignData: campaignCreated })
 
-    } catch (error) {
-
+    } catch (error:any) {
+        console.log(error);
+        Sentry.Error(error, 'Error in Create Campaign');
+        throw error;
     }
     finally {
         if (release == undefined) return console.log('Release lock is undefined!')

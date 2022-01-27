@@ -1,11 +1,16 @@
-import mongodb, {Db } from "mongodb";
+import mongodb, { Db, ReadConcern, ReadConcernLevel, ReadPreference, TransactionOptions, WriteConcern } from "mongodb";
 import { DefaultDatabase } from "../databases/database";
 import { Subscription } from 'rxjs';
 import { GamesInn } from "../databases/gamesinn-database";
 import { ObjectID, ObjectId } from "bson";
 import { Session } from "./session-model";
-import { date } from "joi";
+import { date, object } from "joi";
 import { CampaignHistoryModel } from "./campaigns-history";
+
+interface TransactionResult{
+    success:boolean,
+    data?:any
+}
 
 export interface Campaign {
     campaignName: string,
@@ -40,7 +45,7 @@ export abstract class CampaignModel {
                     console.log('GOT DB');
                     console.log(this.collection.collectionName);
                     await this.collection.createIndex({ "campaignCreatedAt": 1 }, { expireAfterSeconds: CampaignModel.campaignDeletedSeconds })
-                    
+
                 } catch (error: any) {
                     if (error.code == 48) {
                         this.collection = await this.db.collection('campaign');
@@ -118,12 +123,11 @@ export abstract class CampaignModel {
         }
     }
 
+    private static session: mongodb.ClientSession
     public static async InsertCampaign(data: any, user: Session) {
-
         let todaysDate = new Date();
         let numberOfDaysToAdd = 3;
         let expiryDate = todaysDate.setDate(todaysDate.getDate() + numberOfDaysToAdd);
-        console.log(new Date(expiryDate))
 
 
         try {
@@ -141,19 +145,60 @@ export abstract class CampaignModel {
                 campaignExpireAt: new Date(expiryDate)
             }
 
+            CampaignModel.session = GamesInn.mongClient.startSession();
+
+
+            // const transactionOptions: TransactionOptions = {
+            //     // readPreference: ReadPreference.primary,
+            //     readConcern: ReadConcern.fromOptions({ level: "local" }),
+            //     writeConcern: WriteConcern.fromOptions({ w: "majority" })
+            // };
+
+            let doc: mongodb.ModifyResult<mongodb.Document>
+            
+            const transactionResult:TransactionResult = await CampaignModel.session.withTransaction(async () => {
+                doc = await this.collection.findOneAndUpdate({ userID: temp.userID, campainName: temp.campaignName }, { $set: temp }, { upsert: true, session: CampaignModel.session },)
+                if (doc.lastErrorObject && !(doc.lastErrorObject.upserted)) {
+                    await CampaignModel.session.abortTransaction();
+                    console.error("campaign already exist with this name or userID");
+                    console.error("Stopping Further Transaction")
+                    return { success: false };
+                }
+                let object:any = {succes:true}
+                let docCampaingHistory = await CampaignHistoryModel.InsertCampaignHistory(data, user, CampaignModel.session)
+                if ((doc).lastErrorObject && doc.lastErrorObject.upserted) {
+                    temp._id = doc.lastErrorObject.upserted;
+                    object.data = temp
+                    return object;
+                } else{ 
+                    object.data = doc.value
+                    return object
+                };
+    
+            })
+
+
+            if (transactionResult?.success) {
+                console.log("The reservation was successfully created.");
+                return transactionResult.data
+            } else {
+
+                console.log("The transaction was intentionally aborted.");
+                return transactionResult.data = null
+            }
             // GamesInn.mongClient.startSession working
             // let doc = await this.collection.findOneAndUpdate({ userID: temp.userID, campainName:temp.campaignName }, { $set: temp }, { upsert: true })
 
 
-            // if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
-            //     temp._id = doc.lastErrorObject.upserted;
-            //     return temp;
-            // } else return doc.value;
+      
 
         } catch (error) {
             console.log(error);
-            console.log('Error in Inserting Campaign');
+            console.log('Error in Inserting Campaign. The transaction was aborted due to an unexpected error');
             return error;
+        }
+        finally {
+            await CampaignModel.session.endSession()
         }
     }
 
@@ -167,3 +212,52 @@ export abstract class CampaignModel {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+// const transactionResults = await session.withTransaction(async () => {
+
+//     // Important:: You must pass the session to each of the operations
+
+//     // Add a reservation to the reservations array for the appropriate document in the users collection
+//     const usersUpdateResults = await usersCollection.updateOne(
+//         { email: userEmail },
+//         { $addToSet: { reservations: reservation } },
+//         { session });
+//     console.log(`${usersUpdateResults.matchedCount} document(s) found in the users collection with the email address ${userEmail}.`);
+//     console.log(`${usersUpdateResults.modifiedCount} document(s) was/were updated to include the reservation.`);
+
+//     // Check if the Airbnb listing is already reserved for those dates. If so, abort the transaction.
+//     const isListingReservedResults = await listingsAndReviewsCollection.findOne(
+//         { name: nameOfListing, datesReserved: { $in: reservationDates } },
+//         { session });
+//     if (isListingReservedResults) {
+//         await session.abortTransaction();
+//         console.error("This listing is already reserved for at least one of the given dates. The reservation could not be created.");
+//         console.error("Any operations that already occurred as part of this transaction will be rolled back.")
+//         return;
+//     }
+
+//     //  Add the reservation dates to the datesReserved array for the appropriate document in the listingsAndRewiews collection
+//     const listingsAndReviewsUpdateResults = await listingsAndReviewsCollection.updateOne(
+//         { name: nameOfListing },
+//         { $addToSet: { datesReserved: { $each: reservationDates } } },
+//         { session });
+//     console.log(`${listingsAndReviewsUpdateResults.matchedCount} document(s) found in the listingsAndReviews collection with the name ${nameOfListing}.`);
+//     console.log(`${listingsAndReviewsUpdateResults.modifiedCount} document(s) was/were updated to include the reservation dates.`);
+
+// }, transactionOptions);
+
+// if (transactionResults) {
+//     console.log("The reservation was successfully created.");
+// } else {
+//     console.log("The transaction was intentionally aborted.");
+// }

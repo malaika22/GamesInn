@@ -22,8 +22,8 @@ export abstract class CampaignHistoryModel {
                     console.log('GOT DB');
                     console.log(this.collection.collectionName);
                     await this.collection.createIndex({ "userID": 1 })
-                    await this.collection.createIndex({"campaignCreatedAt":1})
-                    await this.collection.createIndex({  "campaignActive" : 1 })
+                    await this.collection.createIndex({ "campaignCreatedAt": 1 })
+                    await this.collection.createIndex({ "campaignActive": 1 })
 
 
                 } catch (error: any) {
@@ -56,18 +56,18 @@ export abstract class CampaignHistoryModel {
     }
 
 
-   
 
-    public static async InsertCampaignHistory(data: any, user:Session) {
+
+    public static async InsertCampaignHistory(data: any, user: Session, session: mongodb.ClientSession) {
         try {
-           
-        let todaysDate = new Date();
-        let numberOfDaysToAdd = 3;
-        let expiryDate = todaysDate.setDate(todaysDate.getDate() + numberOfDaysToAdd);
-        console.log(new Date(expiryDate))
+
+            let todaysDate = new Date();
+            let numberOfDaysToAdd = 3;
+            let expiryDate = todaysDate.setDate(todaysDate.getDate() + numberOfDaysToAdd);
+            console.log(new Date(expiryDate))
 
 
-        try {
+
             let temp: Campaign = {
                 campaignActive: data.active,
                 campaignName: data.campaignName,
@@ -83,22 +83,18 @@ export abstract class CampaignHistoryModel {
             }
 
 
-            
-            let doc = await this.collection.findOneAndUpdate({ userID: temp.userID, campainName:temp.campaignName }, { $set: temp }, { upsert: true })
 
-       
+            let doc = await this.collection.findOneAndUpdate({ userID: temp.userID, campainName: temp.campaignName }, { $set: temp }, { upsert: true, session: session })
+
+
             if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
                 temp._id = doc.lastErrorObject.upserted;
                 return temp;
             } else return doc.value;
 
-        } catch (error) {
-            console.log(error);
-            console.log('Error in Inserting Campaign');
-            return error;
         }
-        
-        } catch (error) {
+
+        catch (error) {
             throw new Error('Error in insertingg campaign history')
 
         }
@@ -106,12 +102,11 @@ export abstract class CampaignHistoryModel {
     }
 
 
-    
 
-    public static async FindCampaignByUserIDInHistory(userID:string | ObjectId)
-    {
-        
-        let doc:any =  await this.collection.find({userID:userID}).limit(1).toArray()
+
+    public static async FindCampaignByUserIDInHistory(userID: string | ObjectId) {
+
+        let doc: any = await this.collection.find({ userID: userID }).limit(1).toArray()
         return doc[0]
     }
 

@@ -17,7 +17,7 @@ const express_1 = __importDefault(require("express"));
  * allowing other threads to acquire a lock and access the resource.
  *
  * @NOTE
- * To understand more about mutex read https://blog.theodo.com/2019/09/handle-race-conditions-in-nodejs-using-mutex/
+ * To understand more about mutex lock read https://blog.theodo.com/2019/09/handle-race-conditions-in-nodejs-using-mutex/
  */
 const async_mutex_1 = require("async-mutex");
 const vault_1 = require("../../databases/vault");
@@ -25,7 +25,7 @@ const session_model_1 = require("../../models/session-model");
 const userTypes_1 = require("../../utils/enums/userTypes");
 const campaign_model_1 = require("../../models/campaign-model");
 const joiSchemas_1 = require("../../utils/joiSchemas");
-const campaigns_history_1 = require("../../models/campaigns-history");
+const sentry_1 = require("../../server/sentry");
 const routes = express_1.default.Router();
 let lock;
 lock = new Map();
@@ -80,10 +80,13 @@ routes.post('/createCampaign', async (req, res) => {
             return res.status(400).send({ msg: "Validation error", errors: validation.errors });
         payload.active = true;
         let campaignCreated = await campaign_model_1.CampaignModel.InsertCampaign(payload, req.gamerDetails);
-        await campaigns_history_1.CampaignHistoryModel.InsertCampaignHistory(payload, req.gamerDetails);
+        // await CampaignHistoryModel.InsertCampaignHistory(payload,req.gamerDetails)
         return res.status(201).send({ msg: "Campaign Created", campaignData: campaignCreated });
     }
     catch (error) {
+        console.log(error);
+        sentry_1.Sentry.Error(error, 'Error in Create Campaign');
+        throw error;
     }
     finally {
         if (release == undefined)
