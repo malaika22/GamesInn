@@ -2,16 +2,17 @@ import cron from 'node-cron'
 import { CampaignHistoryModel } from '../../models/campaigns-history'
 import { Sentry } from '../../server/sentry'
 import { DatesDiffrneceDays, Utils } from '../../utils/utils'
+
 /**
- * @Note https://crontab.guru/ To calculate every day of month
+ * @Note https://crontab.guru/ To calculate cron days and timing
  */
 export abstract class CroneJob {
 
-   
+
     public static Scheduler() {
 
         console.log('Cron intiallize')
-       
+
         //'0 1 * * *' every day at 1am
         cron.schedule('0 1 * * *', async () => {
             try {

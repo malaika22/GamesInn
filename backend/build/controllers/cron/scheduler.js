@@ -9,7 +9,7 @@ const campaigns_history_1 = require("../../models/campaigns-history");
 const sentry_1 = require("../../server/sentry");
 const utils_1 = require("../../utils/utils");
 /**
- * @Note https://crontab.guru/ To calculate every day of month
+ * @Note https://crontab.guru/ To calculate cron days and timing
  */
 class CroneJob {
     static Scheduler() {

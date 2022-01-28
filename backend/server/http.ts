@@ -16,6 +16,7 @@ import * as HealthRouter from "../controllers/api/health";
 import * as VaultRouter from "../controllers/api/vault";
 import * as AuthenticationRouter from '../controllers/api/auth'
 import * as CampaignRouter from '../controllers/api/campaign'
+const PaymentRouter = require('../controllers/api/payments/payments')
 
 import * as Handlebars from 'express-handlebars'
 import * as helpers from 'handlebars-helpers'
@@ -92,9 +93,9 @@ export class HTTPServer {
 
         this.server.app.use('/gamer/auth/api/v1', AuthenticationRouter.router)
 
-        this.server.app.use('/campaign/api/v1/', CampaignRouter.router)
+        this.server.app.use('/campaign/api/v1', CampaignRouter.router)
 
-
+        this.server.app.use('/payment/api/v1', PaymentRouter)
         //Default Route Must be added at end.
         this.server.app.use('/', DefaultRouter.router);
     }
