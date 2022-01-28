@@ -85,6 +85,19 @@ class CampaignHistoryModel {
         let doc = await this.collection.find({ campaignActive: true }).toArray();
         return doc;
     }
+    static async DeactivateCampaigns(arrayOfIds) {
+        try {
+            if (arrayOfIds.length == 0)
+                return "No doccument to update";
+            let doc = await this.collection.updateMany({ _id: { $in: arrayOfIds } }, { $set: { campaignActive: false } });
+            if (doc.modifiedCount > 0)
+                return `modified count is ${doc.modifiedCount}`;
+            // this.collection.find( { quantity: { $in: [ 5, 15 ] } }, { _id: 0 } )
+        }
+        catch (error) {
+            throw new Error(`Error in insertingg campaign history ${error}`);
+        }
+    }
 }
 exports.CampaignHistoryModel = CampaignHistoryModel;
 CampaignHistoryModel.campaignDeletedSeconds = 259200;

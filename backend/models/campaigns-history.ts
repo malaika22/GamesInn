@@ -123,4 +123,17 @@ export abstract class CampaignHistoryModel {
 
     }
 
+    public static async DeactivateCampaigns(arrayOfIds:any)
+    {try {
+        if(arrayOfIds.length == 0) return "No doccument to update"
+        let doc:any = await this.collection.updateMany({ _id : { $in : arrayOfIds }}, {$set  : {campaignActive:false}})
+        if(doc.modifiedCount > 0) return `modified count is ${doc.modifiedCount}`
+        // this.collection.find( { quantity: { $in: [ 5, 15 ] } }, { _id: 0 } )
+    } catch (error:any) {
+        throw new Error(`Error in insertingg campaign history ${error}`)
+
+    }
+  
+    }
+
 }

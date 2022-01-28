@@ -6,14 +6,14 @@ import { ObjectId } from 'mongodb';
 import { Payload, ServiceNames, WebMethods } from '../interfaces/payload';
 import { Logger } from '../server/logger';
 import { Sentry } from '../server/sentry';
-export interface DatesDiffrneceDays  {
-        _id? : ObjectId|string,
-        campaignCreatedAt:Date
+export interface DatesDiffrneceDays {
+    _id?: ObjectId | string,
+    campaignCreatedAt: Date
 }
 export abstract class Utils {
 
     // private static salt = Application.conf?.ENCRYPTION.salt
-  
+
     private static _MS_PER_DAY = 1000 * 60 * 60 * 24;
 
     /**
@@ -210,27 +210,29 @@ export abstract class Utils {
 
 
     }
-
-  //@TODO got bug
-    public static  GetDatesDiffrenceInDays(array:[DatesDiffrneceDays])
-    {
-        let makeActiveFalseCampaigns:[any]
+    /**
+     * @Note .. since dates naturally have time-zone information, which can span regions with different
+     *  day light savings adjustments
+ |   *  You can work around this by first normalizing the two dates to UTC, and then calculating the 
+     * difference between those two UTC dates. Check link
+     * https://stackoverflow.com/questions/3224834/get-difference-between-2-dates-in-javascript
+     * @param array 
+     * @returns objectID or undefined
+     */
+    public static GetDatesDiffrenceInDays(array: [DatesDiffrneceDays]) {
 
         let todaysDate = new Date()
         const todayDateUTC = Date.UTC(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate());
 
-     let answer =   array.map((campaign)=>{
+        let answer = array.filter((campaign) => {
             let campaignDateUTC = Date.UTC(campaign.campaignCreatedAt.getFullYear(), campaign.campaignCreatedAt.getMonth(), campaign.campaignCreatedAt.getDate());
-             if(Math.floor((campaignDateUTC - todayDateUTC)/Utils._MS_PER_DAY) >= 3)
-             {  
-
-                makeActiveFalseCampaigns.push(campaign)
-                return makeActiveFalseCampaigns
-             }
+            if (Math.floor((todayDateUTC - campaignDateUTC) / Utils._MS_PER_DAY) >= 3) return campaign
         })
-        console.log(answer)
-        // const utc2 = Date.UTC(todaysDate.getFullYear(), todaysDate.getMonth(), todaysDate.getDate());
-      
+
+        let result = answer.map(a => a._id);
+
+        return result
+
     }
 
 
@@ -262,8 +264,8 @@ export abstract class Utils {
     }
 
 
-    public static RandomStringGenerator(){
-       return crypto.randomBytes(8).toString('hex')
+    public static RandomStringGenerator() {
+        return crypto.randomBytes(8).toString('hex')
     }
 
 }
