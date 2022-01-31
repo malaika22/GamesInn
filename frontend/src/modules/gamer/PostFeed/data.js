@@ -6,6 +6,7 @@ export default  data =[
         image:'https://res.cloudinary.com/diqqf3eq2/image/upload/v1595959131/person-2_ipcjws.jpg',
         game:'Fortnite',
         titleContent:['Level 1279', '129 Skins', 'Skull Trooper, Candy Axe, Rabbit Raider', 'Full Access - chicksfnc203' ],
+        images:['https://cdn-offer-photos.zeusx.com/d7b7f290-af35-4194-856f-edb24f206e8c.jpg', 'https://pbs.twimg.com/media/D238eu8XQAAAl9-.jpg'],
         rating: 5.0,
         price:45,
     },

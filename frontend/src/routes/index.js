@@ -7,6 +7,7 @@ import GamerLayout from "../components/GamerLayout/GamerLayout";
 import Accounts from "../modules/gamer/Accounts/Accounts";
 import GamerPrivateRoute from "./GamerPrivateRoute";
 import PostFeed from "../modules/gamer/PostFeed/PostFeed";
+import Post from "../modules/gamer/PostFeed/Post";
 
 const ModuleRoutes = () => {
   return (
@@ -18,6 +19,7 @@ const ModuleRoutes = () => {
       <Route exact path="/" element={<GamerPrivateRoute />}>
         <Route exact path="/postfeed" element={<PostFeed />} />
         <Route exact path="/accounts" element={<Accounts />} />
+        <Route exact path="/post/:id" element={<Post />} />
       </Route>
     </Routes>
   );

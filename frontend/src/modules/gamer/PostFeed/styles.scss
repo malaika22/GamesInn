@@ -1,5 +1,9 @@
 @import "~font-awesome/css/font-awesome.css";
 
+
+.posts{
+    height: 100%;
+}
 .rating{
     display: grid;
     grid-template-columns: auto 1fr;
@@ -44,4 +48,88 @@
     object-fit: cover;
     border-radius: 50%;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+
+//card
+.card{
+    padding: 20px;
+    width: 100%;
+    max-width: 1170px;
+    margin: 0 auto;
+    border: 0.5px solid #575988;
+
+
+    &-sections{
+        display: flex;
+        justify-content: left;
+    }
+
+    &-sections-right{
+        width: 100%;
+        margin-left: 20px;
+        margin-top: 20px;
+        text-align: left;
+    }
+
+    &-sections-left{
+        text-align: left;
+    }
+
+    &-tags{
+      margin-top: 20px;
+    }
+
+    img{
+        width: 150px;
+        height: 150px;
+        margin-top: 20px;
+        object-fit: cover;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    &-button{
+        height: 45px;
+        width: 159px;
+        border-radius: 10px;
+        margin-top: 20px;
+
+        &:focus{
+            border: none;
+            outline: none;
+        }
+      }
+}
+
+.Buy{
+    border:1px solid #575988 ;
+    background-color: white;
+    color: #575988;
+
+    &:hover {
+        border:1px solid white ;
+        background-color: #575988;
+        color: white;
+      }
+  }
+
+.Contact{
+    background: #575988;
+    border-color: #575988;
+    color: white;
+
+    &:hover {
+        border:1px solid #575988 ;
+        background-color: white;
+        color: #575988;
+      }
+} 
+.description-images{
+    img{
+        width: 150px;
+        height: 150px;
+        margin-top: 20px;
+        object-fit: cover;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-left: 10px;
+    }
 }
