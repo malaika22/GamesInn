@@ -1,15 +1,14 @@
 const express = require('express')
 const Safepay = require('safepay')
-const { Application } = require('../../../app')
-const { GamersModel } = require('../../../models/gamer-model')
-const { Sentry } = require('../../../server/sentry')
-// Application.INIT()
+const crypto = require('crypto');
+const nanoid = require('nanoid')
 
-// let data = Vault.GetVaultData().then((data)=> console.log("data =====>>>", data))
+const { Sentry } = require('../../../server/sentry')
+
 
 const routes = express.Router()
 
-const config = {
+  const config = {
   environment: "sandbox",
   sandbox: {
     baseUrl: "https://sandbox.api.getsafepay.com",
