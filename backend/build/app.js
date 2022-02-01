@@ -40,6 +40,8 @@ const email_1 = require("./utils/email/email");
 const campaign_model_1 = require("./models/campaign-model");
 const scheduler_1 = require("./controllers/cron/scheduler");
 const campaigns_history_1 = require("./models/campaigns-history");
+const campaign_funded_1 = require("./models/campaign-funded");
+const transaction_1 = require("./models/transaction");
 global.__rootdir__ = process.cwd();
 class Application {
     constructor() { }
@@ -162,6 +164,8 @@ class Application {
             await tokens_model_1.TokenModel.INIT();
             await campaign_model_1.CampaignModel.INIT();
             await campaigns_history_1.CampaignHistoryModel.INIT();
+            await campaign_funded_1.CampaignFunded.INIT();
+            await transaction_1.TransactionsCampaignFunded.INIT();
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.
              */
@@ -169,6 +173,7 @@ class Application {
                 await utils_1.Utils.Sleep(global.delayStart);
             if (env.config.QUEUE)
                 await rabbitmq_1.RMQ.INIT(Application.conf.RABBITMQ);
+            // console.log(await Vault.GetVaultData(), 'vault cliebnt data');
             this.httpServer = http_1.HTTPServer.INIT(env.config);
             Object.seal(this.httpServer);
             logger_2.Logger.Console('Server Started : ', 'info');

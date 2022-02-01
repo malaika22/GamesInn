@@ -25,7 +25,6 @@ export abstract class CroneJob {
 
                 //If ids are theier then update all those document with active property of false
                 let result = await CampaignHistoryModel.DeactivateCampaigns((ids as any));
-                console.log(result, 'DONE');
 
 
             } catch (error: any) {
@@ -41,5 +40,4 @@ export abstract class CroneJob {
 }
 
 
-// 1 * * * * evrey one min
 

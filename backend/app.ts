@@ -24,6 +24,8 @@ import { Email } from "./utils/email/email";
 import { CampaignModel } from "./models/campaign-model";
 import { CroneJob } from "./controllers/cron/scheduler";
 import { CampaignHistoryModel } from "./models/campaigns-history";
+import { CampaignFunded } from "./models/campaign-funded";
+import { TransactionsCampaignFunded } from "./models/transaction";
 // import { OpenAPIConfiguration } from "./controllers/documentation/config_openapi";
 
 // import { runme } from "./controllers/documentation/api-documentations";
@@ -198,13 +200,16 @@ export class Application {
             await TokenModel.INIT()
             await CampaignModel.INIT()
             await CampaignHistoryModel.INIT()
+            await CampaignFunded.INIT()
+            await TransactionsCampaignFunded.INIT()
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.
              */
             if (global.delayStart) await Utils.Sleep(global.delayStart);
 
             if (env.config.QUEUE) await RMQ.INIT(Application.conf.RABBITMQ);
-
+            // console.log(await Vault.GetVaultData(), 'vault cliebnt data');
+            
             this.httpServer = HTTPServer.INIT(env.config);
 
             Object.seal(this.httpServer);

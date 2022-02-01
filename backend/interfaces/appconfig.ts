@@ -69,6 +69,12 @@ export interface APIKEYS {
 }
 
 
+export interface SAFEPAY { 
+    API_KEY : string,
+    API_SECRET  : string,
+    BASE_URL:string
+}
+
 export interface APPCONFIG {
     ENV: string;
     SMTP: SMTP;
@@ -79,6 +85,7 @@ export interface APPCONFIG {
     REDIS: REDIS,
     AWS: AWS,
     DB: DB,
+    SAFEPAY:SAFEPAY,
     APIKEYS: APIKEYS
 }
 

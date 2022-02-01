@@ -1,7 +1,11 @@
 const express = require('express')
 const Safepay = require('safepay')
+const { Application } = require('../../../app')
+const { GamersModel } = require('../../../models/gamer-model')
+const { Sentry } = require('../../../server/sentry')
+// Application.INIT()
 
-const { Vault } = require('../../../databases/vault')
+// let data = Vault.GetVaultData().then((data)=> console.log("data =====>>>", data))
 
 const routes = express.Router()
 
@@ -15,18 +19,34 @@ const config = {
 
 }
 
-let safePayObject = new Safepay(config)
+// const config = {
+//   environment: "sandbox",
+//   sandbox: {
+//     baseUrl: Application.conf.SAFEPAY.BASE_URL,
+//     apiKey:Application.conf.SAFEPAY.API_KEY,
+//     apiSecret:Application.conf.SAFEPAY.API_SECRET
+//   },
 
+// }
+
+let safePayObject = new Safepay(config)
+console.log(safePayObject, "=====>> safepay")
 routes.get('/payme', async (req, res) => {
   try {
-    console.log(safePayObject, "======> safePayObject")
+    
+    //@NOTE CHECK BELOW CODE FOR HASHING STRING
+    // var crypto = require('crypto');
+    // var name = 'braitsch';
+    // var hash = crypto.createHash('md5').update(name).digest('hex');
+    // console.log(hash); // 9b74c9897bac770ffc029102a200c5de
+    
     // initialize payment
     let { data } = await safePayObject.payments.create({
       amount: 1200,
       currency: "PKR",
     })
 
-    console.log(data, "=====>> data");
+    //Perform Chcekout
     let checkout = await safePayObject.checkout.create({
       tracker: data.data.token,
       orderId: "1234",
@@ -35,33 +55,10 @@ routes.get('/payme', async (req, res) => {
       redirectUrl: "https://example.com/payment-complete"
     })
 
+    console.log(data)
+
     console.log(checkout, "===>> checkout")
-    // processPayment({
-    //   tracker: "track_9cbb0da9-6500-4ece-903d-d29e21b4478a",
-    //   token: "trans_89eedd54-459a-403b-a40a-a8f406e174ad",
-    //   ref: "660425",
-    //   sig: "58f5d2570715d44023b4e0d1b4d35045f719518e76bd560e1e419e4fe73df812"
-    // })
-    //   .then((response) => {
-    //     return response.data
-    //   }).then((data) => {
-    //       console.log(data, 'data')
-    //     return safePayObject.checkout.create({
-    //       tracker: data.data.token,
-    //       orderId: "1234",
-    //       source: "custom",
-    //       cancelUrl: "https://example.com/payment-cancelled",
-    //       redirectUrl: "https://example.com/payment-complete"
-    //     })
-    //   }).then((url) => {
-    //     console.log(url)
-    //     return 
-    //   }).catch((error) => {
-    //     console.error(error)
-    //   })
-
-
-    return res.status(200).send({ msg: "WORKED!" })
+  return res.status(200).redirect(checkout)
   } catch (error) {
     console.log(error);
     Sentry.Error(error, 'Error in Payment ');
@@ -72,25 +69,14 @@ routes.get('/payme', async (req, res) => {
 })
 
 
+routes.post('/hitme', (req, res) => {
+  console.log('GOt HIT')
+  res.status(200).send('I worked')
+})
+
+
 module.exports = routes
 
-
-
-
-// console.log(Safepay);
-
-// // const config = {
-// //     environment: "sandbox",
-// //     sandbox: {
-// //       baseUrl: "https://sandbox.api.getsafepay.com",
-// //       apiKey: "sec_2d354429-fc07-4588-8b69-893c4825a002",
-// //       apiSecret: "22ab92ea452241064823ba8767cfe8e2293e263a46337badb9e8c02ac1d7686d"
-// //     },
-
-// //   }
-
-// //  let safePayObject = new Safepay(config)
-// //  console.log(safePayObject , 'Safepay Object ')
 
 
 
