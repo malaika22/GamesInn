@@ -1,0 +1,51 @@
+
+.row-info{
+  margin: 10px; 
+ 
+  
+
+  
+.col-b{
+    padding: 20px;
+    font-size: 15px;
+    color: white;
+    background: #213956;
+    text-align:left;
+    height: 60px;
+   
+}
+}
+
+.col-a{
+ 
+  padding-left: 30px;
+    font-size: 15px;
+    
+    padding-top: 13px;
+    height: 80px;
+    background: #f4f4f4;
+    text-align:left;
+   
+    justify-content: space-between;
+  
+}
+.col-a a{
+color: inherit;
+
+
+}
+a:hover{
+  
+    color: #125cfc;
+ 
+}
+.col-a img{
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  margin-right: 10px;
+}
+
+
