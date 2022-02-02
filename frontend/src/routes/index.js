@@ -4,10 +4,10 @@ import SignUp from "../components/AuthPages/SignUp";
 import SignIn from "../components/AuthPages/SignIn";
 import Home from "../components/HomeLayout/Home/Home";
 import GamerLayout from "../components/GamerLayout/GamerLayout";
-import BuyerInfo from "../modules/gamer/TradingInfo/BuyerInfo";
-import MyAccounts from "../modules/gamer/TradingInfo/MyAccounts";
+import Accounts from "../modules/gamer/Accounts/Accounts";
 import GamerPrivateRoute from "./GamerPrivateRoute";
 import PostFeed from "../modules/gamer/PostFeed/PostFeed";
+import Post from "../modules/gamer/PostFeed/Post";
 
 const ModuleRoutes = () => {
   return (
@@ -18,8 +18,8 @@ const ModuleRoutes = () => {
       <Route exact path="/login" element={<SignIn />} />
       <Route exact path="/" element={<GamerPrivateRoute />}>
         <Route exact path="/postfeed" element={<PostFeed />} />
-        <Route exact path="/buyerinfo" element={<BuyerInfo />} />
-        <Route exact path="/myaccounts" element={<MyAccounts />} />
+        <Route exact path="/accounts" element={<Accounts />} />
+        <Route exact path="/post/:id" element={<Post />} />
       </Route>
     </Routes>
   );
