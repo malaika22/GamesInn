@@ -9,7 +9,8 @@
         "GracefullShutdown": true,
         "VAULT": false,
         "ServiceName": "",
-        "QUEUE": false
+        "QUEUE": false,
+        "EMAIL":true
     },
     "vault": {
         "protocol": "",

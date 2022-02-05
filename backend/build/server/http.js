@@ -32,11 +32,16 @@ const DefaultRouter = __importStar(require("../controllers/global/default"));
 const TestRouter = __importStar(require("../controllers/api/test"));
 const HealthRouter = __importStar(require("../controllers/api/health"));
 const VaultRouter = __importStar(require("../controllers/api/vault"));
+const AuthenticationRouter = __importStar(require("../controllers/api/auth"));
+const CampaignRouter = __importStar(require("../controllers/api/campaign"));
+const PaymentRouter = require('../controllers/api/payments/payments');
+const Handlebars = __importStar(require("express-handlebars"));
+const helpers = __importStar(require("handlebars-helpers"));
 const stoppable_1 = __importDefault(require("stoppable"));
 const sentry_1 = require("./sentry");
 class HTTPServer {
     constructor(conf) {
-        this.app = express_1.default();
+        this.app = (0, express_1.default)();
     }
     static INIT(conf) {
         if (!HTTPServer.server) {
@@ -56,22 +61,36 @@ class HTTPServer {
         this.server.app.use(express_1.default.urlencoded({ extended: false }));
         // parse application/json
         this.server.app.use(express_1.default.json());
+        /**
+         * @NOTE Below next three this.server.app.set is for setting up server side rendering engine using HBS
+         */
+        this.server.app.set('view engine', 'hbs');
+        this.server.app.set('views', `${process.cwd()}/views/pages`);
+        this.server.app.engine('hbs', Handlebars.engine({
+            helpers: helpers.default(),
+            layoutsDir: `${process.cwd}/views/layouts`,
+            partialsDir: `${process.cwd}/views/partials`,
+            defaultLayout: 'default',
+            extname: 'hbs'
+        }));
         //Middleware route must be stayed at the beginning.
         this.server.app.use(Middleware.router);
+        //serving static files
         this.server.app.use('/assets', AssetRouter.router);
         //Register API routes Here
         this.server.app.use('/api/v1/test', TestRouter.router);
-        //@TODO TAIMOOR
         //@REVIEW TAIMOOR This is how we need to add to all services
         this.server.app.use('/auth/api/v1/health', HealthRouter.router);
-        //@TODO TAIMOOR
         //@REVIEW TAIMOOR This is how we need to add to all services
         this.server.app.use('/auth/api/v1/vault', VaultRouter.router);
+        this.server.app.use('/gamer/auth/api/v1', AuthenticationRouter.router);
+        this.server.app.use('/campaign/api/v1', CampaignRouter.router);
+        this.server.app.use('/payment/api/v1', PaymentRouter);
         //Default Route Must be added at end.
         this.server.app.use('/', DefaultRouter.router);
     }
     static StartServer(port) {
-        this.server.httpServer = stoppable_1.default(this.server.app.listen(port, () => { console.log(`Server Started on Port : ${port}`); }));
+        this.server.httpServer = (0, stoppable_1.default)(this.server.app.listen(port, () => { console.log(`Server Started on Port : ${port}`); }));
         this.server.httpServer.on('close', () => {
             console.log('Server Close Fired');
             process.exit(1);

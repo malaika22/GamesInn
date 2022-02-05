@@ -7,7 +7,7 @@ import { Logger } from "../server/logger";
 export abstract class GamesInn {
 
     private static subscriptions: Subscription[] = [];
-    private static mongClient: MongoClient;
+    public static mongClient: MongoClient;
     private static conf: DBConfigMongo;
 
     public static db: BehaviorSubject<Db | any> = new BehaviorSubject(undefined);
@@ -19,11 +19,16 @@ export abstract class GamesInn {
             GamesInn.conf = dbconf;
 
             if (!this.mongClient || !this.db) {
-                this.mongClient = await MongoClient.connect(`mongodb://${dbconf.host}:${dbconf.port}`);
+                // this.mongClient = await MongoClient.connect(`mongodb://${dbconf.host}:${dbconf.port}/replicaSet=rs`);
+
+                // this.mongClient = await MongoClient.connect(`mongodb://${dbconf.host}:${dbconf.port}`);
+                this.mongClient = await MongoClient.connect("mongodb://DESKTOP-79N9VQ7:27017,DESKTOP-79N9VQ7:27018,DESKTOP-79N9VQ7:27019?replicaSet=rs");
+
                 this.mongClient.on('serverDescriptionChanged', function (event) {
                     // console.log('received serverDescriptionChanged');
                     // console.log(JSON.stringify(event, null, 2));
                 });
+
 
                 this.mongClient.on('serverHeartbeatStarted', function (event) {
                     // console.log('received serverHeartbeatStarted');

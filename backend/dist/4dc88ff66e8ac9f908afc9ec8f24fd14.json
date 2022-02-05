@@ -1,0 +1,22 @@
+{
+    "env": "local",
+    "defaultDB": false,
+    "logger": "sentry",
+    "delaySart": 2000,
+    "config": {
+        "PORT": 8000,
+        "AllowCors": false,
+        "GracefullShutdown": true,
+        "VAULT": true,
+        "ServiceName": "GamesInn",
+        "QUEUE": false
+    },
+    "vault": {
+        "protocol": "http",
+        "host": "127.0.0.1",
+        "port": 8200,
+        "login": "s.mJIplvDeXQ0ET0c9esRo434z ",
+        "keyname": "credentials",
+        "apiversion": "v1"
+    }
+}
