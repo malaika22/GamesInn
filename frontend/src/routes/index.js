@@ -13,6 +13,8 @@ import InvestorPrivateRoute from "./InvestorPrivateRoute";
 import PostFeed from "../modules/gamer/PostFeed/PostFeed";
 import Post from "../modules/gamer/PostFeed/Post";
 
+import MyPosts from "../modules/gamer/MyPosts/MyPosts";
+
 const ModuleRoutes = () => {
   return (
     // DEFAULT ROUTES

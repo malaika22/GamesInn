@@ -1,0 +1,37 @@
+.gamer-layout-container {
+  .layout-container {
+    height: 100vh;
+    .gamer-layout-sider {
+      .logo {
+        height: 64px;
+        overflow: hidden;
+        color: white;
+        font-size: 27px;
+        padding: 12px;
+      }
+      .menu-list {
+        .menu-item {
+          margin: 20px 0;
+        }
+      }
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      height: 72px;
+      .search-inputs {
+        width: 70%;
+        border-radius: 10px;
+        height: 35px;
+      }
+      .profile-div {
+        width: 100%;
+        text-align: end;
+      }
+    }
+    .gamer-layout-content {
+    }
+    .gamer-layout-footer {
+    }
+  }
+}
