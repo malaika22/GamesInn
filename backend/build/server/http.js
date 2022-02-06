@@ -24,6 +24,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HTTPServer = void 0;
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 //Global Router Imports
 const Middleware = __importStar(require("../controllers/global/middleware"));
 const AssetRouter = __importStar(require("../controllers/global/assets"));
@@ -61,6 +62,7 @@ class HTTPServer {
         this.server.app.use(express_1.default.urlencoded({ extended: false }));
         // parse application/json
         this.server.app.use(express_1.default.json());
+        this.server.app.use((0, cors_1.default)());
         /**
          * @NOTE Below next three this.server.app.set is for setting up server side rendering engine using HBS
          */

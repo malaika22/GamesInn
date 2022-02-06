@@ -1,5 +1,5 @@
 import express ,{ Application} from "express";
-// import cors from "cors";
+import cors from "cors";
 
 //Config Imports
 import { HTTPCONF } from "../configs/http";
@@ -59,6 +59,8 @@ export class HTTPServer {
         // parse application/json
         this.server.app.use(express.json());
 
+
+        this.server.app.use(cors())
         /**
          * @NOTE Below next three this.server.app.set is for setting up server side rendering engine using HBS
          */

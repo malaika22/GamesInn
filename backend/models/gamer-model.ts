@@ -108,12 +108,14 @@ export abstract class GamersModel {
 
     public static async Sub() {
 
-        try {
-
-            let doc = await this.collection.findOneAndUpdate({ name: 1 }, { $inc: { count: -1 } }, { upsert: true });
-            // if (doc && doc.insertedCount) return doc.result;
-            // else return doc;
-            return { count: (doc && doc.value) ? doc.value.count : 0 };;
+        try {   
+            console.log('it works');
+                return
+            // return 
+            // let doc = await this.collection.findOneAndUpdate({ name: 1 }, { $inc: { count: -1 } }, { upsert: true });
+            // // if (doc && doc.insertedCount) return doc.result;
+            // // else return doc;
+            // return { count: (doc && doc.value) ? doc.value.count : 0 };;
         } catch (error) {
             console.log(error);
             console.log('Error in substracting');

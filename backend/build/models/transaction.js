@@ -1,7 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TransactionsCampaignFunded = void 0;
+exports.TransactionsCampaignFunded = exports.TransactionState = void 0;
 const gamesinn_database_1 = require("../databases/gamesinn-database");
+var TransactionState;
+(function (TransactionState) {
+    TransactionState["completed"] = "COMPLETED";
+    TransactionState["pending"] = "PENDING";
+})(TransactionState = exports.TransactionState || (exports.TransactionState = {}));
 class TransactionsCampaignFunded {
     static async INIT() {
         gamesinn_database_1.GamesInn.db.subscribe(async (val) => {
@@ -15,7 +20,7 @@ class TransactionsCampaignFunded {
                 }
                 catch (error) {
                     if (error.code == 48) {
-                        this.collection = await this.db.collection('transactions');
+                        this.collection = await this.db.collection('transactions-campaign-funded');
                     }
                     else {
                         console.log(error);
@@ -40,16 +45,38 @@ class TransactionsCampaignFunded {
             throw new Error('Error in Initializing Collection in Worker');
         }
     }
-    static async InsertTestDoc() {
+    static async InsertTransactionCampaignFunded(data) {
         try {
-            let doc = await this.collection.insertOne({ 'name': 'Saad', date: new Date().toISOString() });
-            // if (doc && doc.insertedCount) return doc.result;
-            // else return doc;
-            return doc;
+            let temp = {
+                campaignName: data.campaignName,
+                campaignDays: data.campaignDays,
+                campaignCreatedBy: data.campaignCreatedBy,
+                fundedBy: data.fundedBy,
+                campaignCreatedUserEmail: data.campaignCreatedUserEmail,
+                userName: data.userName,
+                currency: data.currency,
+                amount: data.amount,
+                state: data.state,
+                campaignID: data.campaignID,
+                token: data.token,
+                transaction_createdAt: data.transaction_createdAt,
+                transaction_updatedAt: data.transaction_updatedAt,
+                orderID: data.orderID,
+                fundedUserName: data.fundedUserName,
+                fundedByuserEmail: data.fundedByuserEmail,
+                identifierToken: data.identifierToken,
+            };
+            let doc = await this.collection.findOneAndUpdate({ identifierToken: temp.identifierToken }, { $set: temp }, { upsert: true });
+            if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
+                temp._id = doc.lastErrorObject.upserted;
+                return temp;
+            }
+            else
+                return doc.value;
         }
         catch (error) {
             console.log(error);
-            console.log('Error in inserting');
+            console.log('Error in InsertTransactionCampaignFunded');
             return error;
         }
     }

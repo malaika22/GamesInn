@@ -7,7 +7,7 @@ export abstract class CorsConfig {
 
             optionsSuccessStatus : 200,
             methods : ["GET","POST","HEAD","OPTION","PATCH","DELETE"],
-            origin : ["localhost:4200"]
+            origin : ["localhost:5500"]
 
         } as cors.CorsOptions,
         "testroute": {
