@@ -1,5 +1,6 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+
+import {  Link, useNavigate } from "react-router-dom";
 import { Layout, Menu } from "antd";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -26,6 +27,17 @@ const { Sider, Header, Footer, Content } = Layout;
 
 const GamerLayout = ({ children }) => {
   //route change for my acc
+
+  //const history =  useNavigate();
+  //const routeChange = () =>{ 
+    
+    
+   //history("/gamer/myaccounts")
+   
+  //}
+
+ 
+
   const history = useNavigate();
   const routeChange = () => {
     history("/myaccounts");
@@ -58,6 +70,7 @@ const GamerLayout = ({ children }) => {
               <Menu.Item key="4" icon={<UploadOutlined />}>
                 My posts
               </Menu.Item>
+
               <SubMenu
                 key="5"
                 icon={<FontAwesomeIcon icon={faUsers} />}
