@@ -12,6 +12,7 @@ import GamerPrivateRoute from "./GamerPrivateRoute";
 import InvestorPrivateRoute from "./InvestorPrivateRoute";
 import PostFeed from "../modules/gamer/PostFeed/PostFeed";
 import Post from "../modules/gamer/PostFeed/Post";
+import MyCampaigns from "../modules/gamer/campaigns/MyCampaigns";
 
 const ModuleRoutes = () => {
   return (
@@ -25,6 +26,7 @@ const ModuleRoutes = () => {
         <Route exact path="gamer/myaccounts" element={<MyAccounts />} />
         <Route exact path="gamer/buyerinfo" element={<BuyerInfo />} />
         <Route exact path="gamer/post/:id" element={<Post />} />
+        <Route exact path="gamer/mycompaign" element={<MyCampaigns />} />
       </Route>
       <Route exact element={<InvestorPrivateRoute />}>
         <Route
