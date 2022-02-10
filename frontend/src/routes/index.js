@@ -14,20 +14,30 @@ import PostFeed from "../modules/gamer/PostFeed/PostFeed";
 import Post from "../modules/gamer/PostFeed/Post";
 
 import MyPosts from "../modules/gamer/MyPosts/MyPosts";
+import AuthPrivateRoute from "./AuthPrivateRoute";
+import VerifyEmail from "../components/AuthPages/VerifyEmail";
 
 const ModuleRoutes = () => {
   return (
     // DEFAULT ROUTES
     <Routes>
       <Route exact path="/" element={<Home />} />
-      <Route exact path="/signup" element={<SignUp />} />
-      <Route exact path="/login" element={<SignIn />} />
+      <Route path="/verifyemail" element={<VerifyEmail />} />
+      {/*************** AuthPrivateRoute *****************/}
+      <Route exact element={<AuthPrivateRoute />}>
+        <Route exact path="/signup" element={<SignUp />} />
+        <Route exact path="/login" element={<SignIn />} />
+      </Route>
+
+      {/*************** GamerPrivateRoute *****************/}
       <Route exact path="/" element={<GamerPrivateRoute />}>
         <Route exact path="gamer/postfeed" element={<PostFeed />} />
         <Route exact path="gamer/myaccounts" element={<MyAccounts />} />
         <Route exact path="gamer/buyerinfo" element={<BuyerInfo />} />
         <Route exact path="gamer/post/:id" element={<Post />} />
       </Route>
+
+      {/*************** GamerPrivateRoute *****************/}
       <Route exact element={<InvestorPrivateRoute />}>
         <Route
           exact

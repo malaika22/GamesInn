@@ -1,11 +1,9 @@
 "use strict";
 const express = require('express');
 const Safepay = require('safepay');
-const { Application } = require('../../../app');
-const { GamersModel } = require('../../../models/gamer-model');
+const crypto = require('crypto');
+const nanoid = require('nanoid');
 const { Sentry } = require('../../../server/sentry');
-// Application.INIT()
-// let data = Vault.GetVaultData().then((data)=> console.log("data =====>>>", data))
 const routes = express.Router();
 const config = {
     environment: "sandbox",

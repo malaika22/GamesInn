@@ -11,13 +11,14 @@ class JoiSchemas {
             userName: joi_1.default.string().min(3).max(30).required(),
             firstName: joi_1.default.string().min(3).max(30).required(),
             lastName: joi_1.default.string().min(3).max(30).required(),
-            address: joi_1.default.string().min(3).max(40).required(),
+            address: joi_1.default.string().min(3).max(100).required(),
             password: joi_1.default.string().required().min(8).max(50),
             city: joi_1.default.string().required().min(3).max(25),
-            country: joi_1.default.string().required().min(8).max(25),
+            country: joi_1.default.string().required().min(3).max(25),
             email: joi_1.default.string().email().required(),
             userType: joi_1.default.string().required().valid('GAMER', 'INVESTOR'),
         });
+        console.log("data", data);
         let result = schema.validate(data, { abortEarly: false });
         if (result.error)
             return { errored: true, errors: result.error.message.split('.'), value: result.value };
@@ -25,6 +26,7 @@ class JoiSchemas {
             return { errored: false, errors: null, value: result.value };
     }
     static LoginValidator(data) {
+        console.log("login", data);
         let schema = joi_1.default.object({
             password: joi_1.default.string().required(),
             email: joi_1.default.string().email().required(),

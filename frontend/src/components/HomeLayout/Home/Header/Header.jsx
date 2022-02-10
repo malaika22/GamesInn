@@ -1,24 +1,32 @@
-import React, { useState } from "react";
-import { Button, Col, Layout, Menu, Row } from "antd";
+import React, { useContext, useState } from "react";
+import { Button, Col, Dropdown, Layout, Menu, Row } from "antd";
 import { Link } from "react-router-dom";
 import { HomeOutlined, PhoneOutlined, IdcardOutlined } from "@ant-design/icons";
 import "./styles.scss";
+import Avatar from "antd/lib/avatar/avatar";
+import { AuthContext } from "../../../../context/AuthContext";
 
 const NavHeader = ({ role }) => {
-  const loggedInToken = localStorage.getItem("gm_token");
+  const { userLogout } = useContext(AuthContext);
+  const loggedInToken = localStorage.getItem("ginn_token");
+  const { userType } = JSON.parse(localStorage.getItem("ginn_uDetails"));
   const [current, setCurrent] = useState("home");
   const handleMenu = (e) => {
     console.log("e", e);
     setCurrent(e.key);
   };
-  const renderHeader = () => {
-    switch (role) {
-      case "gamer":
-        return <div>Gamer header</div>;
-      case "investor":
-        return <div>investor header</div>;
-        return;
-    }
+
+  const handleLogout = () => {
+    userLogout();
+  };
+
+  const menu = () => {
+    return (
+      <Menu>
+        <Menu.Item>Account Settings</Menu.Item>
+        <Menu.Item onClick={handleLogout}>Logout</Menu.Item>
+      </Menu>
+    );
   };
   return (
     <div className="header-container">
@@ -46,12 +54,32 @@ const NavHeader = ({ role }) => {
         </Col>
         <Col span={8}>
           <div className="header-buttons">
-            <Link to="/login">
-              <Button className="auth-buttons">Login</Button>
-            </Link>
-            <Link to="/signup">
-              <Button className="auth-buttons">Sign up</Button>
-            </Link>
+            {loggedInToken ? (
+              <>
+                {userType === "Gamer" ? (
+                  <span>
+                    <Link to={"/gamer/postfeed"}>Dashboard</Link>
+                  </span>
+                ) : (
+                  <div>Investor dashboard</div>
+                )}
+
+                <div className="dashboard-dropdown">
+                  <Dropdown overlay={menu} trigger={["click"]}>
+                    <div>Click me</div>
+                  </Dropdown>
+                </div>
+              </>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button className="auth-buttons">Login</Button>
+                </Link>
+                <Link to="/signup">
+                  <Button className="auth-buttons">Sign up</Button>
+                </Link>
+              </>
+            )}
           </div>
         </Col>
       </Row>

@@ -16,6 +16,7 @@ const joiSchemas_1 = require("../../utils/joiSchemas");
 const utils_1 = require("../../utils/utils");
 const routes = express_1.default.Router();
 routes.post('/signupGamer', async (req, res) => {
+    console.log("req bod", req.body);
     try {
         const payload = { ...req.body };
         //Joi validation

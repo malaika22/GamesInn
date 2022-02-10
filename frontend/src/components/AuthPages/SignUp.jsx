@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Row, Col, Form, Input, Select, Button } from "antd";
+import { AuthContext } from "../../context/AuthContext";
 import signUp from "../../assests/illustrations/singup.svg";
 import "./styles.scss";
 import { toast } from "react-toastify";
@@ -9,13 +10,20 @@ import { ArrowRightOutlined } from "@ant-design/icons";
 const { Option } = Select;
 const SignUp = () => {
   const [signupRole, setSignupRole] = useState(null);
+  const { userSignUp } = useContext(AuthContext);
   const [form] = Form.useForm();
   const handleSignUp = () => {
     const formValues = form.getFieldsValue(true);
+    const data = {
+      ...formValues,
+      userType: signupRole,
+    };
+    console.log("formValues", formValues);
     if (!signupRole) {
       toast.error("Select a user role");
     } else {
-      console.log("form values", formValues);
+      userSignUp(data);
+      console.log("form values", data);
     }
   };
   return (
@@ -39,7 +47,7 @@ const SignUp = () => {
             <h2>Sign up to Games Inn</h2>
             <div className="member">
               Already a member?{" "}
-              <Link to="/signup">
+              <Link to="/login">
                 <span className="register-span">
                   Login{" "}
                   <span className="register-icon">
@@ -53,7 +61,7 @@ const SignUp = () => {
                 <Row gutter={{ xs: 12 }}>
                   <Col xs={24} sm={12}>
                     <Form.Item
-                      name="firstname"
+                      name="firstName"
                       rules={[
                         {
                           required: true,
@@ -67,7 +75,7 @@ const SignUp = () => {
                   </Col>
                   <Col xs={24} sm={12}>
                     <Form.Item
-                      name="lastname"
+                      name="lastName"
                       rules={[
                         {
                           required: true,
@@ -81,7 +89,7 @@ const SignUp = () => {
                   </Col>
                 </Row>
                 <Form.Item
-                  name="username"
+                  name="userName"
                   rules={[
                     {
                       required: true,
@@ -128,6 +136,20 @@ const SignUp = () => {
                   />
                 </Form.Item>
                 <Row>
+                  <Col xs={24} sm={24}>
+                    <Form.Item
+                      name="address"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Address can't be empty",
+                        },
+                      ]}
+                      className="form-label"
+                    >
+                      <Input placeholder="address" />
+                    </Form.Item>
+                  </Col>
                   <Col xs={24} sm={12}>
                     <Form.Item
                       name="country"
@@ -142,14 +164,16 @@ const SignUp = () => {
                       <Select
                         className="select-input"
                         name="country"
-                        defaultValue={"pakistan"}
+                        defaultValue={"Pakistan"}
                       >
-                        <Option value="pakistan">Pakistan</Option>
-                        <Option value="india">India</Option>
-                        <Option value="turkey">Turkey</Option>
-                        <Option value="german">German</Option>
-                        <Option value="spain">Spain</Option>
-                        <Option value="dubai">Dubai</Option>
+                        <Option value="Pakistan">Pakistan</Option>
+                        <Option value="India">India</Option>
+                        <Option value="Turkey">Turkey</Option>
+                        <Option value="German">German</Option>
+                        <Option value="Spain">Spain</Option>
+                        <Option value="United Arab Emirates">
+                          United Arab Emirates
+                        </Option>
                       </Select>
                     </Form.Item>
                   </Col>
@@ -167,14 +191,14 @@ const SignUp = () => {
                       <Select
                         className="select-input"
                         name="city"
-                        defaultValue={"pakistan"}
+                        defaultValue={"Karachi"}
                       >
-                        <Option value="pakistan">Karachi</Option>
-                        <Option value="india"></Option>
-                        <Option value="turkey">Turkey</Option>
-                        <Option value="german">German</Option>
-                        <Option value="spain">Spain</Option>
-                        <Option value="dubai">Dubai</Option>
+                        <Option value="Karachi">Karachi</Option>
+                        <Option value="Mumbai">Mumbai</Option>
+                        <Option value="Istanbul">Turkey</Option>
+                        <Option value="Berlin">German</Option>
+                        <Option value="Madrid">Spain</Option>
+                        <Option value="Dubai">Dubai</Option>
                       </Select>
                     </Form.Item>
                   </Col>
@@ -187,9 +211,9 @@ const SignUp = () => {
                     <Col lg={12} md={12} sm={12} xs={24}>
                       <Button
                         className={`role-buttons ${
-                          signupRole === "gamer" && "selected"
+                          signupRole === "GAMER" && "selected"
                         }`}
-                        onClick={() => setSignupRole("gamer")}
+                        onClick={() => setSignupRole("GAMER")}
                       >
                         Gamer
                       </Button>
@@ -197,9 +221,9 @@ const SignUp = () => {
                     <Col lg={12} md={12} sm={12} xs={24}>
                       <Button
                         className={`role-buttons ${
-                          signupRole === "investor" && "selected"
+                          signupRole === "INVESTOR" && "selected"
                         }`}
-                        onClick={() => setSignupRole("investor")}
+                        onClick={() => setSignupRole("INVESTOR")}
                       >
                         Investor
                       </Button>
