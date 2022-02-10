@@ -1,5 +1,5 @@
 import React from "react";
-import {  useNavigate } from "react-router-dom";
+import {  Link, useNavigate } from "react-router-dom";
 import { Layout, Menu } from "antd";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -26,16 +26,14 @@ const { Sider, Header, Footer, Content } = Layout;
 
 const GamerLayout = ({ children }) => {
   //route change for my acc
-  const history =  useNavigate();
-  const routeChange = () =>{ 
-   history("/myaccounts")
-   
-  }
-// change route for buyer info
-  const routeChangebuyer = () =>{ 
-    history("/buyerinfo")
+  //const history =  useNavigate();
+  //const routeChange = () =>{ 
     
-   }
+    
+   //history("/gamer/myaccounts")
+   
+  //}
+
  
 
   console.log("Checkcing git");
@@ -62,9 +60,13 @@ const GamerLayout = ({ children }) => {
                 My posts
               </Menu.Item>
               <SubMenu key="5" icon={<FontAwesomeIcon icon={faUsers} />} title='Tranding Info'>
+             
+                 <Menu.Item key="6"  > <Link to="/gamer/myaccounts">My accounts
+                 </Link></Menu.Item>
+             
                
-                <Menu.Item key="6"  onClick={routeChange} >My accounts</Menu.Item>
-                <Menu.Item key="7"  onClick={routeChangebuyer}>Buyer Information</Menu.Item>
+                <Menu.Item key="7"  ><Link to="/gamer/buyerinfo">Buyer Information</Link>
+                </Menu.Item>
               </SubMenu>
               <Menu.Item key="8" icon={<FontAwesomeIcon icon={faCogs} />}>
                 Settings
