@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Row, Col, Form, Input, Select, Button } from "antd";
 import signUp from "../../assests/illustrations/singup.svg";
 import "./styles.scss";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { ArrowRightOutlined } from "@ant-design/icons";
+import { AuthContext } from "../../context/AuthContext";
 
 const { Option } = Select;
 const SignIn = () => {
+  const { userLogin } = useContext(AuthContext);
   const [signupRole, setSignupRole] = useState(null);
   const [form] = Form.useForm();
   const handleSignUp = () => {
@@ -15,6 +17,11 @@ const SignIn = () => {
     if (!signupRole) {
       toast.error("Select a user role");
     } else {
+      const data = {
+        ...formValues,
+        userType: signupRole,
+      };
+      userLogin(data);
       console.log("form values", formValues);
     }
   };

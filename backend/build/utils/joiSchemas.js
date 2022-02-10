@@ -8,12 +8,28 @@ const joi_1 = __importDefault(require("joi"));
 class JoiSchemas {
     static SignUpValidator(data) {
         let schema = joi_1.default.object({
-            name: joi_1.default.string().min(3).max(30).required(),
+            userName: joi_1.default.string().min(3).max(30).required(),
+            firstName: joi_1.default.string().min(3).max(30).required(),
+            lastName: joi_1.default.string().min(3).max(30).required(),
+            address: joi_1.default.string().min(3).max(100).required(),
             password: joi_1.default.string().required().min(8).max(50),
-            dob: joi_1.default.string().required().regex(/^\d{2}\/\d{2}\/\d{4}$/),
+            city: joi_1.default.string().required().min(3).max(25),
+            country: joi_1.default.string().required().min(3).max(25),
             email: joi_1.default.string().email().required(),
-            number: joi_1.default.string().required().regex(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im),
-            countryCode: joi_1.default.string().required().min(2).max(4)
+            userType: joi_1.default.string().required().valid('GAMER', 'INVESTOR'),
+        });
+        console.log("data", data);
+        let result = schema.validate(data, { abortEarly: false });
+        if (result.error)
+            return { errored: true, errors: result.error.message.split('.'), value: result.value };
+        else
+            return { errored: false, errors: null, value: result.value };
+    }
+    static LoginValidator(data) {
+        console.log("login", data);
+        let schema = joi_1.default.object({
+            password: joi_1.default.string().required(),
+            email: joi_1.default.string().email().required(),
         });
         let result = schema.validate(data, { abortEarly: false });
         if (result.error)
@@ -21,10 +37,43 @@ class JoiSchemas {
         else
             return { errored: false, errors: null, value: result.value };
     }
-    static LoginValidator(data, key) {
+    static LogoutValidator(data) {
         let schema = joi_1.default.object({
-            [key]: joi_1.default.string().required(),
+            accessToken: joi_1.default.string().required(),
+        });
+        let result = schema.validate(data, { abortEarly: false });
+        if (result.error)
+            return { errored: true, errors: result.error.message.split('.'), value: result.value };
+        else
+            return { errored: false, errors: null, value: result.value };
+    }
+    static EmailValidator(data) {
+        let schema = joi_1.default.object({
             email: joi_1.default.string().email().required(),
+        });
+        let result = schema.validate(data, { abortEarly: false });
+        if (result.error)
+            return { errored: true, errors: result.error.message.split('.'), value: result.value };
+        else
+            return { errored: false, errors: null, value: result.value };
+    }
+    static UpdatePassword(data) {
+        let schema = joi_1.default.object({
+            password: joi_1.default.string().min(3).max(15).required().label('Password'),
+            confirmPassword: joi_1.default.any().valid(joi_1.default.ref('password')).required().label('Confirm Password').options({ messages: { 'any.only': '{{#label}} password does not match' } })
+        });
+        let result = schema.validate(data, { abortEarly: false });
+        if (result.error)
+            return { errored: true, errors: result.error.message.split('.'), value: result.value };
+        else
+            return { errored: false, errors: null, value: result.value };
+    }
+    static CreateCampaigns(data) {
+        let schema = joi_1.default.object({
+            campaignName: joi_1.default.string().min(3).required(),
+            campaignDays: joi_1.default.number().max(3).required(),
+            campaignDescription: joi_1.default.string().max(800).required(),
+            campaignTargetedAmount: joi_1.default.number().min(100).max(1000).required()
         });
         let result = schema.validate(data, { abortEarly: false });
         if (result.error)

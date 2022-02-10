@@ -16,7 +16,20 @@ import { RMQ } from "./server/queues/rabbitmq";
 import { DefaultDatabase } from "./databases/database";
 import { DefaultModel } from "./models/defaultmodel";
 import { GamesInn } from "./databases/gamesinn-database";
-import { GamersModel } from "./models/usermodel";
+
+import { GamersModel } from "./models/gamer-model";
+import { SessionsModel } from "./models/session-model";
+import { TokenModel } from "./models/tokens-model";
+import { Email } from "./utils/email/email";
+import { CampaignModel } from "./models/campaign-model";
+import { CroneJob } from "./controllers/cron/scheduler";
+import { CampaignHistoryModel } from "./models/campaigns-history";
+import { CampaignFunded } from "./models/campaign-funded";
+import { TransactionsCampaignFunded } from "./models/transaction";
+// import { OpenAPIConfiguration } from "./controllers/documentation/config_openapi";
+
+// import { runme } from "./controllers/documentation/api-documentations";
+// import { OpenAPIConfiguration } from "./controllers/documentation/config_openapi";
 
 // // Instead of:
 // import sourceMapSupport from 'source-map-support'
@@ -33,6 +46,7 @@ declare global {
             defaultDB: boolean;
             logger: string;
             delayStart: number;
+            Url:string
         }
     }
 }
@@ -46,6 +60,8 @@ export class Application {
     constructor() { }
     public async INIT(env: Environment) {
         global.ip = ip.address();
+        global.Url = env.config.URL;
+        console.log(global.Url , 'Global Url')
         process.on('unhandledRejection', (ex) => {
             // console.log("Unhandled Execption", ex);
             Logger.Log('Unhandled Rejection !!!!!', 'critical');
@@ -130,28 +146,18 @@ export class Application {
 
 
 
-        // process.on('SIGTERM', () => {
-        //     // Stops the server from accepting new connections and finishes existing connections.
-        //     HTTPServer.StopServer();
-
-        //     //Kill The Process so that It will be restarted by PM2 or any other process manager
-        //     process.exit(1);
-        // })
-
-
-
 
 
         try {
 
-            await Logger.CreateLogger(LoggerConf.colors)
+            Logger.CreateLogger(LoggerConf.colors)
 
             global.servicename = env.config.ServiceName;
             global.environment = env.env;
             global.logger = env.logger;
             global.defaultDB = env.defaultDB;
             global.delayStart = env.delayStart;
-            
+
             if (!env.config.ServiceName) throw new Error('Unknown Service Name');
             if (!env.config.PORT) throw new Error('Server Port Not Defined');
 
@@ -165,33 +171,45 @@ export class Application {
             }
 
             if (!env.config.VAULT) {
-
+                
                 if (global.defaultDB) await DefaultDatabase.Connect(DBConfig.dbconf.default)
-                else if(!global.defaultDB) await GamesInn.Connect(DBConfig.dbconf.gamesinn)
+                else if (!global.defaultDB)  await GamesInn.Connect(DBConfig.dbconf.gamesinn)
 
             } else {
-
                 Application.conf = await Vault.Init(env as Environment);
-
                 if (global.logger == 'sentry') Sentry.INIT({ dsn: Application.conf.Logging.SENTRY.dsn, environment: global.environment, serverName: global.servicename, logLevel: LogLevel.Error });
                 if (global.defaultDB) await DefaultDatabase.Connect(DBConfig.dbconf.default);
-                else await GamesInn.Connect(DBConfig.dbconf.gamesinn)
+                else  await GamesInn.Connect(DBConfig.dbconf.gamesinn)
+                
             }
 
+            /**
+             * CREATE EMAIL TRANSPORT IF NEEDED
+             */
+            if(env.config.EMAIL) await Email.CreateTransport()
 
+
+            CroneJob.Scheduler()
             /**
              * TEST DATABASE
              */
             if (global.defaultDB) await DefaultModel.INIT();
-            else await GamersModel.INIT()
-            
+       
+            await GamersModel.INIT()
+            await SessionsModel.INIT()
+            await TokenModel.INIT()
+            await CampaignModel.INIT()
+            await CampaignHistoryModel.INIT()
+            await CampaignFunded.INIT()
+            await TransactionsCampaignFunded.INIT()
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.
              */
             if (global.delayStart) await Utils.Sleep(global.delayStart);
 
             if (env.config.QUEUE) await RMQ.INIT(Application.conf.RABBITMQ);
-
+            // console.log(await Vault.GetVaultData(), 'vault cliebnt data');
+            
             this.httpServer = HTTPServer.INIT(env.config);
 
             Object.seal(this.httpServer);

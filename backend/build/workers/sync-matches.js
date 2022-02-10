@@ -13,9 +13,8 @@ class SyncWorker {
         try {
             await logger_2.Logger.CreateLogger(logger_1.LoggerConf.colors);
             let db = await this.Connect();
-            if (db) {
+            if (db)
                 await defaultmodel_1.DefaultModel.INITWorker(db);
-            }
             return;
         }
         catch (error) {

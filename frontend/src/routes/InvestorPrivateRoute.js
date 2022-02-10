@@ -1,22 +1,18 @@
 import React from "react";
-import { Route, Redirect, Outlet } from "react-router-dom";
+import { Route, Redirect, Outlet, Navigate } from "react-router-dom";
 import InvestorLayout from "../components/InvestorLayout/InvestorLayout";
 
 const InvestorPrivateRoute = ({ component: Component, ...rest }) => {
-  return (
-    // <Route
-    //   {...rest}
-    //   render={(props) =>
-    //     !state.isAuthenticated ? (
-    //       <Redirect to="/login" />
-    //     ) : (
-    //       <Component {...props} />
-    //     )
-    //   }
-    // />
-    <InvestorLayout>
-      <Outlet />
-    </InvestorLayout>
+  const token = localStorage.getItem("ginn_token");
+  const gamerInfo = JSON.parse(localStorage.getItem("gamesinn_user"));
+  return !token ? (
+    <Navigate to="/" />
+  ) : (
+    gamerInfo?.verify && gamerInfo?.userType === "gamer" && (
+      <InvestorLayout>
+        <Outlet />
+      </InvestorLayout>
+    )
   );
 };
 

@@ -33,12 +33,22 @@ const rabbitmq_1 = require("./server/queues/rabbitmq");
 const database_2 = require("./databases/database");
 const defaultmodel_1 = require("./models/defaultmodel");
 const gamesinn_database_1 = require("./databases/gamesinn-database");
-const usermodel_1 = require("./models/usermodel");
+const gamer_model_1 = require("./models/gamer-model");
+const session_model_1 = require("./models/session-model");
+const tokens_model_1 = require("./models/tokens-model");
+const email_1 = require("./utils/email/email");
+const campaign_model_1 = require("./models/campaign-model");
+const scheduler_1 = require("./controllers/cron/scheduler");
+const campaigns_history_1 = require("./models/campaigns-history");
+const campaign_funded_1 = require("./models/campaign-funded");
+const transaction_1 = require("./models/transaction");
 global.__rootdir__ = process.cwd();
 class Application {
     constructor() { }
     async INIT(env) {
         global.ip = ip.address();
+        global.Url = env.config.URL;
+        console.log(global.Url, 'Global Url');
         process.on('unhandledRejection', (ex) => {
             // console.log("Unhandled Execption", ex);
             logger_2.Logger.Log('Unhandled Rejection !!!!!', 'critical');
@@ -100,14 +110,8 @@ class Application {
                 }
             });
         }
-        // process.on('SIGTERM', () => {
-        //     // Stops the server from accepting new connections and finishes existing connections.
-        //     HTTPServer.StopServer();
-        //     //Kill The Process so that It will be restarted by PM2 or any other process manager
-        //     process.exit(1);
-        // })
         try {
-            await logger_2.Logger.CreateLogger(logger_1.LoggerConf.colors);
+            logger_2.Logger.CreateLogger(logger_1.LoggerConf.colors);
             global.servicename = env.config.ServiceName;
             global.environment = env.env;
             global.logger = env.logger;
@@ -145,12 +149,23 @@ class Application {
                     await gamesinn_database_1.GamesInn.Connect(database_1.DBConfig.dbconf.gamesinn);
             }
             /**
+             * CREATE EMAIL TRANSPORT IF NEEDED
+             */
+            if (env.config.EMAIL)
+                await email_1.Email.CreateTransport();
+            scheduler_1.CroneJob.Scheduler();
+            /**
              * TEST DATABASE
              */
             if (global.defaultDB)
                 await defaultmodel_1.DefaultModel.INIT();
-            else
-                await usermodel_1.GamersModel.INIT();
+            await gamer_model_1.GamersModel.INIT();
+            await session_model_1.SessionsModel.INIT();
+            await tokens_model_1.TokenModel.INIT();
+            await campaign_model_1.CampaignModel.INIT();
+            await campaigns_history_1.CampaignHistoryModel.INIT();
+            await campaign_funded_1.CampaignFunded.INIT();
+            await transaction_1.TransactionsCampaignFunded.INIT();
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.
              */
@@ -158,6 +173,7 @@ class Application {
                 await utils_1.Utils.Sleep(global.delayStart);
             if (env.config.QUEUE)
                 await rabbitmq_1.RMQ.INIT(Application.conf.RABBITMQ);
+            // console.log(await Vault.GetVaultData(), 'vault cliebnt data');
             this.httpServer = http_1.HTTPServer.INIT(env.config);
             Object.seal(this.httpServer);
             logger_2.Logger.Console('Server Started : ', 'info');

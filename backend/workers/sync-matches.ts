@@ -12,8 +12,7 @@ class SyncWorker {
     conn!: MongoClient;
     conf: DBConfigMongo;
     constructor(dbConf: DBConfigMongo) {
-
-        this.conf = dbConf;
+     this.conf = dbConf;
     }
 
     public async INIT() {
@@ -21,9 +20,8 @@ class SyncWorker {
 
             await Logger.CreateLogger(LoggerConf.colors);
             let db = await this.Connect();
-            if (db) {
-                await DefaultModel.INITWorker(db);
-            }
+            if (db) await DefaultModel.INITWorker(db);
+            
             return;
         } catch (error) {
             let err: any = error;
