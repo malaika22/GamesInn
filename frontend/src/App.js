@@ -6,12 +6,15 @@ import "react-toastify/dist/ReactToastify.css";
 import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import ModuleRoutes from "./routes";
+import { AuthContextProvider } from "./context/AuthContext";
 
 function App() {
   return (
     <>
-      <ToastContainer />
-      <ModuleRoutes />
+      <AuthContextProvider>
+        <ToastContainer />
+        <ModuleRoutes />
+      </AuthContextProvider>
     </>
   );
 }

@@ -1,7 +1,7 @@
 import express from "express";
 import { DefaultDatabase } from "../../databases/database";
 import { DefaultModel } from "../../models/defaultmodel";
-import { GamersModel } from "../../models/usermodel";
+import { GamersModel } from "../../models/gamer-model";
 import { HTTPServer } from "../../server/http";
 import { Utils } from "../../utils/utils";
 
@@ -31,6 +31,9 @@ routes.use('/stop', async (req, res) => {
     process.emit(('SIGINT' as any));
     //Kill The Process so that It will be restarted by PM2 or any other process manager
 });
+
+
+
 
 
 //Always Use Default Routes at the End to ensure precedence

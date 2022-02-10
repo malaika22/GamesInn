@@ -11,7 +11,6 @@ let application = new Application();
  */
 (async () => {
     let env: Environment = JSON.parse((await fs.readFile(__dirname + `/environments/environment.json`)).toString());
-    console.log(env,'env');
     
     application.INIT(env);
 })();

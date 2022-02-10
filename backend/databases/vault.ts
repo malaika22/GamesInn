@@ -8,13 +8,16 @@
  * https://learn.hashicorp.com/tutorials/vault/pattern-approle?in=vault/recommended-patterns
  */
 import * as vault from "node-vault";
+import * as jwt from "jsonwebtoken";
+
 import { Application } from "../app";
 import { APPCONFIG } from "../interfaces/appconfig";
 import { Environment } from "../interfaces/environment";
 import { Logger } from "../server/logger";
+import { Session } from "../models/session-model";
 
 
-const { sign } = require('jsonwebtoken');
+
 import * as crypto from "crypto"
 import pbkdf2 from "pbkdf2";
 
@@ -36,17 +39,14 @@ export abstract class Vault {
             this.conf = conf;
             let vaultConf: vault.VaultOptions = {
                 apiVersion: conf.vault.apiversion,
-                endpoint: conf.vault.protocol + '://' + conf.vault.host,
+                endpoint: conf.vault.protocol + '://' + conf.vault.host + ":" + 8200,
                 token: conf.vault.login
             }
 
             this.client = vault.default(vaultConf);
 
             let appConfig = await this.client.read(`kv/${conf.vault.keyname}`);
-            // let appConfig = await this.client.list('kv/')
-            // console.log(appConfig);
 
-            // console.log(appConfig.data);
             return appConfig.data as APPCONFIG;
 
         } catch (error: any) {
@@ -61,15 +61,13 @@ export abstract class Vault {
         try {
             let vaultConf: vault.VaultOptions = {
                 apiVersion: conf.vault.apiversion,
-                endpoint: conf.vault.protocol + "://" + conf.vault.host,
+                endpoint: conf.vault.protocol + "://" + conf.vault.host+":"+8200,
                 token: conf.vault.login,
             };
             this.client = vault.default(vaultConf);
-            // console.log(await this.client.health(), 'client for vault');
-            let appConfig = await this.client.read(`kv/${conf.vault.keyname}`);
-            // let appConfig = await this.client.list('kv/')
-            // console.log(appConfig);
-            // console.log(appConfig.data);
+
+            let appConfig = await this.client.read(`secrets/${conf.vault.keyname}`);
+   
             return appConfig.data ? true : false;
         } catch (error: any) {
             Logger.Console(`Error in Initializing Vault : ${JSON.stringify(error)}`);
@@ -82,7 +80,6 @@ export abstract class Vault {
         let appConfig = await this.client.read(`kv/${Vault.conf.vault.keyname}`);
         return appConfig.data as APPCONFIG;
     }
-
 
     public static async UpdateVaultData() {
         let appConfig = await this.client.read(`kv/${Vault.conf.vault.keyname}`);
@@ -127,7 +124,6 @@ export abstract class Vault {
 
         // protected data
 
-
         // secret key generate 32 bytes of random data
         let Securitykey = Application.conf?.ENCRYPTION.salt || Vault.salt
         let iv = Buffer.from(Application.conf?.ENCRYPTION.iv || Vault.iv)
@@ -142,7 +138,6 @@ export abstract class Vault {
     }
 
     public static VerifyHashedPassword(password: string, original: string) {
-        console.log(`Password: ${password},  originalPassword: ${original}`)
         let salt = Application.conf?.ENCRYPTION.salt || Vault.salt
 
         let hash = pbkdf2.pbkdf2Sync(password, salt, 1, 32, 'sha256').toString('hex')
@@ -152,12 +147,54 @@ export abstract class Vault {
 
     }
 
+    public static GenerateSignToken(session: Session): string {
+
+        /**
+         * @REVIEW Change Signing LogicMake it more secure
+         */
+        
+
+         let sessionObject:string|any = {
+                session_id: session._id.toString(),
+                type: session.userType,
+                createdAt: session.createdTime,
+                user_id: session.userID.toString(),
+         }
+
+
+        let payload :any = sessionObject
+        
+
+
+        try {
+            let token = jwt.sign(payload, '', { algorithm: 'none' })
+            let encryptedToken = Vault.Encrypt(token);
+
+            return encryptedToken;
+
+        } catch (error: any) {
+            Logger.Console("Error creating session");
+            throw error;
+        }
+    }
+
 
     public static hashPassword(password: string) {
         let salt = Application.conf?.ENCRYPTION.salt || Vault.salt
 
         let hash = pbkdf2.pbkdf2Sync(password, salt, 1, 32, 'sha256')
         return hash.toString('hex')
+    }
+
+
+    public static DecodeSignToken = (token:string) => {
+        try {
+            return jwt.verify(Vault.Decrypt(token), "" ,{complete:true} ).payload
+
+        } catch (error) {
+            Logger.Console("Error decrypting session");
+            throw error;
+        }
     }
 
 }
