@@ -1,6 +1,6 @@
 import React from "react";
 
-import {  Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Layout, Menu } from "antd";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -26,28 +26,15 @@ const { SubMenu } = Menu;
 const { Sider, Header, Footer, Content } = Layout;
 
 const GamerLayout = ({ children }) => {
-  //route change for my acc
-
-  //const history =  useNavigate();
-  //const routeChange = () =>{ 
-    
-    
-   //history("/gamer/myaccounts")
-   
-  //}
-
- 
-
   const history = useNavigate();
   const routeChange = () => {
-    history("/myaccounts");
+    history("/gamer/myaccounts");
   };
   // change route for buyer info
   const routeChangebuyer = () => {
-    history("/buyerinfo");
+    history("gamer/buyerinfo");
   };
 
-  console.log("Checkcing git");
   return (
     <div className="gamer-layout-container">
       <Layout>
@@ -56,11 +43,11 @@ const GamerLayout = ({ children }) => {
             <div className="logo">Games inn</div>
             <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
               <Menu.Item key="1" icon={<ContainerOutlined />}>
-                Feed
+                <Link to={"/gamer/postfeed"}>Feed</Link>
               </Menu.Item>
-              <Menu.Item key="2" icon={<WechatOutlined />}>
+              {/* <Menu.Item key="2" icon={<WechatOutlined />}>
                 Chat
-              </Menu.Item>
+              </Menu.Item> */}
               <Menu.Item
                 key="3"
                 icon={<FontAwesomeIcon icon={faFileContract} />}

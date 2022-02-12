@@ -21,7 +21,6 @@ import MyPosts from "../modules/gamer/MyPosts/MyPosts";
 import AuthPrivateRoute from "./AuthPrivateRoute";
 import VerifyEmail from "../components/AuthPages/VerifyEmail";
 
-
 const ModuleRoutes = () => {
   return (
     // DEFAULT ROUTES
@@ -36,26 +35,19 @@ const ModuleRoutes = () => {
 
       {/*************** GamerPrivateRoute *****************/}
       <Route exact path="/" element={<GamerPrivateRoute />}>
-
         <Route exact path="gamer/postfeed" element={<PostFeed />} />
         <Route exact path="gamer/myaccounts" element={<MyAccounts />} />
         <Route exact path="gamer/buyerinfo" element={<BuyerInfo />} />
         <Route exact path="gamer/post/:id" element={<Post />} />
         <Route exact path="gamer/mycompaign" element={<MyCampaigns />} />
-
       </Route>
 
       {/*************** GamerPrivateRoute *****************/}
       <Route exact element={<InvestorPrivateRoute />}>
-        <Route
-          exact
-          path="investor/talentPool"
-          element={<div/>}
-        />
-        <Route exact path="investor/contract" 
-        element={<Contract/>} />
+        <Route exact path="investor/talentPool" element={<div />} />
+        <Route exact path="investor/contract" element={<Contract />} />
       </Route>
-    </Routes> 
+    </Routes>
   );
 };
 
