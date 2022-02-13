@@ -7,13 +7,16 @@ import "owl.carousel/dist/assets/owl.carousel.css";
 import "owl.carousel/dist/assets/owl.theme.default.css";
 import ModuleRoutes from "./routes";
 import { AuthContextProvider } from "./context/AuthContext";
+import { GamerContextProvider } from "./context/GamerContext";
 
 function App() {
   return (
     <>
       <AuthContextProvider>
-        <ToastContainer />
-        <ModuleRoutes />
+        <GamerContextProvider>
+          <ToastContainer />
+          <ModuleRoutes />
+        </GamerContextProvider>
       </AuthContextProvider>
     </>
   );

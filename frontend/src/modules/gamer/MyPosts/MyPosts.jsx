@@ -1,143 +1,84 @@
-import { Button } from "antd";
-import React from "react";
+import { Button, Spin } from "antd";
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../../context/AuthContext";
+import { toast } from "react-toastify";
+import { GamerContext } from "../../../context/GamerContext";
+import SellAccountModal from "./SellAccount/SellAccountModal";
 
 const MyPosts = () => {
-  const data = [
-    {
-      accountName:
-        "Android / Facebook FreeFire Account LV57. with a big donation / See de*ion 7 days Seller After-sale protection",
-      gameName: "Garena Free Fire-Android",
-      description: ` IMPORTANT
-            UID: 82950680
-            Please read before buying
-            1. After purchase, you get: Password from mail and from facebook
-            2. The account is in the RU region -
-            It is possible to change, but it will not be easy, only through the support of garena
-            3. Account is linked to facebook - you can also change, but not easy
-            4. Phone and authenticator not linked to Facebook account
-            5. You can change mail on facebook.
-            Account video review - female : youtu.be/-OWBd1d_sYE
-            Account video review - male : youtu.be/7nkztlAlOrA
-            I also sell a YouTube channel, 3:4k subscribers, old channel, registration 2011 Subject Free Fire
-            with monetization, The price of the YouTube channel is $ 700
-            if you are interested, write messages on the site. `,
-      sellingPrice: 45,
-      status: "Sold",
-    },
-    {
-      accountName:
-        "Android / Facebook FreeFire Account LV57. with a big donation / See de*ion 7 days Seller After-sale protection",
-      gameName: "Garena Free Fire-Android",
-      description: ` IMPORTANT
-            UID: 82950680
-            Please read before buying
-            1. After purchase, you get: Password from mail and from facebook
-            2. The account is in the RU region -
-            It is possible to change, but it will not be easy, only through the support of garena
-            3. Account is linked to facebook - you can also change, but not easy
-            4. Phone and authenticator not linked to Facebook account
-            5. You can change mail on facebook.
-            Account video review - female : youtu.be/-OWBd1d_sYE
-            Account video review - male : youtu.be/7nkztlAlOrA
-            I also sell a YouTube channel, 3:4k subscribers, old channel, registration 2011 Subject Free Fire
-            with monetization, The price of the YouTube channel is $ 700
-            if you are interested, write messages on the site. `,
-      sellingPrice: 45,
-      status: "Sold",
-    },
-    {
-      accountName:
-        "Android / Facebook FreeFire Account LV57. with a big donation / See de*ion 7 days Seller After-sale protection",
-      gameName: "Garena Free Fire-Android",
-      description: ` IMPORTANT
-            UID: 82950680
-            Please read before buying
-            1. After purchase, you get: Password from mail and from facebook
-            2. The account is in the RU region -
-            It is possible to change, but it will not be easy, only through the support of garena
-            3. Account is linked to facebook - you can also change, but not easy
-            4. Phone and authenticator not linked to Facebook account
-            5. You can change mail on facebook.
-            Account video review - female : youtu.be/-OWBd1d_sYE
-            Account video review - male : youtu.be/7nkztlAlOrA
-            I also sell a YouTube channel, 3:4k subscribers, old channel, registration 2011 Subject Free Fire
-            with monetization, The price of the YouTube channel is $ 700
-            if you are interested, write messages on the site. `,
-      sellingPrice: 45,
-      status: "Sold",
-    },
-    {
-      accountName:
-        "Android / Facebook FreeFire Account LV57. with a big donation / See de*ion 7 days Seller After-sale protection",
-      gameName: "Garena Free Fire-Android",
-      description: ` IMPORTANT
-            UID: 82950680
-            Please read before buying
-            1. After purchase, you get: Password from mail and from facebook
-            2. The account is in the RU region -
-            It is possible to change, but it will not be easy, only through the support of garena
-            3. Account is linked to facebook - you can also change, but not easy
-            4. Phone and authenticator not linked to Facebook account
-            5. You can change mail on facebook.
-            Account video review - female : youtu.be/-OWBd1d_sYE
-            Account video review - male : youtu.be/7nkztlAlOrA
-            I also sell a YouTube channel, 3:4k subscribers, old channel, registration 2011 Subject Free Fire
-            with monetization, The price of the YouTube channel is $ 700
-            if you are interested, write messages on the site. `,
-      sellingPrice: 45,
-      status: "Sold",
-    },
-    {
-      accountName:
-        "Android / Facebook FreeFire Account LV57. with a big donation / See de*ion 7 days Seller After-sale protection",
-      gameName: "Garena Free Fire-Android",
-      description: ` IMPORTANT
-            UID: 82950680
-            Please read before buying
-            1. After purchase, you get: Password from mail and from facebook
-            2. The account is in the RU region -
-            It is possible to change, but it will not be easy, only through the support of garena
-            3. Account is linked to facebook - you can also change, but not easy
-            4. Phone and authenticator not linked to Facebook account
-            5. You can change mail on facebook.
-            Account video review - female : youtu.be/-OWBd1d_sYE
-            Account video review - male : youtu.be/7nkztlAlOrA
-            I also sell a YouTube channel, 3:4k subscribers, old channel, registration 2011 Subject Free Fire
-            with monetization, The price of the YouTube channel is $ 700
-            if you are interested, write messages on the site. `,
-      sellingPrice: 45,
-      status: "Sold",
-    },
-    {
-      accountName:
-        "Android / Facebook FreeFire Account LV57. with a big donation / See de*ion 7 days Seller After-sale protection",
-      gameName: "Garena Free Fire-Android",
-      description: ` IMPORTANT
-            UID: 82950680
-            Please read before buying
-            1. After purchase, you get: Password from mail and from facebook
-            2. The account is in the RU region -
-            It is possible to change, but it will not be easy, only through the support of garena
-            3. Account is linked to facebook - you can also change, but not easy
-            4. Phone and authenticator not linked to Facebook account
-            5. You can change mail on facebook.
-            Account video review - female : youtu.be/-OWBd1d_sYE
-            Account video review - male : youtu.be/7nkztlAlOrA
-            I also sell a YouTube channel, 3:4k subscribers, old channel, registration 2011 Subject Free Fire
-            with monetization, The price of the YouTube channel is $ 700
-            if you are interested, write messages on the site. `,
-      sellingPrice: 45,
-      status: "Sold",
-    },
-  ];
+  const { handleCreatePost } = useContext(GamerContext);
+  const [showPostModal, setShowPostModal] = useState(false);
+  const [accountLoader, setAccountLoader] = useState("");
+  const { currentUser } = useContext(AuthContext);
+  const [accountDetails, setAccountDetails] = useState({
+    gamingPlatform: "",
+    gamingAccount: "",
+    accountDescription: "",
+    accountImages: [],
+    accountPrice: 0,
+  });
+
+  useEffect(() => {
+    if (accountLoader) {
+      const timer = setTimeout(() => {
+        console.log("This will run after 1 second!");
+        setAccountLoader("Fetching details...");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [accountLoader]);
+
+  useEffect(() => {
+    if (accountLoader) {
+      const timer = setTimeout(() => {
+        console.log("This will run after 6000 second!");
+        handleCreatePost({
+          ...accountDetails,
+          userName: currentUser?.userName,
+          profileImage: currentUser?.profileImage,
+          createdBy: currentUser?.uid,
+        });
+        setAccountLoader("");
+        toast.success("Account verified successfully, post uploaded");
+      }, 6000);
+      return () => clearTimeout(timer);
+    }
+  }, [accountLoader]);
+
   return (
-    <div className="my-posts-container">
-      <div className="posts-header">
-        <div className="posts-heading">My Posts</div>
-        <Button>Sell Account</Button>
-      </div>
-      <div className="posts-card-container"></div>
-    </div>
+    <>
+      {accountLoader ? (
+        <Spin tip={accountLoader}>
+          <div className="my-posts-container">
+            <div className="posts-header">
+              <div className="posts-heading">My Posts</div>
+              <Button onClick={() => setShowPostModal(true)}>
+                Sell Account
+              </Button>
+            </div>
+            <div className="posts-card-container"></div>
+          </div>
+        </Spin>
+      ) : (
+        <div className="my-posts-container">
+          <div className="posts-header">
+            <div className="posts-heading">My Posts</div>
+            <Button onClick={() => setShowPostModal(true)}>Sell Account</Button>
+          </div>
+          <div className="posts-card-container"></div>
+        </div>
+      )}
+
+      {showPostModal && (
+        <SellAccountModal
+          cancel={setShowPostModal}
+          handleCreatePost={handleCreatePost}
+          setAccountLoader={setAccountLoader}
+          accountDetails={accountDetails}
+          setAccountDetails={setAccountDetails}
+        />
+      )}
+    </>
   );
 };
 

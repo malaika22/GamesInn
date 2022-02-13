@@ -1,12 +1,23 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { auth, db } from "../firebase";
 
 export const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [userLoading, setUserLoading] = useState(false);
+  const uid = localStorage.getItem("ginn_uid");
+  useEffect(() => {
+    db.collection("users")
+      .doc(uid)
+      .get()
+      .then((res) => setCurrentUser(res.data()))
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [uid]);
 
   const handleSignUp = async (data) => {
     console.log("singnup", data);
@@ -23,6 +34,57 @@ export const AuthContextProvider = ({ children }) => {
     } catch (err) {
       console.log("err", err?.response?.data?.errors);
       toast.error(err?.response?.data?.errors);
+    }
+  };
+
+  const handleFBSignUp = async (data) => {
+    setUserLoading(true);
+    console.log("data", data);
+    try {
+      if (data?.email && data?.userName) {
+        auth
+          .createUserWithEmailAndPassword(data?.email, data?.password)
+          .then((res) => {
+            console.log("Successfully signed in");
+            // Add user to database
+            console.log(res);
+            createUser(res.user, data);
+          })
+          .catch((err) => {
+            console.log("Error signing up", err);
+          });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const createUser = (res, data) => {
+    const userDocRef = db.collection("users").doc(res.uid);
+    userDocRef.set({
+      uid: res.uid,
+      ...data,
+      profileImage: "",
+    });
+    toast.success("Account created successfully");
+  };
+
+  const handleFbLogin = ({ email, password, userType }) => {
+    if (password && email) {
+      auth
+        .signInWithEmailAndPassword(email, password)
+        .then((res) => {
+          console.log("Successfully logged in", res);
+          localStorage.setItem("ginn_uid", res?.user?.uid);
+          localStorage.setItem("ginn_token", res?.user?.uid);
+          localStorage.setItem("ginn_type", userType);
+          //Go to the home page
+          window.location.href = "/";
+        })
+        .catch((err) => {
+          console.log("user not present");
+          toast.error("User doesn't exist, please signup");
+        });
     }
   };
 
@@ -69,8 +131,8 @@ export const AuthContextProvider = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
-        userSignUp: handleSignUp,
-        userLogin: handleSignIn,
+        userSignUp: handleFBSignUp,
+        userLogin: handleFbLogin,
         currentUser: currentUser,
         userLogout: handleLogout,
       }}

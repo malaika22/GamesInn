@@ -9,7 +9,7 @@ import { AuthContext } from "../../../../context/AuthContext";
 const NavHeader = ({ role }) => {
   const { userLogout } = useContext(AuthContext);
   const loggedInToken = localStorage.getItem("ginn_token");
-  const { userType } = JSON.parse(localStorage.getItem("ginn_uDetails"));
+  const userType = localStorage.getItem("ginn_type");
   const [current, setCurrent] = useState("home");
   const handleMenu = (e) => {
     console.log("e", e);
@@ -56,7 +56,7 @@ const NavHeader = ({ role }) => {
           <div className="header-buttons">
             {loggedInToken ? (
               <>
-                {userType === "Gamer" ? (
+                {userType === "gamer" ? (
                   <span>
                     <Link to={"/gamer/postfeed"}>Dashboard</Link>
                   </span>

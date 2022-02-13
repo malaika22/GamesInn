@@ -40,6 +40,7 @@ const ModuleRoutes = () => {
         <Route exact path="gamer/buyerinfo" element={<BuyerInfo />} />
         <Route exact path="gamer/post/:id" element={<Post />} />
         <Route exact path="gamer/mycompaign" element={<MyCampaigns />} />
+        <Route exact path="gamer/myposts" element={<MyPosts />} />
       </Route>
 
       {/*************** GamerPrivateRoute *****************/}

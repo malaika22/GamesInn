@@ -55,7 +55,7 @@ const GamerLayout = ({ children }) => {
                 Contracts
               </Menu.Item>
               <Menu.Item key="4" icon={<UploadOutlined />}>
-                My posts
+                <Link to={"/gamer/myposts"}>My posts</Link>
               </Menu.Item>
 
               <SubMenu
