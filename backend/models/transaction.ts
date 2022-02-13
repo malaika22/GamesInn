@@ -170,6 +170,14 @@ export abstract class TransactionsCampaignFunded {
         return doc[0]
     }
 
+    public static async FindByIdentifierTokenAndUpdate(identifierToken: string,state:string) {
+
+        let doc: any = await this.collection.findOneAndUpdate({state: TransactionState.pending,identifierToken: identifierToken }, { $set :  {state:state}} , {upsert:false, returnDocument:"after"})
+        return doc.lastErrorObject.updatedExisting
+        
+    }
+
+
 }
 
 

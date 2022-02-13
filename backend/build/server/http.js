@@ -35,6 +35,7 @@ const HealthRouter = __importStar(require("../controllers/api/health"));
 const VaultRouter = __importStar(require("../controllers/api/vault"));
 const AuthenticationRouter = __importStar(require("../controllers/api/auth"));
 const CampaignRouter = __importStar(require("../controllers/api/campaign"));
+const AccountsRouter = __importStar(require("../controllers/api/accounts"));
 const PaymentRouter = require('../controllers/api/payments/payments');
 const Handlebars = __importStar(require("express-handlebars"));
 const helpers = __importStar(require("handlebars-helpers"));
@@ -87,6 +88,7 @@ class HTTPServer {
         this.server.app.use('/auth/api/v1/vault', VaultRouter.router);
         this.server.app.use('/gamer/auth/api/v1', AuthenticationRouter.router);
         this.server.app.use('/campaign/api/v1', CampaignRouter.router);
+        this.server.app.use('/accounts/api/v1', AccountsRouter.router);
         this.server.app.use('/payment/api/v1', PaymentRouter);
         //Default Route Must be added at end.
         this.server.app.use('/', DefaultRouter.router);

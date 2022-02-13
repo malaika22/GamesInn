@@ -117,6 +117,10 @@ class TransactionsCampaignFunded {
         let doc = await this.collection.find({ userID: userID }).limit(1).toArray();
         return doc[0];
     }
+    static async FindByIdentifierTokenAndUpdate(identifierToken, state) {
+        let doc = await this.collection.findOneAndUpdate({ state: TransactionState.pending, identifierToken: identifierToken }, { $set: { state: state } }, { upsert: false, returnDocument: "after" });
+        return doc.lastErrorObject.updatedExisting;
+    }
 }
 exports.TransactionsCampaignFunded = TransactionsCampaignFunded;
 TransactionsCampaignFunded.campaignDeletedSeconds = 259200;

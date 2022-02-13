@@ -48,23 +48,9 @@ routes.use(async (req, res, next) => {
         console.log(error);
     }
 });
-// const config = {
-//   environment: "sandbox",
-//   sandbox: {
-//     baseUrl: Application.conf.SAFEPAY.BASE_URL,
-//     apiKey:Application.conf.SAFEPAY.API_KEY,
-//     apiSecret:Application.conf.SAFEPAY.API_SECRET
-//   },
-// }
 let safePayObject = new Safepay(config);
 routes.post('/payme', async (req, res) => {
     try {
-        console.log(req.gamerDetails, "ghagagfagagag");
-        //@NOTE CHECK BELOW CODE FOR HASHING STRING
-        // var crypto = require('crypto');
-        // var name = 'braitsch';
-        // var hash = crypto.createHash('md5').update(name).digest('hex');
-        // console.log(hash); // 9b74c9897bac770ffc029102a200c5de
         // initialize payment
         if (!(ObjectId.isValid(req.body.campaign_id)))
             return res.status(404).send({ msg: "provide valid campaign id" });
@@ -76,25 +62,6 @@ routes.post('/payme', async (req, res) => {
             amount: 1200,
             currency: "PKR",
         });
-        //   interface TransactionCampaignFunded {
-        //     campaignName: string,
-        //     campaignDays: number,
-        //     userName: string,
-        //     _id?: string | ObjectId,
-        //     campaignCreatedBy: string,
-        //     fundedBy: ObjectId | string
-        //     fundedByuserEmail?: string,
-        //     campaignCreatedUserEmail: string,
-        //     currency: string,
-        //     amount: Number,
-        //     state: TransactionState,
-        //     token: String,
-        //     transaction_createdAt: string,
-        //     transaction_updatedAt: string,
-        //     orderID: string,
-        //     fundedUserName?: string,
-        //     identifierToken: string
-        // }
         let orderID = crypto.randomBytes(8).toString('hex');
         let identifierToken = crypto.randomBytes(8).toString('hex');
         console.log(data.data, '>>>Dtaa');
@@ -117,16 +84,18 @@ routes.post('/payme', async (req, res) => {
             campaignCreatedUserEmail: campaign.userEmail,
             userName: campaign.userName
         };
+        let success_url = `http://localhost:8000/success_payment/${identifierToken}`;
+        console.log(success_url, 'suc');
         await TransactionsCampaignFunded.InsertTransactionCampaignFunded(objectCreate);
         //Perform Chcekout
         let checkout = await safePayObject.checkout.create({
             tracker: data.data.token,
             orderId: orderID,
             source: "custom",
-            cancelUrl: "https://example.com/payment-cancelled",
-            redirectUrl: "https://example.com/payment-complete"
+            cancelUrl: `http://localhost:8000/success_payment/${identifierToken}`,
+            redirectUrl: success_url
         });
-        return res.status(200).redirect(checkout);
+        return res.status(200).send(checkout);
     }
     catch (error) {
         console.log(error);
@@ -148,12 +117,4 @@ function processPayment({ tracker, token, ref, sig, order_id }) {
     console.log("signature verified...");
     console.log("proceeding to mark order as paid");
 }
-// This is just for demostration purposes.
-// In a real world scenario, Safepay will make
-// a POST request with body encoded as a form.
-// The params passed by Safepay to your server are:
-// - tracker: this is the original tracker token for this payment
-// - token: this is the transaction id
-// - ref: this is the 6-digit transaction reference number
-// - sig: signature returned by safepay to prove transaction integrity
 //# sourceMappingURL=payments.js.map
