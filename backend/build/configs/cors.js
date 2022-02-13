@@ -8,7 +8,7 @@ CorsConfig.confs = {
     "default": {
         optionsSuccessStatus: 200,
         methods: ["GET", "POST", "HEAD", "OPTION", "PATCH", "DELETE"],
-        origin: ["localhost:3000"]
+        origin: ["localhost:5500"]
     },
     "testroute": {}
 };

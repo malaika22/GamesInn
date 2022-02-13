@@ -68,6 +68,17 @@ class JoiSchemas {
         else
             return { errored: false, errors: null, value: result.value };
     }
+    static CreateAccount(data) {
+        let schema = joi_1.default.object({
+            accountName: joi_1.default.string().required(),
+            cost: joi_1.default.number().min(5).required()
+        });
+        let result = schema.validate(data, { abortEarly: false });
+        if (result.error)
+            return { errored: true, errors: result.error.message.split('.'), value: result.value };
+        else
+            return { errored: false, errors: null, value: result.value };
+    }
     static CreateCampaigns(data) {
         let schema = joi_1.default.object({
             campaignName: joi_1.default.string().min(3).required(),

@@ -1,4 +1,5 @@
 import express from "express";
+import { TransactionsCampaignFunded, TransactionState } from "../../models/transaction";
 import { RMQ } from "../../server/queues/rabbitmq";
 import { WorkerManager } from "../../utils/worker-manager";
 
@@ -35,24 +36,37 @@ routes.use("/stop", async (req, res) => {
 });
 
 routes.get('/syncTest', async (req, res) => {
-	try {
+    try {
 
-		await WorkerManager.StartWorker()
+        await WorkerManager.StartWorker()
 
-		return res.status(200).send({ msg: "done" })
-	} catch (error) {
-		let err: any = error;
+        return res.status(200).send({ msg: "done" })
+    } catch (error) {
+        let err: any = error;
 
-		return res.status(500).send({ msg: err.toString() })
-	}
+        return res.status(500).send({ msg: err.toString() })
+    }
 
 })
 
+/***
+ * @Note Safe pay had no webhook in thier doc so we use toen method
+ *@param token:string
+ */
 
 
 
-//Comment If we Don't want to Entertain All routes and generate Error
-// routes.use('/', (req, res) => { console.log('Default : '); res.send('Hello World'); });
+
+routes.post('/success_payment/:token', async (req, res) => {
+
+    if (!req.params.token) return res.status(400).send({ msg: 'Send token for payment' });
+
+    let doc = await TransactionsCampaignFunded.FindByIdentifierTokenAndUpdate(req.params.token, TransactionState.completed);
+    if (!doc) return res.status(404).send({ msg: "No campaign found with this token" });
+
+    return res.status(200).send({msg : "Payment completed! "})
+
+})
 
 routes.use('*', (req, res) => { res.status(401).send('Uknown Router Default Handled'); });
 

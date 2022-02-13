@@ -42,6 +42,7 @@ const scheduler_1 = require("./controllers/cron/scheduler");
 const campaigns_history_1 = require("./models/campaigns-history");
 const campaign_funded_1 = require("./models/campaign-funded");
 const transaction_1 = require("./models/transaction");
+const accounts_1 = require("./models/accounts");
 global.__rootdir__ = process.cwd();
 class Application {
     constructor() { }
@@ -166,6 +167,7 @@ class Application {
             await campaigns_history_1.CampaignHistoryModel.INIT();
             await campaign_funded_1.CampaignFunded.INIT();
             await transaction_1.TransactionsCampaignFunded.INIT();
+            await accounts_1.AccountsModel.INIT();
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.
              */

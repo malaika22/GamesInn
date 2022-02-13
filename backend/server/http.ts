@@ -16,6 +16,7 @@ import * as HealthRouter from "../controllers/api/health";
 import * as VaultRouter from "../controllers/api/vault";
 import * as AuthenticationRouter from '../controllers/api/auth'
 import * as CampaignRouter from '../controllers/api/campaign'
+import * as AccountsRouter from '../controllers/api/accounts'
 const PaymentRouter = require('../controllers/api/payments/payments')
 
 import * as Handlebars from 'express-handlebars'
@@ -60,6 +61,8 @@ export class HTTPServer {
         this.server.app.use(express.json());
         this.server.app.use(cors())
 
+
+        this.server.app.use(cors())
         /**
          * @NOTE Below next three this.server.app.set is for setting up server side rendering engine using HBS
          */
@@ -95,6 +98,8 @@ export class HTTPServer {
         this.server.app.use('/gamer/auth/api/v1', AuthenticationRouter.router)
 
         this.server.app.use('/campaign/api/v1', CampaignRouter.router)
+      
+        this.server.app.use('/accounts/api/v1', AccountsRouter.router)
 
         this.server.app.use('/payment/api/v1', PaymentRouter)
         //Default Route Must be added at end.

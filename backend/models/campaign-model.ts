@@ -1,6 +1,6 @@
 import mongodb, { Db, ReadConcern, ReadConcernLevel, ReadPreference, TransactionOptions, WriteConcern } from "mongodb";
 import { GamesInn } from "../databases/gamesinn-database";
-import {  ObjectId } from "bson";
+import {  ObjectID, ObjectId } from "bson";
 import { Session } from "./session-model";
 import { CampaignHistoryModel } from "./campaigns-history";
 
@@ -217,7 +217,17 @@ export abstract class CampaignModel {
         return doc[0]
     }
 
+
+    public static async FindCampaignByID(campaignID: string | ObjectId) {
+        console.log('wirks??');
+        
+        let doc: any = await this.collection.find({ _id: new ObjectID(campaignID) }).limit(1).toArray()
+        return doc[0]
+    }
+
 }
+
+
 
 
 

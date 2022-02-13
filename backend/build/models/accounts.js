@@ -1,24 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DefaultModel = void 0;
-const database_1 = require("../databases/database");
-class DefaultModel {
+exports.AccountsModel = void 0;
+const gamesinn_database_1 = require("../databases/gamesinn-database");
+class AccountsModel {
     static async INIT() {
-        database_1.DefaultDatabase.db.subscribe(async (val) => {
+        gamesinn_database_1.GamesInn.db.subscribe(async (val) => {
             this.db = val;
             if (val) {
                 try {
-                    this.collection = await this.db.createCollection('default');
+                    this.collection = await this.db.createCollection('accounts');
                     console.log('GOT DB');
                     console.log(this.collection.collectionName);
                 }
                 catch (error) {
                     if (error.code == 48) {
-                        this.collection = await this.db.collection('default');
+                        this.collection = await this.db.collection('accounts');
                     }
                     else {
                         console.log(error);
-                        console.log('error in Creating Collection');
+                        console.log('error in Creating Accounts Collection');
                     }
                 }
             }
@@ -33,7 +33,7 @@ class DefaultModel {
             throw new Error('Unable to Initialize model in worker');
         this.db = db;
         try {
-            this.collection = await this.db.collection('default');
+            this.collection = await this.db.collection('accounts');
         }
         catch (error) {
             throw new Error('Error in Initializing Collection in Worker');
@@ -52,20 +52,41 @@ class DefaultModel {
             return error;
         }
     }
-    static async Add() {
+    static async AddAccounts(data) {
         try {
-            let doc = await this.collection.findOneAndUpdate({ name: 1 }, { $inc: { count: 1 } }, { upsert: true, returnDocument: 'after' });
+            let temp = {
+                username: data.username,
+                accountName: data.accountName,
+                accountCreatedAt: new Date(),
+                accountActive: true,
+                userEmail: data.userEmail,
+                userID: data.userID,
+                cost: data.cost
+            };
+            let doc = await this.collection.findOneAndUpdate({ accountName: data.accountName, userID: temp.userID }, { $set: temp }, { upsert: true, returnDocument: 'after' });
             // if (doc && doc.insertedCount) return doc.result;
             // else return doc;
-            if (doc.lastErrorObject)
-                return { count: 1 };
-            return { count: (doc && doc.value) ? doc.value.count : 0 };
+            console.log(doc);
+            if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
+                temp._id = doc.lastErrorObject.upserted;
+                return temp;
+            }
+            else
+                return doc.value;
         }
         catch (error) {
             console.log(error);
-            console.log('Error in Adding');
+            console.log('Error in creating acccount');
             throw new Error(error);
         }
+    }
+    static async GetMyAccounts(userID) {
+        let doc = await this.collection.find({ userID: userID }).toArray();
+        return doc;
+    }
+    static async GetAllAccounts() {
+        let doc = await this.collection.find({}).toArray();
+        return doc;
     }
     static async Sub() {
         try {
@@ -82,5 +103,5 @@ class DefaultModel {
         }
     }
 }
-exports.DefaultModel = DefaultModel;
-//# sourceMappingURL=defaultmodel.js.map
+exports.AccountsModel = AccountsModel;
+//# sourceMappingURL=accounts.js.map
