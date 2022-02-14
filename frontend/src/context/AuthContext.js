@@ -71,7 +71,6 @@ export const AuthContextProvider = ({ children }) => {
             // Add user to database
             console.log(res);
             createUser(res.user, data);
-            // window.location.href = "/login";
           })
           .catch((err) => {
             toast.error(err?.message);
@@ -83,15 +82,16 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
-  const createUser = (res, data) => {
+  const createUser = async (res, data) => {
     console.log(res);
     const userDocRef = db.collection("users").doc(res.uid);
-    userDocRef.set({
+    await userDocRef.set({
       uid: res.uid,
       ...data,
       profileImage: "",
     });
     toast.success("Account created successfully");
+    window.location.href = "/login";
   };
 
   const handleFbLogin = ({ email, password, userType }) => {
