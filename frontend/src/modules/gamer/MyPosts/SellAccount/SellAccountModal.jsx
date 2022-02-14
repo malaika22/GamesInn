@@ -63,7 +63,7 @@ const StepOne = ({ accountDetails, setAccountDetails, setStepCount }) => {
             rules={[
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (value?.length > 300) {
+                  if (value?.length > 100) {
                     return Promise.resolve();
                   } else if (!value) {
                     return Promise.reject(

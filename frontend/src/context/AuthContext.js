@@ -17,6 +17,7 @@ export const AuthContextProvider = ({ children }) => {
         .doc(uid)
         .get()
         .then((res) => {
+          console.log(res.data());
           localStorage.setItem("ginn_type", res.data().userType);
           setCurrentUser(res.data());
         })
@@ -70,7 +71,7 @@ export const AuthContextProvider = ({ children }) => {
             // Add user to database
             console.log(res);
             createUser(res.user, data);
-            window.location.href = "/login";
+            // window.location.href = "/login";
           })
           .catch((err) => {
             toast.error(err?.message);
@@ -83,6 +84,7 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   const createUser = (res, data) => {
+    console.log(res);
     const userDocRef = db.collection("users").doc(res.uid);
     userDocRef.set({
       uid: res.uid,
@@ -97,12 +99,13 @@ export const AuthContextProvider = ({ children }) => {
       auth
         .signInWithEmailAndPassword(email, password)
         .then((res) => {
+          console.log(res);
           console.log("Successfully logged in", res);
           localStorage.setItem("ginn_uid", res?.user?.uid);
           localStorage.setItem("ginn_token", res?.user?.uid);
           // localStorage.setItem("ginn_type", userType);
           //Go to the home page
-          window.location.href = "/";
+          // window.location.href = "/";
         })
         .catch((err) => {
           toast.error(err?.message);
