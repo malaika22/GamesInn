@@ -11,53 +11,19 @@ export const AuthContextProvider = ({ children }) => {
   const uid = localStorage.getItem("ginn_uid");
 
   console.log(currentUser);
-  useEffect(() => {
-    if (uid) {
-      db.collection("users")
-        .doc(uid)
-        .get()
-        .then((res) => {
-          console.log(res.data());
-          localStorage.setItem("ginn_type", res.data().userType);
-          setCurrentUser(res.data());
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [uid]);
 
-  const handleFBLogout = () => {
-    auth
-      .signOut()
-      .then((res) => {
-        console.log("in handle logout");
-        localStorage.clear();
-        //setUsers(null)
-        setCurrentUser(null);
-        window.location.href = "/login";
+  // #########################FIREBASE#############################
+  useEffect(() => {
+    db.collection("users").onSnapshot((doc) =>
+      doc.forEach((res) => {
+        console.log(res.data());
+        if (res?.data()?.uid === uid) {
+          console.log("same user");
+          setCurrentUser(res.data());
+        }
       })
-      .catch((err) => {
-        console.log("error logging out", err);
-      });
-  };
-  const handleSignUp = async (data) => {
-    console.log("singnup", data);
-    setUserLoading(true);
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_BACKEND_ENV}gamer/auth/api/v1/signupGamer`,
-        data
-      );
-      setUserLoading(false);
-      console.log("signup res", res);
-      localStorage.setItem("ginn_userDetails", JSON.stringify(res?.data?.data));
-      // window.location.pathname = "/verifyemail";
-    } catch (err) {
-      console.log("err", err?.response?.data?.errors);
-      toast.error(err?.response?.data?.errors);
-    }
-  };
+    );
+  }, []);
 
   const handleFBSignUp = async (data) => {
     setUserLoading(true);
@@ -115,6 +81,56 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
+  const updateUser = (data) => {
+    console.log("data", data);
+    try {
+      const doc = db
+        .collection("users")
+        .doc(currentUser?.uid)
+        .update({
+          ...data,
+        });
+      toast.success("Account updated successsfully");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleFBLogout = () => {
+    auth
+      .signOut()
+      .then((res) => {
+        console.log("in handle logout");
+        localStorage.clear();
+        //setUsers(null)
+        setCurrentUser(null);
+        window.location.href = "/login";
+      })
+      .catch((err) => {
+        console.log("error logging out", err);
+      });
+  };
+
+  // #########################FIREBASE#############################
+
+  const handleSignUp = async (data) => {
+    console.log("singnup", data);
+    setUserLoading(true);
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_BACKEND_ENV}gamer/auth/api/v1/signupGamer`,
+        data
+      );
+      setUserLoading(false);
+      console.log("signup res", res);
+      localStorage.setItem("ginn_userDetails", JSON.stringify(res?.data?.data));
+      // window.location.pathname = "/verifyemail";
+    } catch (err) {
+      console.log("err", err?.response?.data?.errors);
+      toast.error(err?.response?.data?.errors);
+    }
+  };
+
   const handleSignIn = async ({ email, password, userType }) => {
     setUserLoading(true);
     try {
@@ -162,6 +178,7 @@ export const AuthContextProvider = ({ children }) => {
         userLogin: handleFbLogin,
         currentUser: currentUser,
         userLogout: handleFBLogout,
+        updateUser: updateUser,
       }}
     >
       {children}

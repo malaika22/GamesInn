@@ -103,7 +103,6 @@ const StepTwo = ({
   const [accountPrice, setAccountPrice] = useState(0);
 
   const handleImageChange = (e) => {
-    console.log(e.fileList);
     setAccountImages(e.fileList);
   };
 
@@ -114,7 +113,6 @@ const StepTwo = ({
   };
 
   const handlePostAccount = async () => {
-    console.log(accountImages, accountPrice);
     if (!accountImages?.length) {
       toast.error("Account images can't be empty");
     } else if (!accountPrice) {
