@@ -9,16 +9,37 @@ export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [userLoading, setUserLoading] = useState(false);
   const uid = localStorage.getItem("ginn_uid");
+
+  console.log(currentUser);
   useEffect(() => {
-    db.collection("users")
-      .doc(uid)
-      .get()
-      .then((res) => setCurrentUser(res.data()))
-      .catch((err) => {
-        console.log(err);
-      });
+    if (uid) {
+      db.collection("users")
+        .doc(uid)
+        .get()
+        .then((res) => {
+          localStorage.setItem("ginn_type", res.data().userType);
+          setCurrentUser(res.data());
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, [uid]);
 
+  const handleFBLogout = () => {
+    auth
+      .signOut()
+      .then((res) => {
+        console.log("in handle logout");
+        localStorage.clear();
+        //setUsers(null)
+        setCurrentUser(null);
+        window.location.href = "/login";
+      })
+      .catch((err) => {
+        console.log("error logging out", err);
+      });
+  };
   const handleSignUp = async (data) => {
     console.log("singnup", data);
     setUserLoading(true);
@@ -49,8 +70,10 @@ export const AuthContextProvider = ({ children }) => {
             // Add user to database
             console.log(res);
             createUser(res.user, data);
+            window.location.href = "/login";
           })
           .catch((err) => {
+            toast.error(err?.message);
             console.log("Error signing up", err);
           });
       }
@@ -77,11 +100,12 @@ export const AuthContextProvider = ({ children }) => {
           console.log("Successfully logged in", res);
           localStorage.setItem("ginn_uid", res?.user?.uid);
           localStorage.setItem("ginn_token", res?.user?.uid);
-          localStorage.setItem("ginn_type", userType);
+          // localStorage.setItem("ginn_type", userType);
           //Go to the home page
           window.location.href = "/";
         })
         .catch((err) => {
+          toast.error(err?.message);
           console.log("user not present");
           toast.error("User doesn't exist, please signup");
         });
@@ -134,7 +158,7 @@ export const AuthContextProvider = ({ children }) => {
         userSignUp: handleFBSignUp,
         userLogin: handleFbLogin,
         currentUser: currentUser,
-        userLogout: handleLogout,
+        userLogout: handleFBLogout,
       }}
     >
       {children}

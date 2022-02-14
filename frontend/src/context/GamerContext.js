@@ -15,7 +15,7 @@ export const GamerContextProvider = ({ children }) => {
   }, []);
   const handleCreatePost = (data) => {
     console.log("post data", data);
-    const randomRank = Math.floor(Math.random() * 8);
+    const randomRank = Math.floor(Math.random() * 7);
     const accountLevel = Math.floor(Math.random() * 100) + 1;
     const kdRatio = (Math.random() * 2.5).toFixed(2);
     const ranks = [
@@ -86,6 +86,7 @@ export const GamerContextProvider = ({ children }) => {
       kdRatio: kdRatio,
       accountLevel: accountLevel,
       skins: [...randomSkins],
+      isbought: false,
     });
     if (data?.accountImages.length) {
       db.collection("posts").add({
@@ -94,6 +95,7 @@ export const GamerContextProvider = ({ children }) => {
         kdRatio: kdRatio,
         accountLevel: accountLevel,
         skins: [...randomSkins],
+        isBought: false,
       });
     }
   };

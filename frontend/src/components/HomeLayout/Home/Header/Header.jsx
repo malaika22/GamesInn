@@ -56,7 +56,7 @@ const NavHeader = ({ role }) => {
           <div className="header-buttons">
             {loggedInToken ? (
               <>
-                {userType === "gamer" ? (
+                {userType === "GAMER" ? (
                   <span>
                     <Link to={"/gamer/postfeed"}>Dashboard</Link>
                   </span>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 import { Layout, Menu } from "antd";
@@ -21,12 +21,14 @@ import {
   WechatOutlined,
 } from "@ant-design/icons";
 import "./styles.scss";
+import { AuthContext } from "../../context/AuthContext";
 
 const { SubMenu } = Menu;
 const { Sider, Header, Footer, Content } = Layout;
 
 const GamerLayout = ({ children }) => {
   const history = useNavigate();
+  const { userLogout } = useContext(AuthContext);
   const routeChange = () => {
     history("/gamer/myaccounts");
   };
@@ -34,7 +36,9 @@ const GamerLayout = ({ children }) => {
   const routeChangebuyer = () => {
     history("gamer/buyerinfo");
   };
-
+  const handleLogout = () => {
+    userLogout();
+  };
   return (
     <div className="gamer-layout-container">
       <Layout>
@@ -72,6 +76,13 @@ const GamerLayout = ({ children }) => {
               </SubMenu>
               <Menu.Item key="8" icon={<FontAwesomeIcon icon={faCogs} />}>
                 Settings
+              </Menu.Item>
+              <Menu.Item
+                key="9"
+                icon={<FontAwesomeIcon icon={faCogs} />}
+                onClick={handleLogout}
+              >
+                Logout
               </Menu.Item>
             </Menu>
           </div>
