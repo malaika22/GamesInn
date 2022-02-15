@@ -27,7 +27,7 @@ const PostFeed = () => {
     {
       title:'Offer Title',
       align: 'center',
-      render: post => <Link to={`/post/${post.postId}`}>{post.titleContent.join(' | ')}</Link> 
+      render: post => <Link to={`gamer/post/${post.postId}`}>{post.titleContent.join(' | ')}</Link> 
     },
     {
       title:'Rating',
