@@ -19,6 +19,7 @@ export const AuthContextProvider = ({ children }) => {
         console.log(res.data());
         if (res?.data()?.uid === uid) {
           console.log("same user");
+          localStorage.setItem("ginn_type", res?.data()?.userType);
           setCurrentUser(res.data());
         }
       })
@@ -71,7 +72,7 @@ export const AuthContextProvider = ({ children }) => {
           localStorage.setItem("ginn_token", res?.user?.uid);
           // localStorage.setItem("ginn_type", userType);
           //Go to the home page
-          // window.location.href = "/";
+          window.location.href = "/";
         })
         .catch((err) => {
           toast.error(err?.message);
