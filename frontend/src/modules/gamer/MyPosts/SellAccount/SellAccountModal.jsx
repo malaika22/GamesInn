@@ -141,7 +141,6 @@ const StepTwo = ({
               .child(img.name)
               .getDownloadURL()
               .then((url) => {
-                console.log("running");
                 imagesUrlsArr.push(url);
               })
           )

@@ -8,6 +8,10 @@ export const GamerContextProvider = ({ children }) => {
   const [campaigns, setCampaigns] = useState([]);
   const [gamerPost, setGamerPosts] = useState([]);
 
+  const config = {
+    headers: { Authorization: `Bearer ${localStorage.getItem("ginn_token")}` },
+  };
+
   const handleCreatePost = (data) => {
     const randomRank = Math.floor(Math.random() * 7);
     const accountLevel = Math.floor(Math.random() * 100) + 1;
@@ -101,12 +105,27 @@ export const GamerContextProvider = ({ children }) => {
     );
     console.log("active campaign", res);
   };
+
+  const createCampaign = async (data) => {
+    console.log("campaign data", data);
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_BACKEND_ENV}campaign/api/v1/allActiveCampaigns`,
+        data,
+        config
+      );
+      console.log(res);
+    } catch (err) {
+      console.log(err?.response?.message);
+    }
+  };
   return (
     <GamerContext.Provider
       value={{
         getMyCampaigns: getMyCampaigns,
         getActiveCampaigns: getActiveCampaigns,
         handleCreatePost: handleCreatePost,
+        createCampaign: createCampaign,
       }}
     >
       {children}
