@@ -1,10 +1,20 @@
-import { Input, Button } from "antd";
+import {Card,Row, Input, Form, Button } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
 import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { UserOutlined } from "@ant-design/icons";
 import { AuthContext } from "../../../context/AuthContext";
 import { storage } from "../../../firebase";
+import './styles.scss'
+
+const layout = {
+  labelCol: {
+    span: 8,
+  },
+  wrapperCol: {
+    span: 16,
+  },
+};
 
 const GamerAccountSettings = () => {
   const { currentUser, updateUser } = useContext(AuthContext);
@@ -55,53 +65,91 @@ const GamerAccountSettings = () => {
   };
 
   console.log("userDetails", userDetails, currentUser);
-  return (
+  return (<>
+  
+    <Row className='hello' >Account Settings</Row>
+    <Card >
+     
+    <Form {...layout} vertical name="nest-messages"  >
     <div className="account-settings-container">
-      <div>Account Settings</div>
+   
+      {/* <div  className="account">Account Settings</div> */}
+      <br/>
+      
       <div className="account-settings">
         <div className="account-image">
+        
           {userDetails?.profileImage ? (
             <Avatar src={userDetails?.profileImage} />
           ) : (
-            <Avatar size={64} icon={<UserOutlined />} />
-          )}
+            <Avatar size={70} icon={<UserOutlined />} />
+          )} 
+          <br/>
+        <br/>
           <label className="upload-label">
             Upload image
-            <input type={"file"} onChange={handleChangeImage} />
+           
+             <input className="file-choose" type={"file"}
+              onChange={handleChangeImage} />
+          
           </label>
+         
+         
         </div>
+        <br/>
         <div className="input-div">
-          <div className="input-title">First Name</div>
-          <Input
+        <Form.Item
+         label="First Name"
+         name={"firstName"}
+         >
+         
+          <Input style={{ width: 400}} 
             placeholder="First name"
-            name="firstName"
+           
             value={userDetails?.firstName}
             onChange={handleChange}
           />
+          </Form.Item>
         </div>
+        
         <div className="input-div">
-          <div className="input-title">Last Name</div>
-          <Input
+        <Form.Item
+         label="Last Name"
+         name={"lastName"}
+         >
+          <Input style={{ width: 400}}
             placeholder="Last name"
-            name="lastName"
+           
             value={userDetails?.lastName}
             onChange={handleChange}
           />
+          </Form.Item>
         </div>
-        <div className="input-div">
-          <div className="input-title">User name</div>
-          <Input
+        
+        <Form.Item
+         label="User Name"
+         name={"userName"}>
+                       
+          <Input   style={{ width: 400}}
             placeholder="User name"
-            name="userName"
+            
             value={userDetails?.userName}
             onChange={handleChange}
           />
-        </div>
-        <Button className="save-button" onClick={handleUpdateUser}>
+           </Form.Item>
+       
+        <Form.Item  wrapperCol={{ ...layout.wrapperCol, offset: 9 }}>
+        <Button className="btn , move"  type="primary" onClick={handleUpdateUser}>
           Save
         </Button>
+        </Form.Item>
+        
       </div>
+     
     </div>
+     </Form>
+     </Card>
+     </>
   );
 };
 

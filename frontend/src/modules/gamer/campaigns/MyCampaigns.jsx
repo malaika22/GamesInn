@@ -54,7 +54,8 @@ const handleCancel = () => {
          Campaign
       </Button>
      
-      <Modal title="New Campaign" className='btn' visible={isModalVisible} onOk={handleOk } onCancel={handleCancel}>
+      <Modal 
+        footer={null} title="New Campaign" className='btn' visible={isModalVisible} onOk={handleOk } onCancel={handleCancel}>
       
       <Form {...layout}>
       <Form.Item
