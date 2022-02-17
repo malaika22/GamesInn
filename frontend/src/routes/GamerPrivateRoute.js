@@ -4,12 +4,17 @@ import GamerLayout from "../components/GamerLayout/GamerLayout";
 
 const GamerPrivateRoute = ({ component: Component, ...rest }) => {
   const token = localStorage.getItem("ginn_token");
-  const gamerInfo = JSON.parse(localStorage.getItem("ginn_uDetails"));
-  console.log("game info", gamerInfo);
+  // const gamerInfo = JSON.parse(localStorage.getItem("ginn_uDetails"));
+  const userType = localStorage.getItem("ginn_type");
   return !token ? (
     <Navigate to="/" />
   ) : (
-    gamerInfo?.verified && gamerInfo?.userType === "Gamer" && (
+    // gamerInfo?.verified && gamerInfo?.userType === "Gamer" && (
+    //   <GamerLayout>
+    //     <Outlet />
+    //   </GamerLayout>
+    // )
+    userType === "GAMER" && (
       <GamerLayout>
         <Outlet />
       </GamerLayout>

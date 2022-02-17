@@ -14,16 +14,16 @@ const SignIn = () => {
   const [form] = Form.useForm();
   const handleSignUp = () => {
     const formValues = form.getFieldsValue(true);
-    if (!signupRole) {
-      toast.error("Select a user role");
-    } else {
-      const data = {
-        ...formValues,
-        userType: signupRole,
-      };
-      userLogin(data);
-      console.log("form values", formValues);
-    }
+    // if (!signupRole) {
+    //   toast.error("Select a user role");
+    // } else {
+    const data = {
+      ...formValues,
+      userType: signupRole,
+    };
+    userLogin(data);
+    console.log("form values", formValues);
+    // }
   };
   return (
     <div className="auth-container signup-container">
@@ -94,7 +94,7 @@ const SignIn = () => {
                 </Form.Item>
 
                 <div className="signup-role">
-                  <Row>
+                  {/* <Row>
                     <Col xs={24}>
                       <div className="signup-role-label">Sign In as :</div>
                     </Col>
@@ -118,7 +118,7 @@ const SignIn = () => {
                         Investor
                       </Button>
                     </Col>
-                  </Row>
+                  </Row> */}
                   <Form.Item>
                     <Button className="submit-button" htmlType="submit">
                       Sign In
