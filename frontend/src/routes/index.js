@@ -18,6 +18,7 @@ import MyCampaigns from "../modules/gamer/campaigns/MyCampaigns";
 import Contract from "../modules/investor/InvestorContracts/Contract";
 
 import MyPosts from "../modules/gamer/MyPosts/MyPosts";
+import Requirements from '../modules/gamer/Requirements/Requirements'
 import MyPost from "../modules/gamer/MyPosts/MyPost";
 import AuthPrivateRoute from "./AuthPrivateRoute";
 import VerifyEmail from "../components/AuthPages/VerifyEmail";
@@ -43,6 +44,7 @@ const ModuleRoutes = () => {
         <Route exact path="gamer/mycampaign" element={<MyCampaigns />} />
         <Route exact path="gamer/myposts" element={<MyPosts />} />
         <Route exact path="gamer/mypost/:id" element={<MyPost />} />
+        <Route exact path="gamer/requirements" element={<Requirements />} />
       </Route>
 
       {/*************** InvestorPrivateRoute *****************/}

@@ -56,7 +56,7 @@ const GamerLayout = ({ children }) => {
                 key="3"
                 icon={<FontAwesomeIcon icon={faFileContract} />}
               >
-                Contracts
+                <Link to={"/gamer/requirements"}>Contracts</Link>
               </Menu.Item>
               <Menu.Item key="4" icon={<UploadOutlined />}>
                 <Link to={"/gamer/myposts"}>My posts</Link>
