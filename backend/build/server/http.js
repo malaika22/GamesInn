@@ -70,6 +70,8 @@ class HTTPServer {
          */
         this.server.app.set('view engine', 'hbs');
         this.server.app.set('views', `${process.cwd()}/views/pages`);
+        this.server.app.use("/images", express_1.default.static("uploads/account_images"));
+        this.server.app.use("/images", express_1.default.static("uploads/userProfile"));
         this.server.app.engine('hbs', Handlebars.engine({
             helpers: helpers.default(),
             layoutsDir: `${process.cwd}/views/layouts`,

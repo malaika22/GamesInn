@@ -71,7 +71,10 @@ class JoiSchemas {
     static CreateAccount(data) {
         let schema = joi_1.default.object({
             accountName: joi_1.default.string().required(),
-            cost: joi_1.default.number().min(5).required()
+            cost: joi_1.default.number().min(5).required(),
+            gamingAccount: joi_1.default.string().required(),
+            description: joi_1.default.string().required(),
+            title: joi_1.default.string().required()
         });
         let result = schema.validate(data, { abortEarly: false });
         if (result.error)

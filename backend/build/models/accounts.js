@@ -58,12 +58,20 @@ class AccountsModel {
                 username: data.username,
                 accountName: data.accountName,
                 accountCreatedAt: new Date(),
-                accountActive: true,
+                isBought: false,
                 userEmail: data.userEmail,
-                userID: data.userID,
-                cost: data.cost
+                createdBy: data.createdBy,
+                cost: data.cost,
+                images: data.files,
+                skins: data.randomSkins,
+                rank: data.randomRank,
+                kdRatio: data.kdRatio,
+                accountLevel: data.accountLevel,
+                description: data.description,
+                gamingAccount: data.gamingAccount,
+                title: data.title
             };
-            let doc = await this.collection.findOneAndUpdate({ accountName: data.accountName, userID: temp.userID }, { $set: temp }, { upsert: true, returnDocument: 'after' });
+            let doc = await this.collection.findOneAndUpdate({ accountName: data.accountName, userID: temp.createdBy }, { $set: temp }, { upsert: true, returnDocument: 'after' });
             // if (doc && doc.insertedCount) return doc.result;
             // else return doc;
             console.log(doc);

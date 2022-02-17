@@ -73,7 +73,10 @@ export abstract class JoiSchemas {
   public static CreateAccount(data:any):ValidationError{
     let schema = Joi.object({
       accountName: Joi.string().required(),
-      cost: Joi.number().min(5).required()
+      cost: Joi.number().min(5).required(),
+      gamingAccount : Joi.string().required(),
+      description: Joi.string().required(),
+      title : Joi.string().required()
       
       
     });

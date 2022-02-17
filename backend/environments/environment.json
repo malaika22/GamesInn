@@ -7,7 +7,7 @@
         "PORT": 8000,
         "AllowCors": false,
         "GracefullShutdown": true,
-        "VAULT": false,
+        "VAULT": true,
         "EMAIL":true,
         "ServiceName": "GamesInn",
         "QUEUE": false,
@@ -17,7 +17,7 @@
         "protocol": "http",
         "host": "127.0.0.1",
         "port": 8200,
-        "login": "s.7lfiJc2GkobI9jWl6YAaff76",
+        "login": "s.uTEmWUX9maqrVfPSIAgIXRaj",
         "keyname": "gamesinn",
         "apiversion": "v1"
     }

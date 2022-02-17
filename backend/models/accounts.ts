@@ -8,12 +8,20 @@ import { CampaignHistoryModel } from "./campaigns-history";
 export interface Account {
     accountName: string,
     _id?: string | ObjectId,
-    userID: ObjectId | string,
+    createdBy: ObjectId | string,
     username: string,
     userEmail:string
     accountCreatedAt: string | Date,
-    accountActive: boolean,
+    isBought: boolean,
     cost: number,
+    images : any
+    rank : string,
+    accountLevel:number,
+    title:string,
+    kdRatio:number,
+    description:string,
+    gamingAccount:string,
+    skins:[string],
 }
 
 
@@ -86,12 +94,22 @@ export abstract class AccountsModel {
                 username:data.username,
                 accountName:data.accountName,
                 accountCreatedAt:new Date(),
-                accountActive:true,
+                isBought:false,
                 userEmail:data.userEmail,
-                userID:data.userID,
-                cost : data.cost
+                createdBy:data.createdBy,
+                cost : data.cost,
+                images : data.files,
+                skins:data.randomSkins,
+                rank:data.randomRank,
+                kdRatio:data.kdRatio,
+                accountLevel:data.accountLevel,
+                description:data.description,
+                gamingAccount:data.gamingAccount,
+                title:data.title
+
+                
             }
-            let doc = await this.collection.findOneAndUpdate({ accountName: data.accountName, userID:temp.userID }, {$set:temp}, { upsert: true, returnDocument: 'after' });
+            let doc = await this.collection.findOneAndUpdate({ accountName: data.accountName, userID:temp.createdBy }, {$set:temp}, { upsert: true, returnDocument: 'after' });
             // if (doc && doc.insertedCount) return doc.result;
             // else return doc;
             console.log(doc)
@@ -106,6 +124,7 @@ export abstract class AccountsModel {
             throw new Error(error);
         }
     }
+    
 
 
     public static async GetMyAccounts(userID:ObjectID | String)
