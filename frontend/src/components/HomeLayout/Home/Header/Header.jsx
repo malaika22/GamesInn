@@ -9,7 +9,7 @@ import { AuthContext } from "../../../../context/AuthContext";
 const NavHeader = ({ role }) => {
   const { userLogout } = useContext(AuthContext);
   const loggedInToken = localStorage.getItem("ginn_token");
-  const { userType } = JSON.parse(localStorage.getItem("ginn_uDetails"));
+  const { userType } = JSON.parse(localStorage.getItem("ginn_uDetails")) || {};
   const [current, setCurrent] = useState("home");
   const handleMenu = (e) => {
     console.log("e", e);

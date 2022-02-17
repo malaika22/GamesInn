@@ -36,6 +36,7 @@ export const AuthContextProvider = ({ children }) => {
           password,
         }
       );
+      toast.success(res?.data?.msg);
       console.log("login res", res);
       localStorage.setItem("ginn_token", res?.data?.data?.accessToken);
       localStorage.setItem("ginn_uid", res?.data?.data?.userID);
