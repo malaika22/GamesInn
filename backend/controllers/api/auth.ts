@@ -1,7 +1,9 @@
 /** @NOTE All Authentication apis will be avaliable here */
 
-import express from "express";
+import express, { NextFunction } from "express";
 import { Document } from "mongodb";
+import multer from 'multer';
+import crypto from 'crypto';
 
 import { Vault } from "../../databases/vault";
 import { Gamer, GamersModel } from "../../models/gamer-model";
@@ -14,7 +16,89 @@ import { Utils } from "../../utils/utils";
 
 
 const routes = express.Router();
+let whitelistedRoutes = ['/signupGamer', '/login', "/forgetPassword", '/resetPassword', '/userVerification', '/logout'] //dont need access token to run
+let onlyGamerCanUtilize = ['/myAccounts', '/getAccounts'] //only gamers are allowed to use these route
 
+
+interface MiddlewareOptions {
+    fieldName?: string;
+    filter?: (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => void;
+    max: number;
+    diskStoragePath?: string;
+    fileSize?: number;
+}
+
+let storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        if (file.fieldname == "profileImage") cb(null, 'uploads/userProfile');
+        else if (file.fieldname == "accountImage") cb(null, 'uploads/account_images');
+        else cb(null, 'Error uploading image')
+        // file.fieldname == "accountImage" && cb(null, 'uploads/account_images');
+    },
+    filename: function (req, file, cb) {
+        let ext = '';
+        if (file.originalname.split('.').length > 1) {
+            ext = file.originalname.substring(file.originalname.lastIndexOf('.'));
+        }
+        let fileName = `${crypto.randomBytes(64).toString()}-${Date.now()}${ext}`
+        cb(null, file.fieldname + '-' + Date.now() + ext)
+    }
+});
+
+const createUploadMiddleware = (options: MiddlewareOptions) => {
+    const { fieldName, fileSize, diskStoragePath, max } = options;
+    const multerStorage = diskStoragePath ? multer.diskStorage({ destination: diskStoragePath }) : multer.memoryStorage();
+    let upload = multer({
+        storage: storage,
+        fileFilter: filterAttachments,
+        limits: { fileSize },
+    });
+    return upload
+}
+
+const filterAttachments = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
+    if (!file.mimetype.match(/^(application\/pdf|image\/(jpeg|jpg|png|heic|heif))/)) {
+        const uploadError = new Error();
+        uploadError.name = 'invalidFileType';
+        uploadError.message = 'Invalid file type';
+        req.field = file.fieldname
+        req.file_error = `${uploadError.message} at ${req.field}`;
+        return cb(null, false);
+    }
+    let ext = ''
+    if (file.originalname.split('.').length > 1) {
+        ext = file.originalname.substring(file.originalname.lastIndexOf('.'));
+    }
+    return cb(null, true);
+};
+
+let upload = createUploadMiddleware({ max: 6, fileSize: 2 * 100000 * 100000 })
+
+routes.use(async (req: any, res, next: NextFunction) => {
+    try {
+        if (whitelistedRoutes.includes(req.path)) next()
+        else {
+            if (!req.headers.authorization) return res.status(401).send({ msg: "Please login" })
+
+            const token = req.headers.authorization.toString().split(" ")[1]
+
+            const payload: any = Vault.DecodeSignToken(token)
+            if (!payload) return res.status(400).send({ msg: "Login to access" })
+
+            const session = await SessionsModel.GetSessionByID(payload.session_id, token)
+
+            if (!session) return res.status(404).send({ msg: "Please login", issue: "Session not found with this token" })
+
+            req.gamerDetails = session
+
+            next()
+        }
+    } catch (error: any) {
+        console.log(error);
+
+    }
+
+})
 routes.post('/signupGamer', async (req, res) => {
     try {
 
@@ -69,7 +153,7 @@ routes.post('/login', async (req, res) => {
 
         if (!gamer.verified) return res.status(400).send({ msg: "User Not Verified" });
 
-       //convert provided password into hash password and match if it's equal to hashed password saved in collection for respective user
+        //convert provided password into hash password and match if it's equal to hashed password saved in collection for respective user
         let passwordVerification: boolean = Vault.VerifyHashedPassword(payload.password, gamer.password)
         if (!passwordVerification) return res.status(400).send({ msg: "Email or password is incorrect" })
 
@@ -86,6 +170,30 @@ routes.post('/login', async (req, res) => {
 
 })
 
+
+
+routes.patch('/updateGamer', async (req: any, res) => {
+    let payload = { ...req.body }
+    const validation = JoiSchemas.UpdateGamer(payload)
+    if (validation.errored) return res.status(400).send({ msg: "Validation error", errors: validation.errors })
+
+    let data = await GamersModel.UpdateGamerData({ _id: req.gamerDetails.userID, ...payload });
+    res.status(200).send({ msg: 'Update suceesfully', data: data })
+
+})
+
+
+routes.patch('/profilePhoto', upload.any(), async (req: any, res) => {
+    console.log(req.files)
+    if (req.files.length > 1)  return res.status(400).send({ msg: 'not more than 1 image is allowed' });
+    
+    (req.files as any).forEach((object: any) => {
+          object.showPath = `${global.Url}/images/${object.filename}`
+    });
+
+    let data = await GamersModel.UpdateImage({ _id: req.gamerDetails.userID, profileImage: req.files[0] })
+    return res.status(200).send({ msg: "update user", data })
+})
 
 routes.post('/forgetPassword', async (req, res) => {
 

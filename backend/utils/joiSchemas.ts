@@ -98,4 +98,15 @@ export abstract class JoiSchemas {
     if (result.error) return { errored: true, errors: result.error.message.split('.'), value: result.value }
     else return { errored: false, errors: null, value: result.value }
   }
+
+  public static UpdateGamer(data:any):ValidationError{
+    let schema = Joi.object({
+      userName: Joi.string(),
+      firstName: Joi.string(),
+      lastName : Joi.string(),
+    });
+    let result = schema.validate(data, { abortEarly: false });
+    if (result.error) return { errored: true, errors: result.error.message.split('.'), value: result.value }
+    else return { errored: false, errors: null, value: result.value }
+  }
 }
