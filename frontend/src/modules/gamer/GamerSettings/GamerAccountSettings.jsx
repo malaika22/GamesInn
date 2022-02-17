@@ -62,7 +62,6 @@ const GamerAccountSettings = () => {
       );
   };
 
-  console.log("userDetails", userDetails, currentUser);
   return (
     <>
       <Row className="hello">Account Settings</Row>

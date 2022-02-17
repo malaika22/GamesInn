@@ -7,10 +7,24 @@ export const GamerContext = createContext();
 export const GamerContextProvider = ({ children }) => {
   const [campaigns, setCampaigns] = useState([]);
   const [gamerPost, setGamerPosts] = useState([]);
-
+  const uid = localStorage.getItem("ginn_uid");
   const config = {
     headers: { Authorization: `Bearer ${localStorage.getItem("ginn_token")}` },
   };
+
+  useEffect(() => {
+    db.collection("posts")
+      .where("createdBy", "==", uid)
+      .onSnapshot((snapshot) => {
+        const arrPosts = [];
+        snapshot.forEach((dt) => {
+          arrPosts.push(dt.data());
+        });
+        setGamerPosts([...arrPosts]);
+      });
+  }, []);
+
+  console.log("my posts", gamerPost);
 
   const handleCreatePost = (data) => {
     const randomRank = Math.floor(Math.random() * 7);
