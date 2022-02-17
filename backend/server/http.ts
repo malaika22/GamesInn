@@ -1,4 +1,4 @@
-import express ,{ Application} from "express";
+import express, { Application } from "express";
 import cors from "cors";
 
 //Config Imports
@@ -16,6 +16,7 @@ import * as HealthRouter from "../controllers/api/health";
 import * as VaultRouter from "../controllers/api/vault";
 import * as AuthenticationRouter from '../controllers/api/auth'
 import * as CampaignRouter from '../controllers/api/campaign'
+import * as AccountsRouter from '../controllers/api/accounts'
 const PaymentRouter = require('../controllers/api/payments/payments')
 
 import * as Handlebars from 'express-handlebars'
@@ -60,19 +61,25 @@ export class HTTPServer {
         this.server.app.use(express.json());
         this.server.app.use(cors())
 
+
+        this.server.app.use(cors())
         /**
          * @NOTE Below next three this.server.app.set is for setting up server side rendering engine using HBS
          */
         this.server.app.set('view engine', 'hbs')
-  
-        this.server.app.set('views',`${process.cwd()}/views/pages` )
-  
+
+        this.server.app.set('views', `${process.cwd()}/views/pages`)
+
+        this.server.app.use("/images", express.static("uploads/account_images"));
+        this.server.app.use("/images", express.static("uploads/userProfile"));
+
+
         this.server.app.engine('hbs', Handlebars.engine({
             helpers: helpers.default(),
             layoutsDir: `${process.cwd}/views/layouts`,
             partialsDir: `${process.cwd}/views/partials`,
-            defaultLayout:'default',
-            extname:'hbs'
+            defaultLayout: 'default',
+            extname: 'hbs'
         }))
 
         //Middleware route must be stayed at the beginning.
@@ -95,6 +102,8 @@ export class HTTPServer {
         this.server.app.use('/gamer/auth/api/v1', AuthenticationRouter.router)
 
         this.server.app.use('/campaign/api/v1', CampaignRouter.router)
+
+        this.server.app.use('/accounts/api/v1', AccountsRouter.router)
 
         this.server.app.use('/payment/api/v1', PaymentRouter)
         //Default Route Must be added at end.

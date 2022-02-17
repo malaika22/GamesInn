@@ -134,6 +134,9 @@ export const AuthContextProvider = ({ children }) => {
         }
       );
 
+      toast.success(res?.data?.msg);
+      console.log("login res", res);
+
       localStorage.setItem("ginn_token", res?.data?.data?.accessToken);
       localStorage.setItem("ginn_uid", res?.data?.data?.userID);
       localStorage.setItem("ginn_type", res?.data?.data?.userType);

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CampaignModel = void 0;
 const mongodb_1 = require("mongodb");
 const gamesinn_database_1 = require("../databases/gamesinn-database");
+const bson_1 = require("bson");
 const campaigns_history_1 = require("./campaigns-history");
 class CampaignModel {
     static async INIT() {
@@ -156,6 +157,11 @@ class CampaignModel {
     }
     static async FindCampaignByUserID(userID) {
         let doc = await this.collection.find({ userID: userID }).limit(1).toArray();
+        return doc[0];
+    }
+    static async FindCampaignByID(campaignID) {
+        console.log('wirks??');
+        let doc = await this.collection.find({ _id: new bson_1.ObjectID(campaignID) }).limit(1).toArray();
         return doc[0];
     }
 }

@@ -26,6 +26,7 @@ import { CroneJob } from "./controllers/cron/scheduler";
 import { CampaignHistoryModel } from "./models/campaigns-history";
 import { CampaignFunded } from "./models/campaign-funded";
 import { TransactionsCampaignFunded } from "./models/transaction";
+import { AccountsModel } from "./models/accounts";
 // import { OpenAPIConfiguration } from "./controllers/documentation/config_openapi";
 
 // import { runme } from "./controllers/documentation/api-documentations";
@@ -195,13 +196,14 @@ export class Application {
              */
             if (global.defaultDB) await DefaultModel.INIT();
        
-            await GamersModel.INIT()
-            await SessionsModel.INIT()
-            await TokenModel.INIT()
-            await CampaignModel.INIT()
-            await CampaignHistoryModel.INIT()
-            await CampaignFunded.INIT()
-            await TransactionsCampaignFunded.INIT()
+            await GamersModel.INIT();
+            await SessionsModel.INIT();
+            await TokenModel.INIT();
+            await CampaignModel.INIT();
+            await CampaignHistoryModel.INIT();
+            await CampaignFunded.INIT();
+            await TransactionsCampaignFunded.INIT();
+            await AccountsModel.INIT()
             /**
              * Is Useful in cases where we want to delay queue to start fetching and wait for all the initialization events go trigger to prevent intermittent processing.
              */
