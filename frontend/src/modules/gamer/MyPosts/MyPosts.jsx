@@ -6,18 +6,14 @@ import { GamerContext } from "../../../context/GamerContext";
 import SellAccountModal from "./SellAccount/SellAccountModal";
 
 const MyPosts = () => {
-  const { handleCreatePost } = useContext(GamerContext);
+  const { handleCreatePost, getMyAccounts } = useContext(GamerContext);
   const [showPostModal, setShowPostModal] = useState(false);
   const [accountLoader, setAccountLoader] = useState("");
   const { currentUser } = useContext(AuthContext);
-  const [accountDetails, setAccountDetails] = useState({
-    gamingPlatform: "",
-    gamingAccount: "",
-    accountDescription: "",
-    accountImages: [],
-    accountPrice: 0,
-  });
 
+  useEffect(() => {
+    getMyAccounts();
+  }, []);
   useEffect(() => {
     if (accountLoader) {
       const timer = setTimeout(() => {
@@ -30,12 +26,12 @@ const MyPosts = () => {
   useEffect(() => {
     if (accountLoader) {
       const timer = setTimeout(() => {
-        handleCreatePost({
-          ...accountDetails,
-          userName: currentUser?.userName,
-          profileImage: currentUser?.profileImage,
-          createdBy: currentUser?.uid,
-        });
+        // handleCreatePost({
+        //   ...accountDetails,
+        //   userName: currentUser?.userName,
+        //   profileImage: currentUser?.profileImage,
+        //   createdBy: currentUser?.uid,
+        // });
         setAccountLoader("");
         toast.success("Account verified successfully, post uploaded");
       }, 6000);
@@ -72,8 +68,8 @@ const MyPosts = () => {
           cancel={setShowPostModal}
           handleCreatePost={handleCreatePost}
           setAccountLoader={setAccountLoader}
-          accountDetails={accountDetails}
-          setAccountDetails={setAccountDetails}
+          // accountDetails={accountDetails}
+          // setAccountDetails={setAccountDetails}
         />
       )}
     </>

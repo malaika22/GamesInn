@@ -116,7 +116,7 @@ export const AuthContextProvider = ({ children }) => {
       setUserLoading(false);
       console.log("res", res);
       // localStorage.setItem("ginn_userDetails", JSON.stringify(res?.data?.data));
-      // window.location.pathname = "/verifyemail";
+      window.location.pathname = "/verifyemail";
     } catch (err) {
       console.log("err", err?.response?.data?.errors);
       toast.error(err?.response?.data?.errors);
@@ -171,10 +171,10 @@ export const AuthContextProvider = ({ children }) => {
   return (
     <AuthContext.Provider
       value={{
-        userSignUp: handleFBSignUp,
-        userLogin: handleFbLogin,
+        userSignUp: handleSignUp,
+        userLogin: handleSignIn,
         currentUser: currentUser,
-        userLogout: handleFBLogout,
+        userLogout: handleLogout,
         updateUser: updateUser,
       }}
     >

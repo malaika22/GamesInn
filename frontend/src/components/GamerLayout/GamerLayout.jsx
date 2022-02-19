@@ -61,24 +61,34 @@ const GamerLayout = ({ children }) => {
               <Menu.Item key="4" icon={<UploadOutlined />}>
                 <Link to={"/gamer/myposts"}>My posts</Link>
               </Menu.Item>
-
+              <SubMenu key={"5"} icon={<UploadOutlined />} title="Campaigns">
+                <Menu.Item key={"6"}>
+                  <Link to={"gamer/activeCampaign"}>Active Campaigns</Link>
+                </Menu.Item>
+                <Menu.Item key={"7"}>
+                  <Link to={"gamer/mycampaigns"}>My Campaigns</Link>
+                </Menu.Item>
+                <Menu.Item key={"8"}>
+                  <Link to={"gamer/allcampaigns"}>All Campaigns</Link>
+                </Menu.Item>
+              </SubMenu>
               <SubMenu
-                key="5"
+                key="9"
                 icon={<FontAwesomeIcon icon={faUsers} />}
                 title="Tranding Info"
               >
-                <Menu.Item key="6" onClick={routeChange}>
+                <Menu.Item key="10" onClick={routeChange}>
                   My accounts
                 </Menu.Item>
-                <Menu.Item key="7" onClick={routeChangebuyer}>
+                <Menu.Item key="11" onClick={routeChangebuyer}>
                   Buyer Information
                 </Menu.Item>
               </SubMenu>
-              <Menu.Item key="8" icon={<FontAwesomeIcon icon={faCogs} />}>
+              <Menu.Item key="12" icon={<FontAwesomeIcon icon={faCogs} />}>
                 <Link to={"gamer/settings"}>Settings</Link>
               </Menu.Item>
               <Menu.Item
-                key="9"
+                key="13"
                 icon={<FontAwesomeIcon icon={faCogs} />}
                 onClick={handleLogout}
               >

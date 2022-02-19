@@ -1,10 +1,21 @@
 import React, { useContext, useState } from "react";
 import { storage } from "../../../../firebase";
-import { Button, Modal, Row, Col, Select, Form, Input, Upload, InputNumber } from "antd";
+import {
+  Button,
+  Modal,
+  Row,
+  Col,
+  Select,
+  Form,
+  Input,
+  Upload,
+  InputNumber,
+} from "antd";
 import uploadIcon from "../../../../assests/uploadIcon.png";
 import "./styles.scss";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../../context/AuthContext";
+import { GamerContext } from "../../../../context/GamerContext";
 const layout = {
   labelCol: {
     span: 8,
@@ -28,12 +39,10 @@ const StepOne = ({ accountDetails, setAccountDetails, setStepCount }) => {
   };
   return (
     <>
-      
-     
       <div className="account-details">
         <Form {...layout} form={form} onFinish={handleFinish}>
           <Form.Item
-            name={"gamingPlatform"}
+            name={"gamingAccount"}
             label="Gaming Platform"
             rules={[
               {
@@ -58,8 +67,8 @@ const StepOne = ({ accountDetails, setAccountDetails, setStepCount }) => {
             </Select>
           </Form.Item>
           <Form.Item
-          label="Account Title"
-            name={"gamingAccount"}
+            label="Post Title"
+            name={"title"}
             rules={[
               {
                 required: true,
@@ -70,8 +79,20 @@ const StepOne = ({ accountDetails, setAccountDetails, setStepCount }) => {
             <Input placeholder="Gaming account title" />
           </Form.Item>
           <Form.Item
-          label="Description"
-            name={"accountDescription"}
+            label="Account Name"
+            name={"accountName"}
+            rules={[
+              {
+                required: true,
+                message: "Gaming account title can't be empty",
+              },
+            ]}
+          >
+            <Input placeholder="Gaming account title" />
+          </Form.Item>
+          <Form.Item
+            label="Description"
+            name={"description"}
             rules={[
               ({ getFieldValue }) => ({
                 validator(_, value) {
@@ -92,9 +113,9 @@ const StepOne = ({ accountDetails, setAccountDetails, setStepCount }) => {
               }),
             ]}
           >
-            <Input.TextArea  placeholder="Gaming description" />
+            <Input.TextArea placeholder="Gaming description" />
           </Form.Item>
-          <Form.Item  wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+          <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
             <Button type="primary" htmlType="submit">
               Register
             </Button>
@@ -105,12 +126,8 @@ const StepOne = ({ accountDetails, setAccountDetails, setStepCount }) => {
   );
 };
 
-const StepTwo = ({
-  accountDetails,
-  setAccountDetails,
-  setAccountLoader,
-  cancel,
-}) => {
+const StepTwo = ({ setAccountLoader, cancel, accountDetails }) => {
+  const { handleCreatePost } = useContext(GamerContext);
   const [accountImages, setAccountImages] = useState(null);
   const [accountPrice, setAccountPrice] = useState(0);
 
@@ -124,93 +141,117 @@ const StepTwo = ({
     }
   };
 
-  const handlePostAccount = async () => {
-    if (!accountImages?.length) {
-      toast.error("Account images can't be empty");
-    } else if (!accountPrice) {
-      toast.error("Account price can't be zero");
-    } else {
-      const imagesUrlsArr = [];
-      const check = await accountImages.map((img) => {
-        const uploadTask = storage
-          .ref(`/postImages/${img?.originFileObj?.name}`)
-          .put(img?.originFileObj)
-          .then((res) =>
-            storage
-              .ref("postImages")
-              .child(img.name)
-              .getDownloadURL()
-              .then((url) => {
-                imagesUrlsArr.push(url);
-              })
-          )
-          .catch((err) => console.log(err));
-      });
+  // const handlePostAccount = async () => {
+  //   if (!accountImages?.length) {
+  //     toast.error("Account images can't be empty");
+  //   } else if (!accountPrice) {
+  //     toast.error("Account price can't be zero");
+  //   } else {
+  //     const imagesUrlsArr = [];
+  //     const check = await accountImages.map((img) => {
+  //       const uploadTask = storage
+  //         .ref(`/postImages/${img?.originFileObj?.name}`)
+  //         .put(img?.originFileObj)
+  //         .then((res) =>
+  //           storage
+  //             .ref("postImages")
+  //             .child(img.name)
+  //             .getDownloadURL()
+  //             .then((url) => {
+  //               imagesUrlsArr.push(url);
+  //             })
+  //         )
+  //         .catch((err) => console.log(err));
+  //     });
 
-      setAccountDetails({
-        ...accountDetails,
-        accountImages: imagesUrlsArr,
-        accountPrice: accountPrice,
-      });
+  //     setAccountDetails({
+  //       ...accountDetails,
+  //       accountImages: imagesUrlsArr,
+  //       accountPrice: accountPrice,
+  //     });
 
-      cancel(false);
-      setAccountLoader("Verifying your account......");
-    }
+  //     cancel(false);
+  //     setAccountLoader("Verifying your account......");
+  //   }
+  // };
+
+  const handlePostAccount = () => {
+    console.log({
+      ...accountDetails,
+      accountImage: accountImages,
+      cost: accountPrice,
+    });
+    const data = new FormData();
+    data.append("cost", accountPrice);
+    data.append("title", accountDetails?.title);
+    data.append("accountName", accountDetails?.accountName);
+    data.append("description", accountDetails?.description);
+    data.append("gamingAccount", accountDetails?.gamingAccount);
+    accountImages.map((dt) => data.append("accountImage", dt?.originFileObj));
+    handleCreatePost(data);
+    cancel(false);
+    setAccountLoader("Verifying your account......");
   };
 
   return (
     <>
       <div className="title">Account Images</div>
-      <br/>
+      <br />
       <div className="account-images">
-      <Form.Item  wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-        <Upload
-          multiple
-          listType="picture"
-          className="upload-input"
-          // fileList={project.fileList}
-          beforeUpload={() => false}
-          onChange={handleImageChange}
-        >
-          <div className="upload-div">
-            <div className="upload-icon">
-              <img src={uploadIcon} alt="Upload icon" />
+        <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+          <Upload
+            multiple
+            listType="picture"
+            className="upload-input"
+            // fileList={project.fileList}
+            beforeUpload={() => false}
+            onChange={handleImageChange}
+          >
+            <div className="upload-div">
+              <div className="upload-icon">
+                <img src={uploadIcon} alt="Upload icon" />
+              </div>
+              <br />
             </div>
-            <br/>
-           
-            
-            
-          </div>
-          <div className="upload-title">
-          <Button  type="primary" >upload</Button></div>
-        </Upload>
+            <div className="upload-title">
+              <Button type="primary">upload</Button>
+            </div>
+          </Upload>
         </Form.Item>
         <div className="budget-div">
-        <Form.Item  label="Account price"  placeholder="Account price" 
-        name="accountPrice"
-        onChange={handlePriceChange}>
-        <Input />
-      </Form.Item>
-          
+          <Form.Item
+            label="Account price"
+            placeholder="Account price"
+            name="accountPrice"
+            onChange={handlePriceChange}
+          >
+            <Input />
+          </Form.Item>
         </div>
-     
-        <Form.Item className="btn" wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-        <Button  type="primary" onClick={handlePostAccount}>post</Button>
+
+        <Form.Item
+          className="btn"
+          wrapperCol={{ ...layout.wrapperCol, offset: 8 }}
+        >
+          <Button type="primary" onClick={handlePostAccount}>
+            post
+          </Button>
         </Form.Item>
       </div>
     </>
   );
 };
 
-const SellAccountModal = ({
-  cancel,
-  handleCreatePost,
-  setAccountLoader,
-  accountDetails,
-  setAccountDetails,
-}) => {
+const SellAccountModal = ({ cancel, handleCreatePost, setAccountLoader }) => {
   const { currentUser } = useContext(AuthContext);
 
+  const [accountDetails, setAccountDetails] = useState({
+    gamingPlatform: "",
+    gamingAccount: "",
+    description: "",
+    accountImages: [],
+    accountPrice: 0,
+  });
   const [stepCount, setStepCount] = useState(0);
   const renderSteps = () => {
     return !stepCount ? (

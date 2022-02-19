@@ -19,7 +19,7 @@ export abstract class DefaultDatabase {
             DefaultDatabase.conf = dbconf;
 
             if (!this.mongClient || !this.db) {
-                this.mongClient = await MongoClient.connect(`mongodb://${dbconf.host}:${dbconf.port}`);
+                this.mongClient = await MongoClient.connect(`mongodb://DESKTOP-TL59EP5:27017,DESKTOP-TL59EP5:27018,DESKTOP-TL59EP5:27019?replicaSet=rs`);
                 this.mongClient.on('serverDescriptionChanged', function (event) {
                     // console.log('received serverDescriptionChanged');
                     // console.log(JSON.stringify(event, null, 2));

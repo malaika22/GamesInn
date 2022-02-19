@@ -6,6 +6,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = void 0;
 const express_1 = __importDefault(require("express"));
+const multer_1 = __importDefault(require("multer"));
+const crypto_1 = __importDefault(require("crypto"));
 const vault_1 = require("../../databases/vault");
 const gamer_model_1 = require("../../models/gamer-model");
 const session_model_1 = require("../../models/session-model");
@@ -15,8 +17,76 @@ const email_1 = require("../../utils/email/email");
 const joiSchemas_1 = require("../../utils/joiSchemas");
 const utils_1 = require("../../utils/utils");
 const routes = express_1.default.Router();
+let whitelistedRoutes = ['/signupGamer', '/login', "/forgetPassword", '/resetPassword', '/userVerification', '/logout']; //dont need access token to run
+let onlyGamerCanUtilize = ['/myAccounts', '/getAccounts']; //only gamers are allowed to use these route
+let storage = multer_1.default.diskStorage({
+    destination: function (req, file, cb) {
+        if (file.fieldname == "profileImage")
+            cb(null, 'uploads/userProfile');
+        else if (file.fieldname == "accountImage")
+            cb(null, 'uploads/account_images');
+        else
+            cb(null, 'Error uploading image');
+        // file.fieldname == "accountImage" && cb(null, 'uploads/account_images');
+    },
+    filename: function (req, file, cb) {
+        let ext = '';
+        if (file.originalname.split('.').length > 1) {
+            ext = file.originalname.substring(file.originalname.lastIndexOf('.'));
+        }
+        let fileName = `${crypto_1.default.randomBytes(64).toString()}-${Date.now()}${ext}`;
+        cb(null, file.fieldname + '-' + Date.now() + ext);
+    }
+});
+const createUploadMiddleware = (options) => {
+    const { fieldName, fileSize, diskStoragePath, max } = options;
+    const multerStorage = diskStoragePath ? multer_1.default.diskStorage({ destination: diskStoragePath }) : multer_1.default.memoryStorage();
+    let upload = (0, multer_1.default)({
+        storage: storage,
+        fileFilter: filterAttachments,
+        limits: { fileSize },
+    });
+    return upload;
+};
+const filterAttachments = (req, file, cb) => {
+    if (!file.mimetype.match(/^(application\/pdf|image\/(jpeg|jpg|png|heic|heif))/)) {
+        const uploadError = new Error();
+        uploadError.name = 'invalidFileType';
+        uploadError.message = 'Invalid file type';
+        req.field = file.fieldname;
+        req.file_error = `${uploadError.message} at ${req.field}`;
+        return cb(null, false);
+    }
+    let ext = '';
+    if (file.originalname.split('.').length > 1) {
+        ext = file.originalname.substring(file.originalname.lastIndexOf('.'));
+    }
+    return cb(null, true);
+};
+let upload = createUploadMiddleware({ max: 6, fileSize: 2 * 100000 * 100000 });
+routes.use(async (req, res, next) => {
+    try {
+        if (whitelistedRoutes.includes(req.path))
+            next();
+        else {
+            if (!req.headers.authorization)
+                return res.status(401).send({ msg: "Please login" });
+            const token = req.headers.authorization.toString().split(" ")[1];
+            const payload = vault_1.Vault.DecodeSignToken(token);
+            if (!payload)
+                return res.status(400).send({ msg: "Login to access" });
+            const session = await session_model_1.SessionsModel.GetSessionByID(payload.session_id, token);
+            if (!session)
+                return res.status(404).send({ msg: "Please login", issue: "Session not found with this token" });
+            req.gamerDetails = session;
+            next();
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+});
 routes.post('/signupGamer', async (req, res) => {
-    console.log("req bod", req.body);
     try {
         const payload = { ...req.body };
         //Joi validation
@@ -71,6 +141,24 @@ routes.post('/login', async (req, res) => {
         sentry_1.Sentry.Error(error, 'Error in Login');
         throw error;
     }
+});
+routes.patch('/updateGamer', async (req, res) => {
+    let payload = { ...req.body };
+    const validation = joiSchemas_1.JoiSchemas.UpdateGamer(payload);
+    if (validation.errored)
+        return res.status(400).send({ msg: "Validation error", errors: validation.errors });
+    let data = await gamer_model_1.GamersModel.UpdateGamerData({ _id: req.gamerDetails.userID, ...payload });
+    res.status(200).send({ msg: 'Update suceesfully', data: data });
+});
+routes.patch('/profilePhoto', upload.any(), async (req, res) => {
+    console.log(req.files);
+    if (req.files.length > 1)
+        return res.status(400).send({ msg: 'not more than 1 image is allowed' });
+    req.files.forEach((object) => {
+        object.showPath = `${global.Url}/images/${object.filename}`;
+    });
+    let data = await gamer_model_1.GamersModel.UpdateImage({ _id: req.gamerDetails.userID, profileImage: req.files[0] });
+    return res.status(200).send({ msg: "update user", data });
 });
 routes.post('/forgetPassword', async (req, res) => {
     try {

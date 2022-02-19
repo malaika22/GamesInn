@@ -1,4 +1,4 @@
-import { React, useContext, useState } from "react";
+import { React, useContext, useEffect, useState } from "react";
 import { campaignsData } from "./campaignsData";
 import {
   Card,
@@ -28,9 +28,14 @@ const layout = {
 function MyCampaigns() {
   const [form] = Form.useForm();
   const { Text, Title } = Typography;
-  const { createCampaign } = useContext(GamerContext);
+  const { createCampaign, getMyCampaigns, myCampaigns } =
+    useContext(GamerContext);
   //modal
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  useEffect(() => {
+    getMyCampaigns();
+  }, []);
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -119,7 +124,7 @@ function MyCampaigns() {
       </div>
 
       <Row gutter={[24, 24]}>
-        {campaignsData.map((campaign) => (
+        {myCampaigns?.map((campaign) => (
           <Col xs={24} md={12} lg={8}>
             <Card
               bodyStyle={{ paddingBlock: "10px" }}

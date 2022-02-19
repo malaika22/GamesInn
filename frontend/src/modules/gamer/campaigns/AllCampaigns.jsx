@@ -1,16 +1,21 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { campaignsData } from "./campaignsData";
 import { Card, Row, Col, Typography, Space } from "antd";
 import Meta from "antd/lib/card/Meta";
 import "./styles.scss";
+import { GamerContext } from "../../../context/GamerContext";
 
 function AllCampaigns() {
   const { Text, Title } = Typography;
+  const { getAllCampagins, allCampaigns } = useContext(GamerContext);
 
+  useEffect(() => {
+    getAllCampagins();
+  }, []);
   return (
     <>
       <Row gutter={[24, 24]}>
-        {campaignsData.map((campaign) => (
+        {allCampaigns?.map((campaign) => (
           <Col xs={24} md={12} lg={8}>
             <Card
               bodyStyle={{ paddingBlock: "10px" }}
