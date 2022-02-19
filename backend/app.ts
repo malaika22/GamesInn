@@ -36,7 +36,6 @@ import { AccountsModel } from "./models/accounts";
 // import sourceMapSupport from 'source-map-support'
 // sourceMapSupport.install()
 
-
 declare global {
     namespace NodeJS {
         interface Global {

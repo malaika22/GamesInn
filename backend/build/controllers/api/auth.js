@@ -151,7 +151,6 @@ routes.patch('/updateGamer', async (req, res) => {
     res.status(200).send({ msg: 'Update suceesfully', data: data });
 });
 routes.patch('/profilePhoto', upload.any(), async (req, res) => {
-    console.log(req.files);
     if (req.files.length > 1)
         return res.status(400).send({ msg: 'not more than 1 image is allowed' });
     req.files.forEach((object) => {
@@ -251,6 +250,25 @@ routes.post('/logout', async (req, res) => {
     }
     catch (error) {
     }
+});
+routes.patch('/profilePicture', upload.any(), async (req, res) => {
+    var _a;
+    if (((_a = req.files) === null || _a === void 0 ? void 0 : _a.length) > 1)
+        return res.status(400).send({ msg: "no more than 1 image" });
+    req.files.forEach((object) => {
+        object.showPath = `${global.Url}/images/${object.filename}`;
+    });
+    let data = await gamer_model_1.GamersModel.UpdateImage({ _id: req.gamerDetails.userID, profileImage: req.files[0] });
+    res.status(200).send({ data });
+});
+routes.patch('/updateGamer', async (req, res) => {
+    let payload = { ...req.body };
+    //validate logout
+    let validation = joiSchemas_1.JoiSchemas.UpdateGamer(payload);
+    if (validation.errored)
+        return res.status(400).send({ msg: "Validation error", errors: validation.errors });
+    let data = await gamer_model_1.GamersModel.UpdateGamerData({ _id: req.gamerDetails.userID, ...payload });
+    res.status(200).send({ data });
 });
 exports.router = routes;
 // routes.post('/verifyAccesstoken', (req,res)=>{
