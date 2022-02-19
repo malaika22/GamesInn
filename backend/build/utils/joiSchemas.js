@@ -95,6 +95,18 @@ class JoiSchemas {
         else
             return { errored: false, errors: null, value: result.value };
     }
+    static UpdateGamer(data) {
+        let schema = joi_1.default.object({
+            userName: joi_1.default.string(),
+            firstName: joi_1.default.string(),
+            lastName: joi_1.default.string(),
+        });
+        let result = schema.validate(data, { abortEarly: false });
+        if (result.error)
+            return { errored: true, errors: result.error.message.split('.'), value: result.value };
+        else
+            return { errored: false, errors: null, value: result.value };
+    }
 }
 exports.JoiSchemas = JoiSchemas;
 //# sourceMappingURL=joiSchemas.js.map

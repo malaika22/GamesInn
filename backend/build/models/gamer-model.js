@@ -151,6 +151,42 @@ class GamersModel {
             throw error;
         }
     }
+    static async UpdateImage(data) {
+        try {
+            let temp = {
+                _id: data._id,
+                profileImage: data.profileImage
+            };
+            let doc = await this.collection.findOneAndUpdate({ _id: temp._id }, { $set: temp }, { returnDocument: "after" });
+            if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
+                temp._id = doc.lastErrorObject.upserted;
+                return temp;
+            }
+            else
+                return doc.value;
+        }
+        catch (error) {
+            console.log("Error in creating gamer ", error);
+            throw error;
+        }
+    }
+    static async UpdateGamerData(data) {
+        try {
+            let temp = {
+                _id: data._id,
+                ...data
+            };
+            let doc = await this.collection.findOneAndUpdate({ _id: temp._id }, { $set: temp }, { returnDocument: 'after' });
+            if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
+                temp._id = doc.lastErrorObject.upserted;
+                return temp;
+            }
+            else
+                return doc.value;
+        }
+        catch (error) {
+        }
+    }
 }
 exports.GamersModel = GamersModel;
 //# sourceMappingURL=gamer-model.js.map

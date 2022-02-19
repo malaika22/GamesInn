@@ -28,6 +28,12 @@ interface UpdateGamerPassword {
     password  : string
 
 }
+interface UpdateGamerImage { 
+
+    _id  : ObjectId | string,
+    profileImage  : any
+
+}
 
 export abstract class GamersModel {
 
@@ -200,6 +206,50 @@ export abstract class GamersModel {
 
         }
 
+    }
+
+
+    public static async UpdateImage(data: UpdateGamerImage) {
+        try {
+            let temp: UpdateGamerImage = {
+                _id : data._id,
+                profileImage : data.profileImage
+            }
+
+            let doc = await this.collection.findOneAndUpdate({ _id: temp._id }, { $set: temp }, { returnDocument :"after" })
+
+            if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
+                temp._id = doc.lastErrorObject.upserted;
+                return temp;
+            } else return doc.value;
+
+
+        } catch (error) {
+            console.log("Error in creating gamer ", error)
+            throw error
+
+        }
+
+    }
+
+    public static async UpdateGamerData(data:any)
+    {
+        try {
+            let temp = {
+                _id : data._id,
+                ...data
+            }
+
+            let doc = await this.collection.findOneAndUpdate({ _id: temp._id }, { $set: temp }, { returnDocument: 'after' })
+
+            if (doc.lastErrorObject && doc.lastErrorObject.upserted) {
+                temp._id = doc.lastErrorObject.upserted;
+                return temp;
+            } else return doc.value;
+
+        } catch (error) {
+            
+        }
     }
 
 }
