@@ -7,6 +7,7 @@ export const GamerContext = createContext();
 
 export const GamerContextProvider = ({ children }) => {
   const [activeCampaigns, setActiveCampaigns] = useState([]);
+  const [gamerLoading, setGamerLoading] = useState(false);
   const [allCampaigns, setAllCampaigns] = useState([]);
   const [myCampaigns, setMyCampaigns] = useState([]);
   const [myAccounts, setMyAccounts] = useState([]);
@@ -119,12 +120,15 @@ export const GamerContextProvider = ({ children }) => {
         config
       );
       console.log("account res", res);
+      getMyAccounts();
+      getAllAccounts();
     } catch (err) {
       console.log(err, err?.response);
     }
   };
 
   const getAllAccounts = async () => {
+    setGamerLoading(true);
     console.log("all account");
     // console.log("create account", ...data);
     try {
@@ -135,12 +139,15 @@ export const GamerContextProvider = ({ children }) => {
       const filterData = res?.data?.data.filter((dt) => dt?.createdBy !== uid);
       console.log("account res", res, filterData);
       setAllAccounts(res?.data?.data);
+      setGamerLoading(false);
     } catch (err) {
+      setGamerLoading(false);
       console.log(err, err?.response);
     }
   };
 
   const getMyAccounts = async () => {
+    setGamerLoading(true);
     try {
       const res = await axios.get(
         `${process.env.REACT_APP_BACKEND_ENV}accounts/api/v1/myAccounts`,
@@ -148,30 +155,37 @@ export const GamerContextProvider = ({ children }) => {
       );
       setMyAccounts(res?.data?.data);
       console.log("my accounts", res);
+      setGamerLoading(false);
     } catch (err) {
+      setGamerLoading(false);
       console.log(err?.response);
     }
   };
 
   const getMyCampaigns = async () => {
+    setGamerLoading(true);
     try {
       const res = await axios.get(
         `${process.env.REACT_APP_BACKEND_ENV}campaign/api/v1/myAllCampaigns`,
         config
       );
+      setGamerLoading(false);
       setMyCampaigns(res?.data?.data);
       console.log("my campaigns", res);
     } catch (err) {
+      setGamerLoading(false);
       console.log(err?.response?.data?.msg);
     }
   };
 
   const getActiveCampaigns = async () => {
     try {
+      setGamerLoading(true);
       const res = await axios.get(
         `${process.env.REACT_APP_BACKEND_ENV}campaign/api/v1/allActiveCampaigns`,
         config
       );
+      setGamerLoading(false);
       setActiveCampaigns(res?.data?.data);
       console.log("active campaign", res);
     } catch (err) {
@@ -180,14 +194,17 @@ export const GamerContextProvider = ({ children }) => {
   };
 
   const getAllCampagins = async () => {
+    setGamerLoading(true);
     try {
       const res = await axios.get(
         `${process.env.REACT_APP_BACKEND_ENV}campaign/api/v1/myAllCampaigns`,
         config
       );
+      setGamerLoading(false);
       console.log(res);
       setAllCampaigns(res?.data?.data);
     } catch (err) {
+      setGamerLoading(false);
       console.log(err?.response?.data?.msg);
     }
   };
@@ -238,6 +255,7 @@ export const GamerContextProvider = ({ children }) => {
         activeCampaigns: activeCampaigns,
         allCampaigns: allCampaigns,
         fundCampaign: fundCampaign,
+        gamerLoading: gamerLoading,
       }}
     >
       {children}

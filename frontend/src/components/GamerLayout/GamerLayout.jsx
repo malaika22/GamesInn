@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
-import { Layout, Menu } from "antd";
+import { Dropdown, Layout, Menu, Avatar } from "antd";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -39,6 +39,15 @@ const GamerLayout = ({ children }) => {
   const handleLogout = () => {
     userLogout();
   };
+
+  const menu = () => {
+    return (
+      <Menu>
+        <Menu.Item>Account Settings</Menu.Item>
+        <Menu.Item onClick={handleLogout}>Logout</Menu.Item>
+      </Menu>
+    );
+  };
   return (
     <div className="gamer-layout-container">
       <Layout>
@@ -72,7 +81,7 @@ const GamerLayout = ({ children }) => {
                   <Link to={"gamer/allcampaigns"}>All Campaigns</Link>
                 </Menu.Item>
               </SubMenu>
-              <SubMenu
+              {/* <SubMenu
                 key="9"
                 icon={<FontAwesomeIcon icon={faUsers} />}
                 title="Tranding Info"
@@ -83,12 +92,12 @@ const GamerLayout = ({ children }) => {
                 <Menu.Item key="11" onClick={routeChangebuyer}>
                   Buyer Information
                 </Menu.Item>
-              </SubMenu>
-              <Menu.Item key="12" icon={<FontAwesomeIcon icon={faCogs} />}>
+              </SubMenu> */}
+              <Menu.Item key="9" icon={<FontAwesomeIcon icon={faCogs} />}>
                 <Link to={"gamer/settings"}>Settings</Link>
               </Menu.Item>
               <Menu.Item
-                key="13"
+                key="10"
                 icon={<FontAwesomeIcon icon={faCogs} />}
                 onClick={handleLogout}
               >
@@ -99,7 +108,11 @@ const GamerLayout = ({ children }) => {
         </Sider>
         <Layout>
           <Header>
-            <div>Headerr</div>
+            <div className="header-div" style={{ textAlign: "end" }}>
+              <Dropdown overlay={menu} trigger={["click"]}>
+                <Avatar icon={<UserOutlined />} size={40} />
+              </Dropdown>
+            </div>
           </Header>
           <Content>
             <div className="gamer-layout-content">{children}</div>

@@ -8,9 +8,12 @@ import { GamerContext } from "../../../context/GamerContext";
 import { UserOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import Avatar from "antd/lib/avatar/avatar";
+import { Loader } from "../../../components/Loader/Loader";
+import EmptyScreen from "../../../components/EmptyScreen/EmptyScreen";
 
 const PostFeed = () => {
-  const { getAllAccounts, allAccounts } = useContext(GamerContext);
+  const { getAllAccounts, allAccounts, gamerLoading } =
+    useContext(GamerContext);
   //Table
 
   // function getRatings() {
@@ -97,18 +100,23 @@ const PostFeed = () => {
     },
   ];
 
-  return (
-    <div className="posts">
-      <Table
-        dataSource={allAccounts}
-        columns={columns}
-        pagination={{ pageSize: 20 }}
-        bordered
-        size="middle"
-        scroll={{ x: "calc(700px + 50%)", y: 550 }}
-      ></Table>
-    </div>
-  );
+  if (gamerLoading) {
+    return <Loader />;
+  } else if (!allAccounts?.length) {
+    return <EmptyScreen title={"There's no accounts"} />;
+  } else
+    return (
+      <div className="posts">
+        <Table
+          dataSource={allAccounts}
+          columns={columns}
+          pagination={{ pageSize: 20 }}
+          bordered
+          size="middle"
+          scroll={{ x: "calc(700px + 50%)", y: 550 }}
+        ></Table>
+      </div>
+    );
 };
 
 export default PostFeed;

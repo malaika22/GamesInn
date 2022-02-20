@@ -22,6 +22,18 @@
   }
   .header-buttons {
     text-align: center;
+    .dashboard-buttons {
+      display: flex;
+      justify-content: center;
+      .dashboard-button {
+        margin-right: 25px;
+        background: white;
+        padding: 10px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+    }
+
     button {
       width: 150px;
       border: none;

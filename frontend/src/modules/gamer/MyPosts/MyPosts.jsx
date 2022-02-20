@@ -4,9 +4,11 @@ import { AuthContext } from "../../../context/AuthContext";
 import { toast } from "react-toastify";
 import { GamerContext } from "../../../context/GamerContext";
 import SellAccountModal from "./SellAccount/SellAccountModal";
+import { Loader } from "../../../components/Loader/Loader";
 
 const MyPosts = () => {
-  const { handleCreatePost, getMyAccounts } = useContext(GamerContext);
+  const { handleCreatePost, getMyAccounts, gamerLoading } =
+    useContext(GamerContext);
   const [showPostModal, setShowPostModal] = useState(false);
   const [accountLoader, setAccountLoader] = useState("");
   const { currentUser } = useContext(AuthContext);
@@ -39,10 +41,24 @@ const MyPosts = () => {
     }
   }, [accountLoader]);
 
-  return (
-    <>
-      {accountLoader ? (
-        <Spin tip={accountLoader}>
+  if (gamerLoading) {
+    return <Loader />;
+  } else
+    return (
+      <>
+        {accountLoader ? (
+          <Spin tip={accountLoader}>
+            <div className="my-posts-container">
+              <div className="posts-header">
+                <div className="posts-heading">My Posts</div>
+                <Button onClick={() => setShowPostModal(true)}>
+                  Sell Account
+                </Button>
+              </div>
+              <div className="posts-card-container"></div>
+            </div>
+          </Spin>
+        ) : (
           <div className="my-posts-container">
             <div className="posts-header">
               <div className="posts-heading">My Posts</div>
@@ -52,28 +68,19 @@ const MyPosts = () => {
             </div>
             <div className="posts-card-container"></div>
           </div>
-        </Spin>
-      ) : (
-        <div className="my-posts-container">
-          <div className="posts-header">
-            <div className="posts-heading">My Posts</div>
-            <Button onClick={() => setShowPostModal(true)}>Sell Account</Button>
-          </div>
-          <div className="posts-card-container"></div>
-        </div>
-      )}
+        )}
 
-      {showPostModal && (
-        <SellAccountModal
-          cancel={setShowPostModal}
-          handleCreatePost={handleCreatePost}
-          setAccountLoader={setAccountLoader}
-          // accountDetails={accountDetails}
-          // setAccountDetails={setAccountDetails}
-        />
-      )}
-    </>
-  );
+        {showPostModal && (
+          <SellAccountModal
+            cancel={setShowPostModal}
+            handleCreatePost={handleCreatePost}
+            setAccountLoader={setAccountLoader}
+            // accountDetails={accountDetails}
+            // setAccountDetails={setAccountDetails}
+          />
+        )}
+      </>
+    );
 };
 
 export default MyPosts;
