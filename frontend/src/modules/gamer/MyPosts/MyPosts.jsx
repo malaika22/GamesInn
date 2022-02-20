@@ -8,23 +8,21 @@ import {data} from "./data";
 import { Link } from "react-router-dom";
 import { CheckCircleTwoTone,  } from '@ant-design/icons'
 import "./styles.scss";
+import { Loader } from "../../../components/Loader/Loader";
 
 const MyPosts = () => {
-  const { handleCreatePost } = useContext(GamerContext);
+  const { handleCreatePost, getMyAccounts, gamerLoading } =
+    useContext(GamerContext);
   const [showPostModal, setShowPostModal] = useState(false);
   const [accountLoader, setAccountLoader] = useState("");
   const { currentUser } = useContext(AuthContext);
-  const [accountDetails, setAccountDetails] = useState({
-    gamingPlatform: "",
-    gamingAccount: "",
-    accountDescription: "",
-    accountImages: [],
-    accountPrice: 0,
-  });
 
   const { Meta }= Card;
   const {Title, Text}= Typography;
   
+  useEffect(() => {
+    getMyAccounts();
+  }, []);
   useEffect(() => {
     if (accountLoader) {
       const timer = setTimeout(() => {
@@ -37,12 +35,12 @@ const MyPosts = () => {
   useEffect(() => {
     if (accountLoader) {
       const timer = setTimeout(() => {
-        handleCreatePost({
-          ...accountDetails,
-          userName: currentUser?.userName,
-          profileImage: currentUser?.profileImage,
-          createdBy: currentUser?.uid,
-        });
+        // handleCreatePost({
+        //   ...accountDetails,
+        //   userName: currentUser?.userName,
+        //   profileImage: currentUser?.profileImage,
+        //   createdBy: currentUser?.uid,
+        // });
         setAccountLoader("");
         toast.success("Account verified successfully, post uploaded");
       }, 6000);
@@ -50,10 +48,24 @@ const MyPosts = () => {
     }
   }, [accountLoader]);
 
-  return (
-    <>
-      {accountLoader ? (
-        <Spin tip={accountLoader}>
+  if (gamerLoading) {
+    return <Loader />;
+  } else
+    return (
+      <>
+        {accountLoader ? (
+          <Spin tip={accountLoader}>
+            <div className="my-posts-container">
+              <div className="posts-header">
+                <div className="posts-heading">My Posts</div>
+                <Button onClick={() => setShowPostModal(true)}>
+                  Sell Account
+                </Button>
+              </div>
+              <div className="posts-card-container"></div>
+            </div>
+          </Spin>
+        ) : (
           <div className="my-posts-container">
             <div className="posts-header">
               <div className="posts-heading">My Posts</div>
@@ -113,17 +125,18 @@ const MyPosts = () => {
         </div>
       )}
 
-      {showPostModal && (
-        <SellAccountModal
-          cancel={setShowPostModal}
-          handleCreatePost={handleCreatePost}
-          setAccountLoader={setAccountLoader}
-          accountDetails={accountDetails}
-          setAccountDetails={setAccountDetails}
-        />
-      )}
-    </>
-  );
+
+        {showPostModal && (
+          <SellAccountModal
+            cancel={setShowPostModal}
+            handleCreatePost={handleCreatePost}
+            setAccountLoader={setAccountLoader}
+            // accountDetails={accountDetails}
+            // setAccountDetails={setAccountDetails}
+          />
+        )}
+      </>
+    );
 };
 
 export default MyPosts;

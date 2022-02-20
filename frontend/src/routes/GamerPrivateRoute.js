@@ -14,7 +14,7 @@ const GamerPrivateRoute = ({ component: Component, ...rest }) => {
     //     <Outlet />
     //   </GamerLayout>
     // )
-    userType === "GAMER" && (
+    userType === "Gamer" && (
       <GamerLayout>
         <Outlet />
       </GamerLayout>

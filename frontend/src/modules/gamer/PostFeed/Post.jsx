@@ -1,32 +1,79 @@
-import React from 'react';
-import data from './data';
-import { Card, Button, Typography, Tag, Col, Row } from 'antd';
-import { useParams } from 'react-router';
-
+import React, { useContext, useEffect, useState } from "react";
+import data from "./data";
+import { Card, Button, Typography, Tag, Col, Row } from "antd";
+import { useParams } from "react-router";
+import { UserOutlined } from "@ant-design/icons";
+import { GamerContext } from "../../../context/GamerContext";
+import Avatar from "antd/lib/avatar/avatar";
+import { Loader } from "../../../components/Loader/Loader";
 
 const { Meta } = Card;
-const {Title} = Typography;
+const { Title } = Typography;
 
 export default function Post() {
+  const [selectedPost, setSelectedPost] = useState(null);
+  const { id } = useParams();
+  console.log("id", id, selectedPost);
+  const { getAllAccounts, allAccounts, gamerLoading } =
+    useContext(GamerContext);
+  useEffect(() => {
+    getAllAccounts();
+  }, []);
 
-    const {id} = useParams();
+  useEffect(() => {
+    const post = allAccounts?.find((dt) => dt?._id === id);
+    setSelectedPost({ ...post });
+  }, [id, allAccounts?.length]);
 
-  return (<Card 
+  console.log(selectedPost);
+
+  if (gamerLoading) {
+    return <Loader />;
+  } else
+    return (
+      <Card
         hoverable
         bordered={false}
-        title={<Title level={3} ellipsis={true}>{data[id-1].titleContent.join(' | ')}</Title>}
+        title={
+          <Title level={3} ellipsis={true}>
+            {selectedPost?.title}
+          </Title>
+        }
         cover={
           <div className="card">
             <Row className="card-sections">
               <Col className="card-sections-left" xs={24} xl={4}>
-                <img alt="example" src={data[id-1].image} className="card-img" />
+                <Avatar icon={<UserOutlined />} size={64} />
+                {/* <img alt="example" src={selectedPost} className="card-img" /> */}
               </Col>
               <Col className="card-sections-right" xs={24} xl={16}>
-                <Title level={2} >{data[id-1].gamerName}</Title>
-                <Title level={5} style={{lineHeight:'1'}}>Gaming Platform: {data[id-1].game}</Title>
-                <Title level={5} style={{lineHeight:'0.5'}}>Rating:  {data[id-1].rating}</Title>
+                <Title level={2}>{selectedPost?.username}</Title>
+                <Title level={5} style={{ lineHeight: "1" }}>
+                  Gaming Platform: {selectedPost?.gamingAccount}
+                </Title>
+                <Title level={5} style={{ lineHeight: "0.5" }}>
+                  Rank: {selectedPost?.rank}
+                </Title>
+                <Title level={5} style={{ lineHeight: "0.5" }}>
+                  Kill Ration: {selectedPost?.kdRatio}
+                </Title>
                 <div className="card-tags">
-                  {data[id-1].titleContent.map(t => <Tag style={{margin: '2px'}} color='purple'>{t}</Tag>)}
+                  {selectedPost?.skins?.map((t) => (
+                    <Tag style={{ margin: "2px" }} color="purple">
+                      {t}
+                    </Tag>
+                  ))}
+                </div>
+                <div
+                  className="account-cost"
+                  style={{
+                    fontSize: "20px",
+                    marginTop: "15px",
+                    color: "#67a367",
+                  }}
+                >
+                  <span style={{ color: "black" }}>Price : </span>
+                  {`$ ${selectedPost?.cost}`}
                 </div>
                 <Button className="card-button Buy">Buy Now</Button>
               </Col>
@@ -35,14 +82,18 @@ export default function Post() {
         }
       >
         <Meta
-          title='Description'
-          description='Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic maiores blanditiis mollitia accusantium quibusdam dolore animi fugiat modi placeat quia sint ipsum dolorum quasi id recusandae, corporis excepturi commodi. Expedita!'
-          >
-        </Meta>
+          title="Description"
+          description={selectedPost?.description}
+        ></Meta>
         <div className="description-images">
-          {data[0].images.map(img => <img src={img} alt="account" /> )}
+          <div style={{ fontSize: "20px", marginTop: "15px" }}>
+            Account Images
+          </div>
+          {selectedPost?.images?.map((img) => (
+            <img src={img?.showPath} alt="account" />
+          ))}
         </div>
         <Button className="card-button Contact">Contact me</Button>
       </Card>
-      )
+    );
 }

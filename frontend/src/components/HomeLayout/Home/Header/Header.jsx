@@ -1,7 +1,12 @@
 import React, { useContext, useState } from "react";
 import { Button, Col, Dropdown, Layout, Menu, Row } from "antd";
 import { Link } from "react-router-dom";
-import { HomeOutlined, PhoneOutlined, IdcardOutlined } from "@ant-design/icons";
+import {
+  HomeOutlined,
+  PhoneOutlined,
+  IdcardOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import "./styles.scss";
 import Avatar from "antd/lib/avatar/avatar";
 import { AuthContext } from "../../../../context/AuthContext";
@@ -55,9 +60,9 @@ const NavHeader = ({ role }) => {
         <Col span={8}>
           <div className="header-buttons">
             {loggedInToken ? (
-              <>
-                {userType === "GAMER" ? (
-                  <span>
+              <div className="dashboard-buttons">
+                {userType === "Gamer" ? (
+                  <span className="dashboard-button">
                     <Link to={"/gamer/postfeed"}>Dashboard</Link>
                   </span>
                 ) : (
@@ -66,10 +71,10 @@ const NavHeader = ({ role }) => {
 
                 <div className="dashboard-dropdown">
                   <Dropdown overlay={menu} trigger={["click"]}>
-                    <div>Click me</div>
+                    <Avatar icon={<UserOutlined />} size={40} />
                   </Dropdown>
                 </div>
-              </>
+              </div>
             ) : (
               <>
                 <Link to="/login">

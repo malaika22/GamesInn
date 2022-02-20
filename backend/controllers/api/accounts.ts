@@ -121,6 +121,7 @@ routes.post('/createAccount',upload.any(), async (req: any, res) => {
         delete object['size'];
         object.showPath = `${global.Url}/images/${object.filename}`
     });
+    
     const ranks = [
         "Bronze",
         "Silver",
@@ -188,8 +189,6 @@ routes.post('/createAccount',upload.any(), async (req: any, res) => {
       const rdn = Math.floor(Math.random() * 45);
       randomSkins.push(skins[rdn]);
     }
-    
-    
     payload.randomRank = ranks[randomRank];
     payload.accountLevel = accountLevel;
     payload.kdRatio = kdRatio;
@@ -202,10 +201,7 @@ routes.post('/createAccount',upload.any(), async (req: any, res) => {
     payload.cost = parseFloat(req.body.cost)
     payload.description = req.body.description;
     payload.gamingAccount = req.body.gamingAccount;
-
-
     let doc = await AccountsModel.AddAccounts(payload)
-
     return res.status(201).send({ msg: "Success", doc })
 });
 

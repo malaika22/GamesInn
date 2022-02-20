@@ -34,7 +34,7 @@ class SyncWorker {
 
         try {
 
-            this.conn = await MongoClient.connect(`mongodb://${this.conf.host}:${this.conf.port}`);
+            this.conn = await MongoClient.connect(`mongodb://DESKTOP-TL59EP5:27017,DESKTOP-TL59EP5:27018,DESKTOP-TL59EP5:27019?replicaSet=rs`);
             return this.conn.db(this.conf.dbname);
 
         } catch (error: any) {

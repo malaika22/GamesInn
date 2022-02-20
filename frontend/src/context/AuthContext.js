@@ -9,7 +9,9 @@ export const AuthContextProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [userLoading, setUserLoading] = useState(false);
   const uid = localStorage.getItem("ginn_uid");
-
+  const config = {
+    headers: { Authorization: `Bearer ${localStorage.getItem("ginn_token")}` },
+  };
   // #########################FIREBASE#############################
   useEffect(() => {
     db.collection("users").onSnapshot((doc) =>
@@ -116,7 +118,7 @@ export const AuthContextProvider = ({ children }) => {
       setUserLoading(false);
       console.log("res", res);
       // localStorage.setItem("ginn_userDetails", JSON.stringify(res?.data?.data));
-      // window.location.pathname = "/verifyemail";
+      window.location.href = "/login";
     } catch (err) {
       console.log("err", err?.response?.data?.errors);
       toast.error(err?.response?.data?.errors);
@@ -159,7 +161,6 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   const handleLogout = () => {
-    setUserLoading(true);
     localStorage.clear();
     toast.success("Logged out successfully");
     setTimeout(() => {
@@ -168,14 +169,44 @@ export const AuthContextProvider = ({ children }) => {
     }, 300);
   };
 
+  const handleUpdateUser = async (data) => {
+    try {
+      const res = await axios.patch(
+        `${process.env.REACT_APP_BACKEND_ENV}gamer/auth/api/v1/updateGamer`,
+        data,
+        config
+      );
+      toast.success("User updated successfully");
+      setCurrentUser(res?.data?.data);
+    } catch (err) {
+      toast.error(err?.response?.data.msg);
+    }
+  };
+
+  const handleUpdateImage = async (data) => {
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_BACKEND_ENV}gamer/auth/api/v1/profilePhoto`,
+        data,
+        config
+      );
+      console.log(res);
+      toast.success("Image upload successfully");
+    } catch (err) {
+      toast.error(err?.response?.data.msg);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
-        userSignUp: handleFBSignUp,
-        userLogin: handleFbLogin,
+        userSignUp: handleSignUp,
+        userLogin: handleSignIn,
         currentUser: currentUser,
-        userLogout: handleFBLogout,
+        userLogout: handleLogout,
         updateUser: updateUser,
+        handleUpdateUser: handleUpdateUser,
+        handleUpdateImage: handleUpdateImage,
       }}
     >
       {children}
