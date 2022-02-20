@@ -1,0 +1,35 @@
+.posts-header{
+        display: flex;
+        justify-content: space-between;
+        margin: 10px;
+}
+
+.sell-btn{
+        height: 40px !important;
+        width: 155px;
+        border-radius: 10px;
+        border:1px solid white ;
+        background-color: #33557e;
+        color: white;
+        font-weight: 700;
+
+        &:hover {   
+        border:1px solid #33557e ;
+        background-color: white;
+        color: #33557e;
+      }
+
+        &:focus{
+            border: none;
+            outline: none;
+        }
+}
+
+.price{
+        margin: 20px 10px;
+        color: #33557e;
+        borderRadius: 5px;
+        padding: 10px 50px;
+        width: 25%;
+        height: 100%;
+}

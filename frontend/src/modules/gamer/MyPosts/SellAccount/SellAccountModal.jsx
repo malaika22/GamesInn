@@ -29,6 +29,7 @@ const StepOne = ({ accountDetails, setAccountDetails, setStepCount }) => {
   const [form] = Form.useForm();
   const { Option } = Select;
   const { TextArea } = Input;
+  
   const handleFinish = () => {
     const values = form.getFieldsValue();
     setAccountDetails({
