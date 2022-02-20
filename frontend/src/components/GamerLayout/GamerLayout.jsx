@@ -75,7 +75,7 @@ const GamerLayout = ({ children }) => {
                 </Menu.Item>
               </SubMenu>
               <Menu.Item key="8" icon={<FontAwesomeIcon icon={faCogs} />}>
-                Settings
+                <Link to={"gamer/settings"}>Settings</Link>
               </Menu.Item>
               <Menu.Item
                 key="9"

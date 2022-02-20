@@ -1,10 +1,18 @@
 import React, { useContext, useState } from "react";
 import { storage } from "../../../../firebase";
-import { Button, Modal, Row, Col, Select, Form, Input, Upload } from "antd";
+import { Button, Modal, Row, Col, Select, Form, Input, Upload, InputNumber } from "antd";
 import uploadIcon from "../../../../assests/uploadIcon.png";
 import "./styles.scss";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../../../context/AuthContext";
+const layout = {
+  labelCol: {
+    span: 8,
+  },
+  wrapperCol: {
+    span: 16,
+  },
+};
 
 const StepOne = ({ accountDetails, setAccountDetails, setStepCount }) => {
   const [form] = Form.useForm();
@@ -21,11 +29,13 @@ const StepOne = ({ accountDetails, setAccountDetails, setStepCount }) => {
   };
   return (
     <>
-      <div>Account Details</div>
+      
+     
       <div className="account-details">
-        <Form form={form} onFinish={handleFinish}>
+        <Form {...layout} form={form} onFinish={handleFinish}>
           <Form.Item
             name={"gamingPlatform"}
+            label="Gaming Platform"
             rules={[
               {
                 required: true,
@@ -49,17 +59,19 @@ const StepOne = ({ accountDetails, setAccountDetails, setStepCount }) => {
             </Select>
           </Form.Item>
           <Form.Item
+          label="Account Title"
             name={"gamingAccount"}
             rules={[
               {
                 required: true,
-                message: "Gaming account name can't be empty",
+                message: "Gaming account title can't be empty",
               },
             ]}
           >
-            <Input placeholder="Gaming account name" />
+            <Input placeholder="Gaming account title" />
           </Form.Item>
           <Form.Item
+          label="Description"
             name={"accountDescription"}
             rules={[
               ({ getFieldValue }) => ({
@@ -81,9 +93,9 @@ const StepOne = ({ accountDetails, setAccountDetails, setStepCount }) => {
               }),
             ]}
           >
-            <TextArea autoSize placeholder="Gaming description" />
+            <Input.TextArea  placeholder="Gaming description" />
           </Form.Item>
-          <Form.Item>
+          <Form.Item  wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
             <Button type="primary" htmlType="submit">
               Register
             </Button>
@@ -104,7 +116,6 @@ const StepTwo = ({
   const [accountPrice, setAccountPrice] = useState(0);
 
   const handleImageChange = (e) => {
-    console.log(e.fileList);
     setAccountImages(e.fileList);
   };
 
@@ -115,7 +126,6 @@ const StepTwo = ({
   };
 
   const handlePostAccount = async () => {
-    console.log(accountImages, accountPrice);
     if (!accountImages?.length) {
       toast.error("Account images can't be empty");
     } else if (!accountPrice) {
@@ -132,7 +142,6 @@ const StepTwo = ({
               .child(img.name)
               .getDownloadURL()
               .then((url) => {
-                console.log("running");
                 imagesUrlsArr.push(url);
               })
           )
@@ -152,8 +161,10 @@ const StepTwo = ({
 
   return (
     <>
-      <div>Account Images</div>
+      <div className="title">Account Images</div>
+      <br/>
       <div className="account-images">
+      <Form.Item  wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
         <Upload
           multiple
           listType="picture"
@@ -166,19 +177,27 @@ const StepTwo = ({
             <div className="upload-icon">
               <img src={uploadIcon} alt="Upload icon" />
             </div>
-            <div className="upload-title">Upload your account photos here</div>
-            <div className="upload-button">Browse Files</div>
+            <br/>
+           
+            
+            
           </div>
+          <div className="upload-title">
+          <Button  type="primary" >upload</Button></div>
         </Upload>
+        </Form.Item>
         <div className="budget-div">
-          <Input
-            placeholder="Account price"
-            maxLength={10}
-            name="accountPrice"
-            onChange={handlePriceChange}
-          />
+        <Form.Item  label="Account price"  placeholder="Account price" 
+        name="accountPrice"
+        onChange={handlePriceChange}>
+        <Input />
+      </Form.Item>
+          
         </div>
-        <Button onClick={handlePostAccount}>Verify my account</Button>
+     
+        <Form.Item className="btn" wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+        <Button  type="primary" onClick={handlePostAccount}>post</Button>
+        </Form.Item>
       </div>
     </>
   );
@@ -220,10 +239,7 @@ const SellAccountModal = ({
     >
       <div className="modal-body">
         <Row>
-          <Col xs={8}>
-            <div>Some background with gaming wordings</div>
-          </Col>
-          <Col xs={16}>
+          <Col xs={24}>
             <div className="account-details-container">{renderSteps()}</div>
           </Col>
         </Row>

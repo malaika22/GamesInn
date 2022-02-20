@@ -70,6 +70,21 @@ export abstract class JoiSchemas {
     else return { errored: false, errors: null, value: result.value }
   }
 
+  public static CreateAccount(data:any):ValidationError{
+    let schema = Joi.object({
+      accountName: Joi.string().required(),
+      cost: Joi.number().min(5).required(),
+      gamingAccount : Joi.string().required(),
+      description: Joi.string().required(),
+      title : Joi.string().required()
+      
+      
+    });
+    let result = schema.validate(data, { abortEarly: false });
+    if (result.error) return { errored: true, errors: result.error.message.split('.'), value: result.value }
+    else return { errored: false, errors: null, value: result.value }
+  }
+
 
   
   public static CreateCampaigns(data:any):ValidationError{

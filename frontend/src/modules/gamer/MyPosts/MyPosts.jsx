@@ -28,7 +28,6 @@ const MyPosts = () => {
   useEffect(() => {
     if (accountLoader) {
       const timer = setTimeout(() => {
-        console.log("This will run after 1 second!");
         setAccountLoader("Fetching details...");
       }, 3000);
       return () => clearTimeout(timer);
@@ -38,7 +37,6 @@ const MyPosts = () => {
   useEffect(() => {
     if (accountLoader) {
       const timer = setTimeout(() => {
-        console.log("This will run after 6000 second!");
         handleCreatePost({
           ...accountDetails,
           userName: currentUser?.userName,

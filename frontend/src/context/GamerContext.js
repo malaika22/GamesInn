@@ -7,14 +7,26 @@ export const GamerContext = createContext();
 export const GamerContextProvider = ({ children }) => {
   const [campaigns, setCampaigns] = useState([]);
   const [gamerPost, setGamerPosts] = useState([]);
+  const uid = localStorage.getItem("ginn_uid");
+  const config = {
+    headers: { Authorization: `Bearer ${localStorage.getItem("ginn_token")}` },
+  };
 
   useEffect(() => {
     db.collection("posts")
-      .get()
-      .then((res) => res.forEach((dt) => console.log(dt.data())));
+      .where("createdBy", "==", uid)
+      .onSnapshot((snapshot) => {
+        const arrPosts = [];
+        snapshot.forEach((dt) => {
+          arrPosts.push(dt.data());
+        });
+        setGamerPosts([...arrPosts]);
+      });
   }, []);
+
+  console.log("my posts", gamerPost);
+
   const handleCreatePost = (data) => {
-    console.log("post data", data);
     const randomRank = Math.floor(Math.random() * 7);
     const accountLevel = Math.floor(Math.random() * 100) + 1;
     const kdRatio = (Math.random() * 2.5).toFixed(2);
@@ -80,14 +92,7 @@ export const GamerContextProvider = ({ children }) => {
       const rdn = Math.floor(Math.random() * 45);
       randomSkins.push(skins[rdn]);
     }
-    console.log({
-      ...data,
-      accountRank: ranks[randomRank],
-      kdRatio: kdRatio,
-      accountLevel: accountLevel,
-      skins: [...randomSkins],
-      isbought: false,
-    });
+
     if (data?.accountImages.length) {
       db.collection("posts").add({
         ...data,
@@ -114,12 +119,27 @@ export const GamerContextProvider = ({ children }) => {
     );
     console.log("active campaign", res);
   };
+
+  const createCampaign = async (data) => {
+    console.log("campaign data", data);
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_BACKEND_ENV}campaign/api/v1/allActiveCampaigns`,
+        data,
+        config
+      );
+      console.log(res);
+    } catch (err) {
+      console.log(err?.response?.message);
+    }
+  };
   return (
     <GamerContext.Provider
       value={{
         getMyCampaigns: getMyCampaigns,
         getActiveCampaigns: getActiveCampaigns,
         handleCreatePost: handleCreatePost,
+        createCampaign: createCampaign,
       }}
     >
       {children}

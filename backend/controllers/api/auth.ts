@@ -16,7 +16,6 @@ import { Utils } from "../../utils/utils";
 const routes = express.Router();
 
 routes.post('/signupGamer', async (req, res) => {
-    console.log("req bod", req.body)
     try {
 
         const payload = { ...req.body }

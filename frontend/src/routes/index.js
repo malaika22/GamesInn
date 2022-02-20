@@ -22,6 +22,9 @@ import Requirements from '../modules/gamer/Requirements/Requirements'
 import MyPost from "../modules/gamer/MyPosts/MyPost";
 import AuthPrivateRoute from "./AuthPrivateRoute";
 import VerifyEmail from "../components/AuthPages/VerifyEmail";
+import GamerAccountSettings from "../modules/gamer/GamerSettings/GamerAccountSettings";
+import ActiveCampaigns from "../modules/gamer/campaigns/ActiveCampaigns";
+import AllCampaigns from "../modules/gamer/campaigns/AllCampaigns";
 
 const ModuleRoutes = () => {
   return (
@@ -41,10 +44,21 @@ const ModuleRoutes = () => {
         <Route exact path="gamer/myaccounts" element={<MyAccounts />} />
         <Route exact path="gamer/buyerinfo" element={<BuyerInfo />} />
         <Route exact path="gamer/post/:id" element={<Post />} />
-        <Route exact path="gamer/mycampaign" element={<MyCampaigns />} />
+
+       
         <Route exact path="gamer/myposts" element={<MyPosts />} />
         <Route exact path="gamer/mypost/:id" element={<MyPost />} />
         <Route exact path="gamer/requirements" element={<Requirements />} />
+
+        <Route exact path="gamer/mycampaigns" element={<MyCampaigns />} />
+        <Route
+          exact
+          path="gamer/activeCampaign"
+          element={<ActiveCampaigns />}
+        />
+        <Route exact path="gamer/allcampaigns" element={<AllCampaigns />} />
+       
+        <Route exact path="gamer/settings" element={<GamerAccountSettings />} />
       </Route>
 
       {/*************** InvestorPrivateRoute *****************/}
