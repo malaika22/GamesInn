@@ -17,7 +17,6 @@ import {
   VideoCameraOutlined,
   UploadOutlined,
   ContainerOutlined,
-  
   WechatOutlined,
 } from "@ant-design/icons";
 // import "./styles.scss";
@@ -78,9 +77,7 @@ const InvestorLayout = ({ children }) => {
           </div>
         </Sider>
         <Layout>
-          <Header>
-            <div>Headerr</div>
-          </Header>
+          <Header>{/* <div>Headerr</div> */}</Header>
           <Content>
             <div className="gamer-layout-content">{children}</div>
           </Content>

@@ -29,7 +29,7 @@ const StepOne = ({ accountDetails, setAccountDetails, setStepCount }) => {
   const [form] = Form.useForm();
   const { Option } = Select;
   const { TextArea } = Input;
-  
+
   const handleFinish = () => {
     const values = form.getFieldsValue();
     setAccountDetails({
@@ -118,7 +118,7 @@ const StepOne = ({ accountDetails, setAccountDetails, setStepCount }) => {
           </Form.Item>
           <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
             <Button type="primary" htmlType="submit">
-              Register
+              Next
             </Button>
           </Form.Item>
         </Form>

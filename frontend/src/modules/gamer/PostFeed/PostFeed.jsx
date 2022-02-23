@@ -43,6 +43,7 @@ const PostFeed = () => {
     {
       title: "Offer Title",
       align: "center",
+      width: "500px",
       render: (post) => (
         <Link to={`/gamer/post/${post._id}`}>{post?.title}</Link>
       ),
@@ -110,10 +111,11 @@ const PostFeed = () => {
         <Table
           dataSource={allAccounts}
           columns={columns}
-          pagination={{ pageSize: 20 }}
+          pagination={{ pageSize: 5 }}
           bordered
-          size="middle"
-          scroll={{ x: "calc(700px + 50%)", y: 550 }}
+          size="small"
+
+          // scroll={{ x: "calc(700px + 50%)", y: 550 }}
         ></Table>
       </div>
     );

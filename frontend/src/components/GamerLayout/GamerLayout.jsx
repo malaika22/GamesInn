@@ -51,7 +51,7 @@ const GamerLayout = ({ children }) => {
   return (
     <div className="gamer-layout-container">
       <Layout>
-        <Sider>
+        <Sider className="gamer-sider">
           <div className="gamer-layout-sider">
             <div className="logo">Games inn</div>
             <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
@@ -114,7 +114,7 @@ const GamerLayout = ({ children }) => {
               </Dropdown>
             </div>
           </Header>
-          <Content>
+          <Content className="gamer-content">
             <div className="gamer-layout-content">{children}</div>
           </Content>
         </Layout>

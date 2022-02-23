@@ -5,6 +5,10 @@
   }
   // .layout-container {
   //   height: 100vh;
+  .gamer-sider {
+    position: fixed;
+    height: 100vh;
+  }
   .gamer-layout-sider {
     .logo {
       height: 64px;
@@ -32,6 +36,10 @@
       width: 100%;
       text-align: end;
     }
+  }
+  .gamer-content {
+    padding-left: 227px;
+    padding-top: 20px;
   }
   .gamer-layout-content {
   }

@@ -179,6 +179,7 @@ export const GamerContextProvider = ({ children }) => {
   };
 
   const getActiveCampaigns = async () => {
+    setGamerLoading(true);
     try {
       setGamerLoading(true);
       const res = await axios.get(
@@ -189,6 +190,7 @@ export const GamerContextProvider = ({ children }) => {
       setActiveCampaigns(res?.data?.data);
       console.log("active campaign", res);
     } catch (err) {
+      setGamerLoading(false);
       console.log(err?.response?.data?.msg);
     }
   };
@@ -219,6 +221,7 @@ export const GamerContextProvider = ({ children }) => {
       );
       console.log(res);
       toast.success("Campaign created successfully");
+      getMyCampaigns();
     } catch (err) {
       toast.error(err?.response?.data?.msg);
       console.log(err?.response?.data?.msg);

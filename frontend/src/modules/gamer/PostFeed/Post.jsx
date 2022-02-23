@@ -14,7 +14,7 @@ export default function Post() {
   const [selectedPost, setSelectedPost] = useState(null);
   const { id } = useParams();
   console.log("id", id, selectedPost);
-  const { getAllAccounts, allAccounts, gamerLoading } =
+  const { getAllAccounts, allAccounts, gamerLoading, fundCampaign } =
     useContext(GamerContext);
   useEffect(() => {
     getAllAccounts();
@@ -75,7 +75,14 @@ export default function Post() {
                   <span style={{ color: "black" }}>Price : </span>
                   {`$ ${selectedPost?.cost}`}
                 </div>
-                <Button className="card-button Buy">Buy Now</Button>
+                <Button
+                  className="card-button Buy"
+                  onClick={() =>
+                    fundCampaign({ campaign_id: "6212449b9664cfadaa5b34a9" })
+                  }
+                >
+                  Buy Now
+                </Button>
               </Col>
             </Row>
           </div>

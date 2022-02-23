@@ -1,25 +1,34 @@
-import { Button, Spin, Card, Avatar, Typography, Col, Row, Divider} from "antd";
+import {
+  Button,
+  Spin,
+  Card,
+  Avatar,
+  Typography,
+  Col,
+  Row,
+  Divider,
+} from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import { toast } from "react-toastify";
 import { GamerContext } from "../../../context/GamerContext";
 import SellAccountModal from "./SellAccount/SellAccountModal";
-import {data} from "./data";
+import { data } from "./data";
 import { Link } from "react-router-dom";
-import { CheckCircleTwoTone,  } from '@ant-design/icons'
+import { CheckCircleTwoTone, UserOutlined } from "@ant-design/icons";
 import "./styles.scss";
 import { Loader } from "../../../components/Loader/Loader";
 
 const MyPosts = () => {
-  const { handleCreatePost, getMyAccounts, gamerLoading } =
+  const { handleCreatePost, getMyAccounts, gamerLoading, myAccounts } =
     useContext(GamerContext);
   const [showPostModal, setShowPostModal] = useState(false);
   const [accountLoader, setAccountLoader] = useState("");
   const { currentUser } = useContext(AuthContext);
 
-  const { Meta }= Card;
-  const {Title, Text}= Typography;
-  
+  const { Meta } = Card;
+  const { Title, Text } = Typography;
+
   useEffect(() => {
     getMyAccounts();
   }, []);
@@ -68,63 +77,63 @@ const MyPosts = () => {
         ) : (
           <div className="my-posts-container">
             <div className="posts-header">
-              <div className="posts-heading">My Posts</div>
-              <Button onClick={() => setShowPostModal(true)}
-                      className='sell-btn'>
+              <Title level={3}>My Posts</Title>
+              <Button
+                className="sell-btn"
+                onClick={() => setShowPostModal(true)}
+              >
                 Sell Account
               </Button>
             </div>
-            <div className="posts-card-container"></div>
-          </div>
-        </Spin>
-      ) : (
-        <div className="my-posts-container">
-          <div className="posts-header">
-            <Title level={3} >My Posts</Title>
-            <Button className='sell-btn' onClick={() => setShowPostModal(true)}>Sell Account</Button>
-          </div>
-          <div className="posts">
-           <Row gutter={[10,10]} >
-           {data.map(post => (
-              <Col span={23} >
-                <Card
-                headStyle={{backgroundColor: '#213956', color:'white'}}
-                hoverable
-                title={post.title}
-                extra={post.isSold && <CheckCircleTwoTone style={{ fontSize: '25px'}} twoToneColor="#52c41a" /> }
-              >
-                <Row  >
-                  <Col style={{display:'flex', maxWidth:'70%'}} >
-                      <Col lg={2} md={4} sm={6} xs={8}>
-                        <Avatar src={post.image} size='large'  />
-                      </Col>
-                      <Col lg={22} md={20} sm={18} xs={16}>
-                       <Title level={5}>{post.gamerName}</Title>
-                       <Text strong>Gaming Account: {post.game}</Text>
-                       <br/>
-                      <Text>{post.description}</Text>
-                      </Col>
+            <div className="posts">
+              <Row gutter={[10, 10]}>
+                {myAccounts.map((post) => (
+                  <Col span={23}>
+                    <Card
+                      headStyle={{ backgroundColor: "#213956", color: "white" }}
+                      hoverable
+                      title={post.title}
+                      extra={
+                        post.isBought && (
+                          <CheckCircleTwoTone
+                            style={{ fontSize: "25px" }}
+                            twoToneColor="#52c41a"
+                          />
+                        )
+                      }
+                    >
+                      <Row>
+                        <Col style={{ display: "flex", maxWidth: "70%" }}>
+                          <Col lg={2} md={4} sm={6} xs={8}>
+                            <Avatar icon={<UserOutlined />} size="large" />
+                          </Col>
+                          <Col lg={22} md={20} sm={18} xs={16}>
+                            <Title level={5}>{post.gamerName}</Title>
+                            <Text strong>
+                              Gaming Account: {post.gamingAccount}
+                            </Text>
+                            <br />
+                            <Text>{post.description}</Text>
+                          </Col>
+                        </Col>
+                        <Col style={{ maxHeight: "100%" }}>
+                          <Divider type="vertical" style={{ height: "100%" }} />
+                        </Col>
+                        <div className="price">
+                          <h2 style={{ color: "inherit" }}>
+                            Price: Rs.{post?.cost}
+                          </h2>
+                        </div>
+                      </Row>
+                      <Link to={`/gamer/mypost/${post._id}`}>More...</Link>
+                    </Card>
                   </Col>
-                  <Col style={{maxHeight: '100%'}} >
-                    <Divider type="vertical" style={{height: '100%'}} />
-                  </Col>
-                  <div className="price" >
-                    <h2 style={{color:'inherit'}}>
-                      Price: Rs.{post.price}
-                    </h2>
-                  </div>
-                </Row>
-                <Link to={`/gamer/mypost/${post.postId}`}>More...</Link>
-              </Card>
-              </Col>
-            ))}
-           </Row>
-            
-            
-            </div>;
-        </div>
-      )}
-
+                ))}
+              </Row>
+            </div>
+            ;
+          </div>
+        )}
 
         {showPostModal && (
           <SellAccountModal

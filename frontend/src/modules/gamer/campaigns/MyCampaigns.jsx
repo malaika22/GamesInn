@@ -48,6 +48,7 @@ function MyCampaigns() {
     console.log(form.getFieldsValue());
     const data = form.getFieldsValue();
     createCampaign(data);
+    setIsModalVisible(false);
   };
   //modal
 

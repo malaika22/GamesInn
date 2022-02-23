@@ -164,7 +164,7 @@ const SignUp = () => {
                       <Select
                         className="select-input"
                         name="country"
-                        defaultValue={"Pakistan"}
+                        placeholder="Pakistan"
                       >
                         <Option value="Pakistan">Pakistan</Option>
                         <Option value="India">India</Option>
@@ -191,7 +191,7 @@ const SignUp = () => {
                       <Select
                         className="select-input"
                         name="city"
-                        defaultValue={"Karachi"}
+                        placeholder="Karachi"
                       >
                         <Option value="Karachi">Karachi</Option>
                         <Option value="Mumbai">Mumbai</Option>
