@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Layout, Menu } from "antd";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -44,34 +44,10 @@ const InvestorLayout = ({ children }) => {
             <div className="logo">Games inn</div>
             <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
               <Menu.Item key="1" icon={<ContainerOutlined />}>
-                Total pool
+                <Link to={"investor/talentPool"}>Total pool</Link>
               </Menu.Item>
               <Menu.Item key="2" icon={<WechatOutlined />}>
-                Chat
-              </Menu.Item>
-              <Menu.Item
-                key="3"
-                icon={<FontAwesomeIcon icon={faFileContract} />}
-              >
-                Contracts
-              </Menu.Item>
-              <Menu.Item key="4" icon={<UploadOutlined />}>
-                My posts
-              </Menu.Item>
-              <SubMenu
-                key="5"
-                icon={<FontAwesomeIcon icon={faUsers} />}
-                title="Tranding Info"
-              >
-                <Menu.Item key="6" onClick={routeChange}>
-                  My accounts
-                </Menu.Item>
-                <Menu.Item key="7" onClick={routeChangebuyer}>
-                  Buyer Information
-                </Menu.Item>
-              </SubMenu>
-              <Menu.Item key="8" icon={<FontAwesomeIcon icon={faCogs} />}>
-                Settings
+                <Link to={"investor/contract"}>Contract</Link>
               </Menu.Item>
             </Menu>
           </div>
